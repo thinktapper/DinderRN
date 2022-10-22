@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import 'react-native-url-polyfill/auto'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = 'https://vaybumsbdqkykxhazlhh.supabase.co'

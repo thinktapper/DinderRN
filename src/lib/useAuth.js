@@ -1,55 +1,71 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { Alert } from 'react-native'
 import { supabase } from '../lib/supabase'
-import { Session } from '@supabase/supabase-js'
+// import { Session } from '@supabase/supabase-js'
 
-const AuthContext = createContext({})
+const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [session, setSession] = useState(null)
+  // Create state values for user data and loading
+  const [user, setUser] = useState()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
+    // Get session data if there is an active session
+    const session = supabase.auth.session()
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
+    // If there is a session, set the user data
+    setUser(session?.user ?? null)
+    setLoading(false)
+
+    // Listen for changes to the session
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null)
+        setLoading(false)
+      }
+    )
+
+    // Cleanup the useEffect hook
+    return () => {
+      listener?.unsubscribe()
+    }
   }, [])
 
-  async function signInWithEmail() {
-    setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    })
-
-    if (error) Alert.alert(error.message)
-    setLoading(false)
+  // Create auth functions
+  const value = {
+    signUp: data => supabase.auth.signUp(data),
+    signIn: data => supabase.auth.signIn(data),
+    signOut: () => supabase.auth.signOut(),
+    loading,
+    user,
   }
 
-  async function signUpWithEmail() {
-    setLoading(true)
-    const { error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    })
+  // Use cached memoized value
+  // const memoedValue = useMemo(
+  //   () => ({
+  //     signUp: data => supabase.auth.signUp(data),
+  //     signIn: data => supabase.auth.signIn(data),
+  //     signOut: () => supabase.auth.signOut(),
+  //     user,
+  //   }),
+  //   [user, loading, error]
+  // )
 
-    if (error) Alert.alert(error.message)
-    setLoading(false)
-  }
-
+  // Use provider to pass down the values
   return (
-    <AuthContext.Provider value={{ user: null, signInWithEmail }}>
+    <AuthContext.Provider value={value}>
       {!loading && children}
     </AuthContext.Provider>
   )
 }
 
-export default function useAuth() {
+export function useAuth() {
   return useContext(AuthContext)
 }
