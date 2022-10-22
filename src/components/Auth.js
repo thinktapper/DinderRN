@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../lib/useAuth'
 
 export default function Auth() {
+  const { signUp, signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -29,6 +31,12 @@ export default function Auth() {
     if (error) Alert.alert(error.message)
     setLoading(false)
   }
+
+  const data = {
+    email: email,
+    password: password,
+  }
+
   return (
     <View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
@@ -56,14 +64,14 @@ export default function Auth() {
         <Button
           title="Sign in"
           disabled={loading}
-          onPress={() => signInWithEmail()}
+          onPress={data => signIn(data)}
         />
       </View>
       <View style={styles.verticallySpaced}>
         <Button
           title="Sign up"
           disabled={loading}
-          onPress={() => signUpWithEmail()}
+          onPress={data => signUp(data)}
         />
       </View>
     </View>
