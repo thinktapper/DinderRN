@@ -41,8 +41,8 @@ const HomeScreen = () => {
       </View>
 
       <Text>I am the HomeScreen</Text>
-      <View style={tw`flex-1 justify-content items-center`}>
-        <Card user={users[3]} />
+      <View style={tw`flex-1 justify-center items-center`}>
+        {/* <Card user={users[3]} /> */}
       </View>
       <Button
         title="Go to Chat Screen"
