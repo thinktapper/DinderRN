@@ -39,9 +39,35 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   // Create auth functions
+  const signUp = async ({ data: email, password }) => {
+    setLoading(true)
+    const { error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    })
+
+    if (error) {
+      Alert.alert(error.message)
+    }
+    setLoading(false)
+  }
+
+  const signIn = async ({ data: email, password }) => {
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    })
+
+    if (error) {
+      Alert.alert(error.message)
+    }
+    setLoading(false)
+  }
+
   const value = {
-    signUp: data => supabase.auth.signUp(data),
-    signIn: data => supabase.auth.signIn(data),
+    signUp: data => signUp(data),
+    signIn: data => signIn(data),
     signOut: () => supabase.auth.signOut(),
     loading,
     user,

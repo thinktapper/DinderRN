@@ -5,6 +5,7 @@ import { View, Text } from 'react-native'
 import ChatScreen from '../screens/ChatScreen'
 import HomeScreen from '../screens/HomeScreen'
 import LoginScreen from '../screens/LoginScreen'
+import Auth from '../components/Auth'
 import { useAuth } from './useAuth'
 
 const Stack = createNativeStackNavigator()
@@ -20,7 +21,10 @@ const StackNavigator = () => {
           <Stack.Screen name="Chat" component={ChatScreen} />
         </>
       ) : (
-        <Stack.Screen name="Login" component={LoginScreen} />
+        <>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Auth" component={Auth} />
+        </>
       )}
     </Stack.Navigator>
   )
