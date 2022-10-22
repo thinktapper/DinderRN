@@ -3,6 +3,13 @@ import { useNavigation } from '@react-navigation/native'
 import { View, Text, SafeAreaView, TouchableOpacity, Image } from 'react-native'
 import { Button } from 'react-native-elements'
 import tw from 'twrnc'
+import {
+  AntDesign,
+  Entypo,
+  Ionicons,
+  FontAwesome,
+  Fontisto,
+} from '@expo/vector-icons'
 import { Auth } from 'aws-amplify'
 
 const HomeScreen = () => {
@@ -11,11 +18,22 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView>
-      <View>
+      <View style={tw`items-center relative`}>
         <TouchableOpacity style={tw`absolute left-5 top-3`}>
+          {user.image ? (
+            <Image
+              source={{ uri: user.image }}
+              style={tw`h-10 w-10 rounded-full`}
+            />
+          ) : (
+            <FontAwesome name="user" size={24} color="black" />
+          )}
+        </TouchableOpacity>
+
+        <TouchableOpacity>
           <Image
-            source={{ uri: user?.image }}
-            style={tw`h-10 w-10 rounded-full`}
+            source={require('../../assets/images/flame-square.png')}
+            style={tw`h-14 w-14`}
           />
         </TouchableOpacity>
       </View>
