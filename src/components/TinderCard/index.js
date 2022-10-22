@@ -1,12 +1,16 @@
 import { View, Text, ImageBackground, StyleSheet } from 'react-native'
 import React from 'react'
+import tw from 'twrnc'
 
 const Card = props => {
   const { name, image, bio } = props.user
   return (
-    <View style={styles.card}>
-      <ImageBackground source={{ uri: image }} style={styles.image}>
-        <View style={styles.cardInner}>
+    <View
+      style={tw`w-full h-full bg-[#fefefe] shadow-black shadow-offset-[0px]/[5px] shadow-opacity-36 shadow-radius-[6.68px] elevation-11`}>
+      <ImageBackground
+        source={{ uri: image }}
+        style={tw`w-full h-full overflow-hidden justify-end`}>
+        <View style={tw`p-2.5`}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.bio}>{bio}</Text>
         </View>

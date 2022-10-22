@@ -14,13 +14,12 @@ import Like from '../../../assets/images/LIKE.png'
 import Nope from '../../../assets/images/nope.png'
 import tw from 'twrnc'
 import Card from '../TinderCard'
-import users from '../../../assets/data/users'
 
 const ROTATION = 60
 const SWIPE_VELOCITY = 800
 
 const AnimatedStack = props => {
-  const { data, renderItem } = props
+  const { data, renderItem, onSwipeLeft, onSwipeRight } = props
   const [currentIndex, setCurrentIndex] = useState(0)
   const [nextIndex, setNextIndex] = useState(currentIndex + 1)
   const currentProfile = data[currentIndex]
@@ -63,7 +62,6 @@ const AnimatedStack = props => {
   const likeStyle = useAnimatedStyle(() => ({
     opacity: interpolate(translateX.value, [0, hiddenTranslateX / 5], [0, 1]),
   }))
-
   const nopeStyle = useAnimatedStyle(() => ({
     opacity: interpolate(translateX.value, [0, -hiddenTranslateX / 5], [0, 1]),
   }))
@@ -99,13 +97,13 @@ const AnimatedStack = props => {
     setNextIndex(currentIndex + 1)
   }, [currentIndex, translateX])
 
-  const onSwipeLeft = user => {
-    console.warn('swipe left', user.name)
-  }
+  // const onSwipeLeft = ({ data: user }) => {
+  //   console.warn('swipe left', user.name)
+  // }
 
-  const onSwipeRight = user => {
-    console.warn('swipe right: ', user.name)
-  }
+  // const onSwipeRight = ({ data: user }) => {
+  //   console.warn('swipe right: ', user.name)
+  // }
 
   return (
     <View style={tw`flex-1 justify-center items-center w-full`}>
@@ -127,7 +125,7 @@ const AnimatedStack = props => {
             <Animated.Image
               source={Like}
               style={[
-                tw`absolute w-{150} h-{150} top-2.5 z-1 elevation-1`,
+                tw`absolute w-150 h-150 top-2.5 z-1 elevation-1`,
                 { left: 10 },
                 likeStyle,
               ]}
@@ -136,7 +134,7 @@ const AnimatedStack = props => {
             <Animated.Image
               source={Nope}
               style={[
-                tw`absolute w-{150} h-{150} top-2.5 z-1 elevation-1`,
+                tw`absolute w-150 h-150 top-2.5 z-1 elevation-1`,
                 { right: 10 },
                 nopeStyle,
               ]}
