@@ -13,6 +13,7 @@ import {
 import Card from '../components/TinderCard'
 import { Auth } from 'aws-amplify'
 import users from '../../assets/data/users'
+import AnimatedStack from '../components/AnimatedStack'
 
 const HomeScreen = () => {
   const navigation = useNavigation()
@@ -39,16 +40,17 @@ const HomeScreen = () => {
           />
         </TouchableOpacity>
       </View>
-
-      <Text>I am the HomeScreen</Text>
       <View style={tw`flex-1 justify-center items-center`}>
-        {/* <Card user={users[3]} /> */}
+        <AnimatedStack
+          data={users}
+          renderItem={({ item }) => <Card user={item} />}
+        />
       </View>
-      <Button
+      {/* <Button
         title="Go to Chat Screen"
         onPress={() => navigation.navigate('Chat')}
-      />
-      <Button title="Logout" onPress={Auth.signOut} />
+      /> */}
+      {/* <Button title="Logout" onPress={Auth.signOut} /> */}
     </SafeAreaView>
   )
 }
