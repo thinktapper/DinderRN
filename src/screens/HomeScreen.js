@@ -10,7 +10,9 @@ import {
   FontAwesome,
   Fontisto,
 } from '@expo/vector-icons'
+import Card from '../components/TinderCard'
 import { Auth } from 'aws-amplify'
+import users from '../../assets/data/users'
 
 const HomeScreen = () => {
   const navigation = useNavigation()
@@ -39,6 +41,9 @@ const HomeScreen = () => {
       </View>
 
       <Text>I am the HomeScreen</Text>
+      <View style={tw`flex-1 justify-content items-center`}>
+        <Card user={users[3]} />
+      </View>
       <Button
         title="Go to Chat Screen"
         onPress={() => navigation.navigate('Chat')}
