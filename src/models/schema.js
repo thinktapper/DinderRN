@@ -101,7 +101,7 @@ export const schema = {
                     "name": "sub",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "matches": {
@@ -244,5 +244,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.2.0",
-    "version": "40199d5c560c6ca6606850cf28d3e39d"
+    "version": "4b053c6e450c1a5c209b5ec4b5534854"
 };

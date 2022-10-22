@@ -108,7 +108,8 @@ const AnimatedStack = props => {
   return (
     <View style={tw`flex-1 justify-center items-center w-full`}>
       {nextProfile && (
-        <View style={tw`absolute justify-center items-center`}>
+        <View
+          style={tw`absolute top-0 left-0 bottom-0 right-0 justify-center items-center`}>
           <Animated.View
             style={[
               tw`w-11/12 h-5/6 justify-center items-center`,

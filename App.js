@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar'
 import { Text, View } from 'react-native'
 import tw from 'twrnc'
 import StackNavigator from './src/lib/StackNavigator'
-import Amplify from 'aws-amplify'
+import { Amplify, Auth } from 'aws-amplify'
 import { withAuthenticator } from 'aws-amplify-react-native'
 import config from './src/aws-exports'
 
