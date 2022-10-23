@@ -6,7 +6,9 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "eject": "expo eject",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@hookform/resolvers": "^2.9.10",
@@ -34,7 +36,9 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.9"
+    "@babel/core": "^7.12.9",
+    "@react-native-community/eslint-config": "^3.1.0",
+    "eslint": "^8.26.0"
   },
   "private": true
 }
