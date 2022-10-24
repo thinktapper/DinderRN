@@ -8,8 +8,8 @@ import {
 import React, { useState } from 'react'
 import tw from 'twrnc'
 import Logo from '../../../assets/images/dinder-double_flame-black.png'
-import CustomInput from '../../components/CustomInput'
-import CustomButton from '../../components/CustomButton'
+import CustomInput from '../components/CustomInput'
+import CustomButton from '../components/CustomButton'
 
 const SignInScreen = () => {
   const [email, setEmail] = useState('')
