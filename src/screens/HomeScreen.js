@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import {
   View,
@@ -30,6 +30,7 @@ const HomeScreen = () => {
   const activeColor = '#F76C6B'
   const navigation = useNavigation()
   const { user, signOut } = Auth
+  const swipeRef = useRef(null)
 
   const onSwipeLeft = card => {
     console.warn('swipe left', card.name)
@@ -102,6 +103,7 @@ const HomeScreen = () => {
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Swiper
+          ref={swipeRef}
           containerStyle={{ backgroundColor: 'transparent' }}
           cards={users}
           stackSize={5}
@@ -150,6 +152,19 @@ const HomeScreen = () => {
             </View>
           )}
         />
+      </View>
+
+      <View style={tw`flex flex-row justify-evenly`}>
+        <TouchableOpacity
+          onPress={() => swipeRef.current.swipeLeft()}
+          style={tw`items-center justify-center rounded-full w-16 h-16 bg-red-200`}>
+          <Entypo name="cross" size={24} color="red" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => swipeRef.current.swipeRight()}
+          style={tw`items-center justify-center rounded-full w-16 h-16 bg-green-200`}>
+          <AntDesign name="heart" size={24} color="green" />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   )
