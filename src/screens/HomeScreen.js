@@ -31,12 +31,12 @@ const HomeScreen = () => {
   const navigation = useNavigation()
   const { user, signOut } = Auth
 
-  const onSwipeLeft = user => {
-    console.warn('swipe left', user.name)
+  const onSwipeLeft = card => {
+    console.warn('swipe left', card.name)
   }
 
-  const onSwipeRight = user => {
-    console.warn('swipe right: ', user.name)
+  const onSwipeRight = card => {
+    console.warn('swipe right: ', card.name)
   }
 
   return (
@@ -108,6 +108,28 @@ const HomeScreen = () => {
           cardIndex={0}
           animateCardOpacity
           verticalSwipe={false}
+          overlayLabels={{
+            left: {
+              title: 'NOPE',
+              style: {
+                label: {
+                  textAlign: 'right',
+                  color: 'red',
+                },
+              },
+            },
+            right: {
+              title: 'LIKE',
+              style: {
+                label: {
+                  color: '#4DED30',
+                },
+              },
+            },
+          }}
+          backgroundColor={'#4FD0E9'}
+          onSwipedLeft={onSwipeLeft}
+          onSwipedRight={onSwipeRight}
           renderCard={card => (
             <View key={card.id} style={tw`relative bg-white h-3/4 rounded-xl`}>
               <Image
@@ -116,12 +138,12 @@ const HomeScreen = () => {
               />
               <View
                 style={[
-                  tw`absolute bottom-0 bg-white w-full flex-row justify-around items-stretch h-20 px-6 py-2 rounded-b-xl`,
+                  tw`absolute bottom-0 bg-white w-full flex-row justify-around items-stretch h-20 px-8 py-2 rounded-b-xl`,
                   styles.cardShadow,
                 ]}>
                 <View>
                   <Text style={tw`text-xl font-bold`}>{card.name}</Text>
-                  <Text style={tw`w-7/12`}>{card.bio}</Text>
+                  <Text style={tw`w-9/12`}>{card.bio}</Text>
                 </View>
                 <Text style={tw`text-2xl font-bold`}>{card.age}</Text>
               </View>
