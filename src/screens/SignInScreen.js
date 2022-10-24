@@ -10,23 +10,30 @@ import tw from 'twrnc'
 import Logo from '../../assets/images/dinder-double_flame-black.png'
 import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
+import { useNavigation } from '@react-navigation/native'
+import { useForm, Controller } from 'react-hook-form'
 
 const SignInScreen = () => {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-
   const { height } = useWindowDimensions()
+  const navigation = useNavigation()
+  const { control, handleSubmit } = useForm()
 
   const onSignInPressed = () => {
     console.warn('Sign In Pressed')
+
+    navigation.navigate('Home')
   }
 
   const onSignUpPressed = () => {
     console.warn('Sign Up Pressed')
+
+    navigation.navigate('SignUp')
   }
 
   const onForgotPasswordPressed = () => {
     console.warn('Forgot Password Pressed')
+
+    navigation.navigate('ForgotPassword')
   }
 
   return (
@@ -38,11 +45,11 @@ const SignInScreen = () => {
           resizeMode="contain"
         />
 
-        <CustomInput placeholder="Email" value={email} setValue={setEmail} />
+        <CustomInput name="email" placeholder="Email" control={control} />
         <CustomInput
+          name="password"
           placeholder="Password"
-          value={password}
-          setValue={setPassword}
+          control={control}
           secureTextEntry
         />
 

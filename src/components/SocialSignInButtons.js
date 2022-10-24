@@ -1,19 +1,19 @@
-import React from 'react';
-import {View, Text} from 'react-native';
-import CustomButton from '../CustomButton';
+import React from 'react'
+import { View, Text } from 'react-native'
+import CustomButton from './CustomButton'
 
 const SocialSignInButtons = () => {
   const onSignInFacebook = () => {
-    console.warn('onSignInFacebook');
-  };
+    console.warn('onSignInFacebook')
+  }
 
   const onSignInGoogle = () => {
-    console.warn('onSignInGoogle');
-  };
+    console.warn('onSignInGoogle')
+  }
 
   const onSignInApple = () => {
-    console.warn('onSignInApple');
-  };
+    console.warn('onSignInApple')
+  }
 
   return (
     <>
@@ -36,7 +36,7 @@ const SocialSignInButtons = () => {
         fgColor="#363636"
       />
     </>
-  );
-};
+  )
+}
 
-export default SocialSignInButtons;
+export default SocialSignInButtons
