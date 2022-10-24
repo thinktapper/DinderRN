@@ -11,6 +11,7 @@ import ConfirmEmailScreen from '../screens/ConfirmEmailScreen'
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen'
 import NewPasswordScreen from '../screens/NewPasswordScreen'
 import HomeScreen from '../screens/HomeScreen'
+import ProfileScreen from '../screens/ProfileScreen'
 
 const Stack = createNativeStackNavigator()
 
@@ -53,7 +54,10 @@ const Navigation = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
-          <Stack.Screen name="Home" component={HomeScreen} />
+          <>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Profile" component={ProfileScreen} />
+          </>
         ) : (
           <>
             <Stack.Screen name="SignIn" component={SignInScreen} />

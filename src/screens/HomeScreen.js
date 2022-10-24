@@ -15,6 +15,7 @@ import Card from '../components/TinderCard'
 import { Auth } from 'aws-amplify'
 import users from '../../assets/data/users'
 import AnimatedStack from '../components/AnimatedStack'
+import ProfileScreen from './ProfileScreen'
 
 const HomeScreen = () => {
   const [activeScreen, setActiveScreen] = useState('Home')
@@ -63,7 +64,11 @@ const HomeScreen = () => {
               color={activeScreen === 'Chat' ? activeColor : color}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveScreen('Profile')}>
+          <TouchableOpacity
+            onPress={() => {
+              setActiveScreen('Profile')
+              navigation.navigate('Profile')
+            }}>
             <FontAwesome
               name="user"
               size={30}
