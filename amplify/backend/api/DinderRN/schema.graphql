@@ -1,0 +1,14 @@
+type Match @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  users: [User] @manyToMany(relationName: "UserMatch")
+}
+
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: String!
+  image: String
+  bio: String
+  sub: String!
+  matches: [Match] @manyToMany(relationName: "UserMatch")
+}
+ 

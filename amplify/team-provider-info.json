@@ -10,6 +10,11 @@
       "StackName": "amplify-dinderrn-staging-121424",
       "StackId": "arn:aws:cloudformation:us-east-1:276360755392:stack/amplify-dinderrn-staging-121424/11257380-5203-11ed-afe3-0aa3d2c573f1",
       "AmplifyAppId": "dbctbz0cdgaz1"
+    },
+    "categories": {
+      "auth": {
+        "DinderRN": {}
+      }
     }
   }
 }
