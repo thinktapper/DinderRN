@@ -7,7 +7,7 @@ import {
 } from 'react-native'
 import React, { useState } from 'react'
 import tw from 'twrnc'
-import Logo from '../../../assets/images/dinder-double_flame-black.png'
+import Logo from '../../assets/images/dinder-double_flame-black.png'
 import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
 
@@ -23,6 +23,10 @@ const SignInScreen = () => {
 
   const onSignUpPressed = () => {
     console.warn('Sign Up Pressed')
+  }
+
+  const onForgotPasswordPressed = () => {
+    console.warn('Forgot Password Pressed')
   }
 
   return (
@@ -52,7 +56,7 @@ const SignInScreen = () => {
 
         <CustomButton
           text="Don't have an account? Create one"
-          onPress={onSignUpPress}
+          onPress={onSignUpPressed}
           type="TERTIARY"
         />
       </View>
