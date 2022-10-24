@@ -42,13 +42,13 @@ const SignInScreen = () => {
   }
 
   const onSignUpPressed = () => {
-    console.warn('Sign Up Pressed')
+    // console.warn('Sign Up Pressed')
 
     navigation.navigate('SignUp')
   }
 
   const onForgotPasswordPressed = () => {
-    console.warn('Forgot Password Pressed')
+    // console.warn('Forgot Password Pressed')
 
     navigation.navigate('ForgotPassword')
   }
