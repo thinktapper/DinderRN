@@ -64,7 +64,7 @@ const SignUpScreen = () => {
           }}
         />
 
-        {/* <CustomInput
+        <CustomInput
           name="username"
           control={control}
           placeholder="Username"
@@ -79,7 +79,7 @@ const SignUpScreen = () => {
               message: 'Username should be max 24 characters long',
             },
           }}
-        /> */}
+        />
         <CustomInput
           name="email"
           control={control}

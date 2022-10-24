@@ -4,6 +4,7 @@ import {
   Image,
   useWindowDimensions,
   ScrollView,
+  Alert,
 } from 'react-native'
 import React, { useState } from 'react'
 import tw from 'twrnc'
@@ -12,20 +13,32 @@ import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
 import { useNavigation } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form'
+import { Auth } from 'aws-amplify'
 
 const SignInScreen = () => {
   const { height } = useWindowDimensions()
   const navigation = useNavigation()
+  const [loading, setLoading] = useState(false)
+
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm()
 
-  const onSignInPressed = () => {
-    console.warn('Sign In Pressed')
+  const onSignInPressed = async data => {
+    if (loading) {
+      return
+    }
 
-    navigation.navigate('Home')
+    setLoading(true)
+    try {
+      const response = await Auth.signIn(data.username, data.password)
+      console.log(response)
+    } catch (error) {
+      Alert.alert('Oops!', error.message)
+    }
+    setLoading(false)
   }
 
   const onSignUpPressed = () => {
@@ -50,10 +63,10 @@ const SignInScreen = () => {
         />
 
         <CustomInput
-          name="email"
-          placeholder="Email"
+          name="username"
+          placeholder="username"
           control={control}
-          rules={{ required: 'Email is required' }}
+          rules={{ required: 'Username is required' }}
         />
         <CustomInput
           name="password"
@@ -69,7 +82,10 @@ const SignInScreen = () => {
           secureTextEntry
         />
 
-        <CustomButton text="Sign In" onPress={handleSubmit(onSignInPressed)} />
+        <CustomButton
+          text={loading ? 'Loading...' : 'Sign In'}
+          onPress={handleSubmit(onSignInPressed)}
+        />
 
         <CustomButton
           text="Forgot password?"
