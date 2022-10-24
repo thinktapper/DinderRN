@@ -16,7 +16,11 @@ import { useForm, Controller } from 'react-hook-form'
 const SignInScreen = () => {
   const { height } = useWindowDimensions()
   const navigation = useNavigation()
-  const { control, handleSubmit } = useForm()
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
 
   const onSignInPressed = () => {
     console.warn('Sign In Pressed')
@@ -45,15 +49,27 @@ const SignInScreen = () => {
           resizeMode="contain"
         />
 
-        <CustomInput name="email" placeholder="Email" control={control} />
+        <CustomInput
+          name="email"
+          placeholder="Email"
+          control={control}
+          rules={{ required: 'Email is required' }}
+        />
         <CustomInput
           name="password"
           placeholder="Password"
           control={control}
+          rules={{
+            required: 'Password is required',
+            minLength: {
+              value: 3,
+              message: 'Password should be minimum 3 characters long',
+            },
+          }}
           secureTextEntry
         />
 
-        <CustomButton text="Sign In" onPress={onSignInPressed} />
+        <CustomButton text="Sign In" onPress={handleSubmit(onSignInPressed)} />
 
         <CustomButton
           text="Forgot password?"
