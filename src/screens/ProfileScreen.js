@@ -18,13 +18,17 @@ const ProfileScreen = () => {
   const [name, setName] = useState('')
   const [bio, setBio] = useState('')
 
+  const signOut = () => {
+    Auth.signOut()
+  }
+
   useEffect(() => {
     const getCurrentUser = async () => {
       const user = await Auth.currentAuthenticatedUser()
 
       const dbUsers = await DataStore.query(
         User,
-        u => u.sub === user.attributes.sub
+        u => u.sub === user.attributes.sub,
       )
       if (dbUsers.length < 0) {
         return
@@ -95,7 +99,7 @@ const ProfileScreen = () => {
           <Text>Save</Text>
         </Pressable>
 
-        <Pressable onPress={() => Auth.signOut()} style={styles.button}>
+        <Pressable onPress={() => signOut()} style={styles.button}>
           <Text>Sign out</Text>
         </Pressable>
       </View>
