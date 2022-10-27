@@ -16,6 +16,7 @@ import ProfileScreen from '../screens/ProfileScreen'
 const Stack = createNativeStackNavigator()
 
 const Navigation = () => {
+  // TODO: Move auth state to context
   const [user, setUser] = useState(undefined)
 
   const checkUser = async () => {
