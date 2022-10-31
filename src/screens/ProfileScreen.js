@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigation } from '@react-navigation/native'
 import {
   View,
   Text,
@@ -14,7 +15,7 @@ import { User } from '../models/'
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(null)
-
+  const navigation = useNavigation()
   const [name, setName] = useState('')
   const [bio, setBio] = useState('')
 
@@ -74,6 +75,7 @@ const ProfileScreen = () => {
     }
 
     Alert.alert('User saved successfully')
+    navigation.navigate('Home')
   }
 
   return (
