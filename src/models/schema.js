@@ -1,7 +1,7 @@
 export const schema = {
     "models": {
-        "Match": {
-            "name": "Match",
+        "Restaurant": {
+            "name": "Restaurant",
             "fields": {
                 "id": {
                     "name": "id",
@@ -10,18 +10,88 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "users": {
-                    "name": "users",
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "description": {
+                    "name": "description",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "image": {
+                    "name": "image",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "price": {
+                    "name": "price",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "ranking": {
+                    "name": "ranking",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "rating": {
+                    "name": "rating",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "phone": {
+                    "name": "phone",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "website": {
+                    "name": "website",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "address": {
+                    "name": "address",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "feastID": {
+                    "name": "feastID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "votes": {
+                    "name": "votes",
                     "isArray": true,
                     "type": {
-                        "model": "UserMatch"
+                        "model": "VoteRestaurant"
                     },
                     "isRequired": false,
                     "attributes": [],
                     "isArrayNullable": true,
                     "association": {
                         "connectionType": "HAS_MANY",
-                        "associatedWith": "match"
+                        "associatedWith": "restaurant"
                     }
                 },
                 "createdAt": {
@@ -42,7 +112,82 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "Matches",
+            "pluralName": "Restaurants",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byFeast",
+                        "fields": [
+                            "feastID"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "Vote": {
+            "name": "Vote",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "restaurants": {
+                    "name": "restaurants",
+                    "isArray": true,
+                    "type": {
+                        "model": "VoteRestaurant"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "vote"
+                    }
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Votes",
             "attributes": [
                 {
                     "type": "model",
@@ -54,6 +199,118 @@ export const schema = {
                         "rules": [
                             {
                                 "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "Feast": {
+            "name": "Feast",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "endsAt": {
+                    "name": "endsAt",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "lat": {
+                    "name": "lat",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "long": {
+                    "name": "long",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "distance": {
+                    "name": "distance",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "restaurants": {
+                    "name": "restaurants",
+                    "isArray": true,
+                    "type": {
+                        "model": "Restaurant"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "feastID"
+                    }
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Feasts",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            },
+                            {
+                                "provider": "userPools",
+                                "ownerField": "owner",
+                                "allow": "owner",
+                                "identityClaim": "cognito:username",
                                 "operations": [
                                     "create",
                                     "update",
@@ -104,20 +361,6 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "matches": {
-                    "name": "matches",
-                    "isArray": true,
-                    "type": {
-                        "model": "UserMatch"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "user"
-                    }
-                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -160,8 +403,8 @@ export const schema = {
                 }
             ]
         },
-        "UserMatch": {
-            "name": "UserMatch",
+        "VoteRestaurant": {
+            "name": "VoteRestaurant",
             "fields": {
                 "id": {
                     "name": "id",
@@ -170,30 +413,30 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "match": {
-                    "name": "match",
+                "restaurant": {
+                    "name": "restaurant",
                     "isArray": false,
                     "type": {
-                        "model": "Match"
+                        "model": "Restaurant"
                     },
                     "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "matchID"
+                        "targetName": "restaurantID"
                     }
                 },
-                "user": {
-                    "name": "user",
+                "vote": {
+                    "name": "vote",
                     "isArray": false,
                     "type": {
-                        "model": "User"
+                        "model": "Vote"
                     },
                     "isRequired": true,
                     "attributes": [],
                     "association": {
                         "connectionType": "BELONGS_TO",
-                        "targetName": "userID"
+                        "targetName": "voteID"
                     }
                 },
                 "createdAt": {
@@ -214,7 +457,7 @@ export const schema = {
                 }
             },
             "syncable": true,
-            "pluralName": "UserMatches",
+            "pluralName": "VoteRestaurants",
             "attributes": [
                 {
                     "type": "model",
@@ -223,18 +466,18 @@ export const schema = {
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byMatch",
+                        "name": "byRestaurant",
                         "fields": [
-                            "matchID"
+                            "restaurantID"
                         ]
                     }
                 },
                 {
                     "type": "key",
                     "properties": {
-                        "name": "byUser",
+                        "name": "byVote",
                         "fields": [
-                            "userID"
+                            "voteID"
                         ]
                     }
                 }
@@ -244,5 +487,5 @@ export const schema = {
     "enums": {},
     "nonModels": {},
     "codegenVersion": "3.2.0",
-    "version": "4b053c6e450c1a5c209b5ec4b5534854"
+    "version": "989f9e10f2d16a8f350e535cf4197f78"
 };

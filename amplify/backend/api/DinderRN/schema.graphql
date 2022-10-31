@@ -1,6 +1,32 @@
-type Match @model @auth(rules: [{allow: public}]) {
+type Restaurant @model @auth(rules: [{allow: public}]) {
   id: ID!
-  users: [User] @manyToMany(relationName: "UserMatch")
+  name: String
+  description: String
+  image: String
+  price: String
+  ranking: String
+  rating: String
+  phone: String
+  website: String
+  address: String
+  feastID: ID! @index(name: "byFeast")
+  votes: [Vote] @manyToMany(relationName: "VoteRestaurant")
+}
+
+type Feast @model @auth(rules: [{allow: public}, {allow: owner}]) {
+  id: ID!
+  createdAt: String
+  endsAt: String
+  name: String
+  lat: Float
+  long: Float
+  distance: Int
+  restaurants: [Restaurant] @hasMany(indexName: "byFeast", fields: ["id"])
+}
+
+type Vote @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  restaurants: [Restaurant] @manyToMany(relationName: "VoteRestaurant")
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -9,6 +35,5 @@ type User @model @auth(rules: [{allow: public}]) {
   image: String
   bio: String
   sub: String!
-  matches: [Match] @manyToMany(relationName: "UserMatch")
 }
  
