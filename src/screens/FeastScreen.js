@@ -8,11 +8,15 @@ import {
   Pressable,
   TextInput,
   Alert,
+  ScrollView,
 } from 'react-native'
 import { Picker } from '@react-native-picker/picker'
 import { DataStore } from 'aws-amplify'
 import { Feast } from '../models'
-import DatePicker from 'react-native-date-picker'
+import DateTimePicker from '@react-native-community/datetimepicker'
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
+import { GOOGLE_API } from '@env'
+import RNDateTimePicker from '@react-native-community/datetimepicker'
 
 const FeastScreen = () => {
   const navigation = useNavigation()
@@ -22,11 +26,8 @@ const FeastScreen = () => {
   const [long, setLong] = useState(0)
   const [distance, setDistance] = useState(0)
 
-
-
-
   // useEffect(() => {
-    
+
   // }, [])
 
   const isValid = () => {
@@ -54,10 +55,14 @@ const FeastScreen = () => {
     } catch (error) {
       console.warn(`Error saving feast: ${error}`)
     }
-
+  }
   return (
     <SafeAreaView style={styles.root}>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
+        {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+
+        <Text style={styles.title}>Create a Feast</Text>
+
         <TextInput
           style={styles.input}
           placeholder="Feast name..."
@@ -65,19 +70,49 @@ const FeastScreen = () => {
           onChangeText={setName}
         />
 
-        <DatePicker 
-          date={endsAt}
-          onDateChange={setEndsAt}
+        <GooglePlacesAutocomplete
+          placeholder="Location"
+          onPress={(data, details = null) => {
+            // 'details' is provided when fetchDetails = true
+            console.warn(data, details)
+          }}
+          query={{
+            key: GOOGLE_API,
+            language: 'en',
+          }}
         />
+
+        <Text>Date</Text>
+        <RNDateTimePicker
+          // display="inline"
+          value={new Date()}
+          onChange={(e, selectedDate) => {
+            setEndsAt(selectedDate)
+          }}
+        />
+
+        <Text>Distance</Text>
+        <Picker
+          label="Distance"
+          selectedValue={distance}
+          onValueChange={itemValue => setDistance(itemValue)}>
+          <Picker.Item label="1 Mile" value={1} />
+          <Picker.Item label="2 Miles" value={2} />
+          <Picker.Item label="3 Miles" value={3} />
+          <Picker.Item label="4 Miles" value={4} />
+          <Picker.Item label="5 Miles" value={5} />
+        </Picker>
 
         <Pressable onPress={save} style={styles.button}>
           <Text>Save</Text>
         </Pressable>
 
-        <Pressable onPress={() => navigation.navigate('Home')} style={styles.button}>
+        <Pressable
+          onPress={() => navigation.navigate('Home')}
+          style={styles.button}>
           <Text>Cancel</Text>
         </Pressable>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   )
 }
@@ -86,7 +121,18 @@ const styles = StyleSheet.create({
   root: {
     width: '100%',
     flex: 1,
+    // alignContent: 'center',
     padding: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#051C60',
+    margin: 10,
+  },
+  text: {
+    color: 'gray',
+    marginVertical: 10,
   },
   container: {
     padding: 10,
@@ -106,4 +152,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ProfileScreen
+export default FeastScreen

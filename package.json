@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^2.9.10",
     "@mapbox/search-js-react": "^1.0.0-beta.13",
     "@react-native-async-storage/async-storage": "^1.17.10",
+    "@react-native-community/datetimepicker": "6.2.0",
     "@react-native-community/netinfo": "9.3.0",
     "@react-native-picker/picker": "2.4.2",
     "@react-navigation/native": "^6.0.13",
@@ -31,6 +32,7 @@
     "react-native-deck-swiper": "^2.0.10",
     "react-native-elements": "^3.4.2",
     "react-native-gesture-handler": "~2.5.0",
+    "react-native-google-places-autocomplete": "^2.5.0",
     "react-native-reanimated": "~2.9.1",
     "react-native-safe-area-context": "4.3.1",
     "react-native-screens": "~3.15.0",
@@ -41,7 +43,8 @@
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@react-native-community/eslint-config": "^3.1.0",
-    "eslint": "^8.26.0"
+    "eslint": "^8.26.0",
+    "react-native-dotenv": "^3.3.1"
   },
   "private": true
 }
