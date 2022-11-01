@@ -67,7 +67,7 @@ const HomeScreen = () => {
         <TouchableOpacity
           onPress={() => {
             setActiveScreen('Chat')
-            navigation.navigate('Chat')
+            navigation.navigate('Feast')
           }}>
           <Ionicons
             name="ios-chatbubbles"
