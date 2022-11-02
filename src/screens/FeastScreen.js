@@ -30,6 +30,18 @@ const FeastScreen = () => {
 
   // }, [])
 
+  const getCoords = details => {
+    // console.warn(details)
+    try {
+      setLat(details.geometry.location.lat)
+      setLong(details.geometry.location.lng)
+    } catch (error) {
+      console.warn(`Could not set coords: ${error}`)
+    } finally {
+      console.warn(`Latitude set to: ${lat}, Longitude set to: ${long}`)
+    }
+  }
+
   const isValid = () => {
     return name && bio
   }
@@ -58,7 +70,7 @@ const FeastScreen = () => {
   }
   return (
     <SafeAreaView style={styles.root}>
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         {/* <ScrollView showsVerticalScrollIndicator={false}> */}
 
         <Text style={styles.title}>Create a Feast</Text>
@@ -69,19 +81,29 @@ const FeastScreen = () => {
           value={name}
           onChangeText={setName}
         />
+      </View>
 
-        <GooglePlacesAutocomplete
-          placeholder="Location"
-          onPress={(data, details = null) => {
-            // 'details' is provided when fetchDetails = true
-            console.warn(data, details)
-          }}
-          query={{
-            key: GOOGLE_API,
-            language: 'en',
-          }}
-        />
+      <GooglePlacesAutocomplete
+        placeholder="Type a location"
+        fetchDetails={true}
+        onPress={(data, details = null) => {
+          // 'details' is provided when fetchDetails = true
+          console.warn(data, details)
+          getCoords(details)
+        }}
+        query={{
+          key: GOOGLE_API,
+        }}
+        onFail={error => console.log(error)}
+        onNotFound={() => console.warn('no results')}
+        listEmptyComponent={() => (
+          <View style={{ flex: 1 }}>
+            <Text>No results were found</Text>
+          </View>
+        )}
+      />
 
+      <View style={styles.container}>
         <Text>Date</Text>
         <RNDateTimePicker
           // display="inline"
@@ -112,7 +134,7 @@ const FeastScreen = () => {
           style={styles.button}>
           <Text>Cancel</Text>
         </Pressable>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   )
 }
