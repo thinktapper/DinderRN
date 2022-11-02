@@ -43,7 +43,7 @@ const FeastScreen = () => {
   }
 
   const isValid = () => {
-    return name && bio
+    return name && endsAt && lat && long && distance
   }
 
   const save = async () => {
@@ -54,11 +54,11 @@ const FeastScreen = () => {
     // create a new feast
     try {
       const newFeast = new Feast({
-        sub: authUser.attributes.sub,
         name,
-        bio,
-        image:
-          'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg',
+        endsAt: endsAt.toISOString(),
+        lat,
+        long,
+        distance,
       })
       await DataStore.save(newFeast)
 
@@ -107,7 +107,7 @@ const FeastScreen = () => {
         <Text>Date</Text>
         <RNDateTimePicker
           // display="inline"
-          value={new Date()}
+          value={endsAt}
           onChange={(e, selectedDate) => {
             setEndsAt(selectedDate)
           }}
