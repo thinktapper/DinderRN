@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import {
   View,
@@ -18,19 +18,23 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons'
 // import Card from '../components/TinderCard'
-import { Auth } from 'aws-amplify'
+import { Auth, DataStore } from 'aws-amplify'
 import users from '../../assets/data/users'
 // import AnimatedStack from '../components/AnimatedStack'
 import ProfileScreen from './ProfileScreen'
 import Swiper from 'react-native-deck-swiper'
 
-const HomeScreen = () => {
+const HomeScreen = ({ props }) => {
+  const { lat, long } = props.params
   const [activeScreen, setActiveScreen] = useState('Home')
   const color = '#b5b5b5'
   const activeColor = '#F76C6B'
   const navigation = useNavigation()
   const { user, signOut } = Auth
+  const [places, setPlaces] = useState([])
   const swipeRef = useRef(null)
+
+  useEffect(() => {}, [])
 
   const onSwipeLeft = card => {
     console.warn('swipe left', card.name)
@@ -91,21 +95,12 @@ const HomeScreen = () => {
 
       {/* End Header */}
 
-      {/* <View style={tw`flex-1 justify-center items-center w-full`}>
-          <AnimatedStack
-            data={users}
-            renderItem={({ item }) => <Card user={item} />}
-            onSwipeLeft={onSwipeLeft}
-            onSwipeRight={onSwipeRight}
-          />
-        </View> */}
-
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Swiper
           ref={swipeRef}
           containerStyle={{ backgroundColor: 'transparent' }}
-          cards={users}
+          cards={places}
           stackSize={5}
           cardIndex={0}
           animateCardOpacity
@@ -132,25 +127,43 @@ const HomeScreen = () => {
           backgroundColor={'#4FD0E9'}
           onSwipedLeft={onSwipeLeft}
           onSwipedRight={onSwipeRight}
-          renderCard={card => (
-            <View key={card.id} style={tw`relative bg-white h-3/4 rounded-xl`}>
-              <Image
-                source={{ uri: card.image }}
-                style={tw`absolute top-0 h-full w-full rounded-xl`}
-              />
+          renderCard={card =>
+            card ? (
+              <View
+                key={card.id}
+                style={tw`relative bg-white h-3/4 rounded-xl`}>
+                <Image
+                  source={{ uri: card.image }}
+                  style={tw`absolute top-0 h-full w-full rounded-xl`}
+                />
+                <View
+                  style={[
+                    tw`absolute bottom-0 bg-white w-full flex-row justify-around items-stretch h-20 px-8 py-2 rounded-b-xl`,
+                    styles.cardShadow,
+                  ]}>
+                  <View>
+                    <Text style={tw`text-xl font-bold`}>{card.name}</Text>
+                    <Text style={tw`w-9/12`}>{card.bio}</Text>
+                  </View>
+                  <Text style={tw`text-2xl font-bold`}>{card.age}</Text>
+                </View>
+              </View>
+            ) : (
               <View
                 style={[
-                  tw`absolute bottom-0 bg-white w-full flex-row justify-around items-stretch h-20 px-8 py-2 rounded-b-xl`,
+                  tw`relative bg-white h-3/4 rounded-xl justify-center items-center`,
                   styles.cardShadow,
                 ]}>
-                <View>
-                  <Text style={tw`text-xl font-bold`}>{card.name}</Text>
-                  <Text style={tw`w-9/12`}>{card.bio}</Text>
-                </View>
-                <Text style={tw`text-2xl font-bold`}>{card.age}</Text>
+                <Text style={tw`font-bold pb-5`}>No more places</Text>
+                <Image
+                  style={tw`h-20 w-full`}
+                  height={100}
+                  width={100}
+                  source={{ uri: 'https://links.papareact.com/6gb' }}
+                />
               </View>
-            </View>
-          )}
+            )
+          }
         />
       </View>
 

@@ -91,6 +91,7 @@ type EagerFeast = {
   readonly long?: number | null;
   readonly distance?: number | null;
   readonly restaurants?: (Restaurant | null)[] | null;
+  readonly userID: string;
   readonly updatedAt?: string | null;
 }
 
@@ -103,6 +104,7 @@ type LazyFeast = {
   readonly long?: number | null;
   readonly distance?: number | null;
   readonly restaurants: AsyncCollection<Restaurant>;
+  readonly userID: string;
   readonly updatedAt?: string | null;
 }
 
@@ -118,6 +120,7 @@ type EagerUser = {
   readonly image?: string | null;
   readonly bio?: string | null;
   readonly sub: string;
+  readonly feasts?: (Feast | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -128,6 +131,7 @@ type LazyUser = {
   readonly image?: string | null;
   readonly bio?: string | null;
   readonly sub: string;
+  readonly feasts: AsyncCollection<Feast>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

@@ -63,7 +63,7 @@ const FeastScreen = () => {
       await DataStore.save(newFeast)
 
       Alert.alert('Feast saved successfully')
-      navigation.navigate('Home')
+      navigation.navigate('Home', { lat, long })
     } catch (error) {
       console.warn(`Error saving feast: ${error}`)
     }
