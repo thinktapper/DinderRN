@@ -13,7 +13,7 @@ type Restaurant @model @auth(rules: [{allow: public}]) {
   votes: [Vote] @manyToMany(relationName: "VoteRestaurant")
 }
 
-type Feast @model @auth(rules: [{allow: public}, {allow: owner}]) {
+type Feast @model @auth(rules: [{allow: public}]) {
   id: ID!
   createdAt: String
   endsAt: String
@@ -23,6 +23,7 @@ type Feast @model @auth(rules: [{allow: public}, {allow: owner}]) {
   distance: Int
   restaurants: [Restaurant] @hasMany(indexName: "byFeast", fields: ["id"])
   userID: ID! @index(name: "byUser")
+  places: [AWSJSON]
 }
 
 type Vote @model @auth(rules: [{allow: public}]) {

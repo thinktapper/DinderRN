@@ -92,6 +92,7 @@ type EagerFeast = {
   readonly distance?: number | null;
   readonly restaurants?: (Restaurant | null)[] | null;
   readonly userID: string;
+  readonly places?: (string | null)[] | null;
   readonly updatedAt?: string | null;
 }
 
@@ -105,6 +106,7 @@ type LazyFeast = {
   readonly distance?: number | null;
   readonly restaurants: AsyncCollection<Restaurant>;
   readonly userID: string;
+  readonly places?: (string | null)[] | null;
   readonly updatedAt?: string | null;
 }
 

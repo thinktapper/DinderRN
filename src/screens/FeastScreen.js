@@ -16,6 +16,7 @@ import { Feast } from '../models'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
+import { TOMTOM_API } from '@env'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 
 const FeastScreen = () => {
@@ -25,6 +26,7 @@ const FeastScreen = () => {
   const [lat, setLat] = useState(0)
   const [long, setLong] = useState(0)
   const [distance, setDistance] = useState(0)
+  const [places, setPlaces] = useState([])
 
   // useEffect(() => {
 
@@ -42,8 +44,20 @@ const FeastScreen = () => {
     }
   }
 
+  const getPlaces = async () => {
+    // fetch request to TomTom API
+    const radius = distance * 1609.34
+    const res = await fetch(
+      `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${radius}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
+    )
+    if (res.ok) {
+      const data = await res.json()
+      setPlaces(data.results)
+    }
+  }
+
   const isValid = () => {
-    return name && endsAt && lat && long && distance
+    return name && endsAt && lat && long && distance && places
   }
 
   const save = async () => {
@@ -59,11 +73,12 @@ const FeastScreen = () => {
         lat,
         long,
         distance,
+        places,
       })
       await DataStore.save(newFeast)
 
       Alert.alert('Feast saved successfully')
-      navigation.navigate('Home', { lat, long })
+      navigation.navigate('Home', { places })
     } catch (error) {
       console.warn(`Error saving feast: ${error}`)
     }
@@ -88,7 +103,7 @@ const FeastScreen = () => {
         fetchDetails={true}
         onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
-          console.warn(data, details)
+          // console.warn(data, details)
           getCoords(details)
         }}
         query={{

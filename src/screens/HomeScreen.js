@@ -24,17 +24,19 @@ import users from '../../assets/data/users'
 import ProfileScreen from './ProfileScreen'
 import Swiper from 'react-native-deck-swiper'
 
-const HomeScreen = ({ props }) => {
-  const { lat, long } = props.params
+const HomeScreen = ({ places }) => {
+  // const { lat, long } = props.params
   const [activeScreen, setActiveScreen] = useState('Home')
   const color = '#b5b5b5'
   const activeColor = '#F76C6B'
   const navigation = useNavigation()
   const { user, signOut } = Auth
-  const [places, setPlaces] = useState([])
+  // const [places, setPlaces] = useState([])
   const swipeRef = useRef(null)
 
-  useEffect(() => {}, [])
+  // useEffect(() => {
+  //   // fetch data from API
+  // }, [])
 
   const onSwipeLeft = card => {
     console.warn('swipe left', card.name)
