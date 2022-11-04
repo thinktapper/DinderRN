@@ -12,24 +12,26 @@ import {
 import { Picker } from '@react-native-picker/picker'
 import { Auth, DataStore } from 'aws-amplify'
 import { User } from '../models/'
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
+import { GOOGLE_API } from '@env'
+import { TOMTOM_API } from '@env'
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(null)
   const navigation = useNavigation()
   const [name, setName] = useState('')
   const [bio, setBio] = useState('')
-
-  const signOut = () => {
-    Auth.signOut()
-  }
+  const [lat, setLat] = useState(0)
+  const [long, setLong] = useState(0)
+  const [radius, setRadius] = useState(0)
+  const [places, setPlaces] = useState([])
 
   useEffect(() => {
     const getCurrentUser = async () => {
-      const user = await Auth.currentAuthenticatedUser()
+      const authUser = await Auth.currentAuthenticatedUser()
 
-      const dbUsers = await DataStore.query(
-        User,
-        u => u.sub === user.attributes.sub,
+      const dbUsers = await DataStore.query(User, u =>
+        u.sub('eq', authUser.attributes.sub),
       )
       if (dbUsers.length < 0) {
         return
@@ -43,8 +45,40 @@ const ProfileScreen = () => {
     getCurrentUser()
   }, [])
 
+  const signOut = async () => {
+    await DataStore.clear()
+    Auth.signOut()
+  }
+
+  const getCoords = details => {
+    // console.warn(details)
+    try {
+      setLat(details.geometry.location.lat)
+      setLong(details.geometry.location.lng)
+    } catch (error) {
+      console.warn(`Could not set coords: ${error}`)
+    } finally {
+      console.warn(`Latitude set to: ${lat}, Longitude set to: ${long}`)
+      getPlaces()
+    }
+  }
+
+  const getPlaces = async () => {
+    // fetch request to TomTom API
+    const radius = distance * 1609.34
+    const res = await fetch(
+      `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${radius}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
+    )
+    if (res.ok) {
+      const data = await res.json()
+      setPlaces(data.results)
+    } else {
+      console.warn('Could not get places from TomTom API')
+    }
+  }
+
   const isValid = () => {
-    return name && bio
+    return name && bio && lat && long && radius && places
   }
 
   const save = async () => {
@@ -57,6 +91,10 @@ const ProfileScreen = () => {
       const updatedUser = User.copyOf(user, updated => {
         updated.name = name
         updated.bio = bio
+        updated.lat = lat
+        updated.long = long
+        updated.radius = radius
+        updated.places = places
       })
 
       await DataStore.save(updatedUser)
@@ -70,17 +108,23 @@ const ProfileScreen = () => {
         bio,
         image:
           'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg',
+        lat,
+        long,
+        radius,
+        places,
       })
       await DataStore.save(newUser)
     }
 
     Alert.alert('User saved successfully')
-    navigation.navigate('Home')
+    navigation.navigate('Home', { places })
   }
 
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.container}>
+        <Text style={styles.title}>Set your swipe session</Text>
+
         <TextInput
           style={styles.input}
           placeholder="Name..."
@@ -97,8 +141,50 @@ const ProfileScreen = () => {
           onChangeText={setBio}
         />
 
+        <View style={styles.location}>
+          <GooglePlacesAutocomplete
+            placeholder="Type a location"
+            fetchDetails={true}
+            onPress={(data, details = null) => {
+              // 'details' is provided when fetchDetails = true
+              // console.warn(data, details)
+              getCoords(details)
+            }}
+            query={{
+              key: GOOGLE_API,
+            }}
+            onFail={error => console.log(error)}
+            onNotFound={() => console.warn('no results')}
+            listEmptyComponent={() => (
+              <View style={{ flex: 1 }}>
+                <Text>No results were found</Text>
+              </View>
+            )}
+          />
+        </View>
+
+        {/* <View style={styles.location}> */}
+        <Text>Radius</Text>
+        <Picker
+          label="Radius"
+          selectedValue={radius}
+          onValueChange={itemValue => setRadius(itemValue)}>
+          <Picker.Item label="1 Mile" value={1} />
+          <Picker.Item label="2 Miles" value={2} />
+          <Picker.Item label="3 Miles" value={3} />
+          <Picker.Item label="4 Miles" value={4} />
+          <Picker.Item label="5 Miles" value={5} />
+        </Picker>
+        {/* </View> */}
+
         <Pressable onPress={save} style={styles.button}>
           <Text>Save</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => navigation.navigate('Home')}
+          style={styles.button}>
+          <Text>Cancel</Text>
         </Pressable>
 
         <Pressable onPress={() => signOut()} style={styles.button}>
@@ -117,6 +203,17 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 10,
+  },
+  location: {
+    margin: 10,
+    flex: 1,
+    padding: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#051C60',
+    margin: 10,
   },
   button: {
     backgroundColor: '#F63A6E',
