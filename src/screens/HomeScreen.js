@@ -17,26 +17,43 @@ import {
   Fontisto,
   MaterialCommunityIcons,
 } from '@expo/vector-icons'
-// import Card from '../components/TinderCard'
 import { Auth, DataStore } from 'aws-amplify'
-import users from '../../assets/data/users'
-// import AnimatedStack from '../components/AnimatedStack'
+// import users from '../../assets/data/users'
+import { User } from '../models'
+import { TOMTOM_API } from '@env'
 import ProfileScreen from './ProfileScreen'
 import Swiper from 'react-native-deck-swiper'
 
-const HomeScreen = ({ places }) => {
-  // const { lat, long } = props.params
+const HomeScreen = ({ route }) => {
+  const { lat, long, radius } = route.params
+  // const { places } = props.params
   const [activeScreen, setActiveScreen] = useState('Home')
   const color = '#b5b5b5'
   const activeColor = '#F76C6B'
   const navigation = useNavigation()
   const { user, signOut } = Auth
-  // const [places, setPlaces] = useState([])
+  const [places, setPlaces] = useState([])
   const swipeRef = useRef(null)
 
-  // useEffect(() => {
-  //   // fetch data from API
-  // }, [])
+  useEffect(() => {
+    // fetch data from API
+    const distance = radius * 1609.34
+    async function getPlaces() {
+      try {
+        const res = await fetch(
+          `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${distance}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
+        )
+        if (res.status === 200) {
+          const data = await res.json()
+          setPlaces(data.results)
+        }
+      } catch (error) {
+        throw new Error(`Could not fetch places: ${error}`)
+      }
+    }
+    getPlaces()
+    console.warn(places)
+  }, [])
 
   const onSwipeLeft = card => {
     console.warn('swipe left', card.name)

@@ -23,8 +23,8 @@ const ProfileScreen = () => {
   const [bio, setBio] = useState('')
   const [lat, setLat] = useState(0)
   const [long, setLong] = useState(0)
-  const [radius, setRadius] = useState(0)
-  const [places, setPlaces] = useState([])
+  const [radius, setRadius] = useState(1)
+  // const [places, setPlaces] = useState([])
 
   useEffect(() => {
     const getCurrentUser = async () => {
@@ -45,6 +45,26 @@ const ProfileScreen = () => {
     getCurrentUser()
   }, [])
 
+  // useEffect(() => {
+  //   // fetch request to TomTom API
+  //   const distance = radius * 1609.34
+  //   async function getPlaces() {
+  //     try {
+  //       const res = await fetch(
+  //         `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${distance}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
+  //       )
+  //       if (res.status === 200) {
+  //         const data = await res.json()
+  //         setPlaces(data.results)
+  //       }
+  //     } catch (error) {
+  //       throw new Error(`Could not fetch places: ${error}`)
+  //     }
+  //   }
+  //   getPlaces()
+  //   console.warn(places)
+  // }, [setRadius])
+
   const signOut = async () => {
     await DataStore.clear()
     Auth.signOut()
@@ -57,31 +77,31 @@ const ProfileScreen = () => {
       setLong(details.geometry.location.lng)
     } catch (error) {
       console.warn(`Could not set coords: ${error}`)
-    } finally {
-      console.warn(`Latitude set to: ${lat}, Longitude set to: ${long}`)
-      getPlaces()
     }
+    // } finally {
+    //   console.warn(`Latitude set to: ${lat}, Longitude set to: ${long}`)
+    // }
   }
 
-  const getPlaces = async () => {
-    // fetch request to TomTom API
-    const radius = distance * 1609.34
-    const res = await fetch(
-      `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${radius}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
-    )
-    if (res.ok) {
-      const data = await res.json()
-      setPlaces(data.results)
-    } else {
-      console.warn('Could not get places from TomTom API')
-    }
-  }
+  // const getPlaces = async () => {
+  //   // fetch request to TomTom API
+  //   const radius = radius * 1609.34
+  //   const res = await fetch(
+  //     `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${radius}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
+  //   )
+  //   if (res.status === 200) {
+  //     setPlaces(res.results)
+  //   } else {
+  //     console.warn('Could not get places from TomTom API')
+  //   }
+  // }
 
   const isValid = () => {
-    return name && bio && lat && long && radius && places
+    return name && bio && lat && long && radius
   }
 
   const save = async () => {
+    // getPlaces()
     if (!isValid()) {
       console.warn('Not valid')
       return
@@ -94,7 +114,7 @@ const ProfileScreen = () => {
         updated.lat = lat
         updated.long = long
         updated.radius = radius
-        updated.places = places
+        // updated.places = places
       })
 
       await DataStore.save(updatedUser)
@@ -111,13 +131,13 @@ const ProfileScreen = () => {
         lat,
         long,
         radius,
-        places,
+        // places,
       })
       await DataStore.save(newUser)
     }
 
     Alert.alert('User saved successfully')
-    navigation.navigate('Home', { places })
+    navigation.navigate('Home', { lat, long, radius })
   }
 
   return (
@@ -141,29 +161,29 @@ const ProfileScreen = () => {
           onChangeText={setBio}
         />
 
-        <View style={styles.location}>
-          <GooglePlacesAutocomplete
-            placeholder="Type a location"
-            fetchDetails={true}
-            onPress={(data, details = null) => {
-              // 'details' is provided when fetchDetails = true
-              // console.warn(data, details)
-              getCoords(details)
-            }}
-            query={{
-              key: GOOGLE_API,
-            }}
-            onFail={error => console.log(error)}
-            onNotFound={() => console.warn('no results')}
-            listEmptyComponent={() => (
-              <View style={{ flex: 1 }}>
-                <Text>No results were found</Text>
-              </View>
-            )}
-          />
-        </View>
+        {/* <SafeAreaView> */}
+        <GooglePlacesAutocomplete
+          placeholder="Type a location"
+          fetchDetails={true}
+          onPress={(data, details = null) => {
+            // 'details' is provided when fetchDetails = true
+            // console.warn(data, details)
+            getCoords(details)
+          }}
+          query={{
+            key: GOOGLE_API,
+          }}
+          onFail={error => console.log(error)}
+          onNotFound={() => console.warn('no results')}
+          listEmptyComponent={() => (
+            <View style={{ flex: 1 }}>
+              <Text>No results were found</Text>
+            </View>
+          )}
+        />
+        {/* </SafeAreaView> */}
 
-        {/* <View style={styles.location}> */}
+        {/* <View> */}
         <Text>Radius</Text>
         <Picker
           label="Radius"
@@ -202,6 +222,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   container: {
+    flex: 1,
     padding: 10,
   },
   location: {
