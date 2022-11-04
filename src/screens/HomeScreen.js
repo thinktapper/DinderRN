@@ -21,6 +21,7 @@ import { Auth, DataStore } from 'aws-amplify'
 // import users from '../../assets/data/users'
 import { User } from '../models'
 import { TOMTOM_API } from '@env'
+import axios from 'axios'
 import ProfileScreen from './ProfileScreen'
 import Swiper from 'react-native-deck-swiper'
 
@@ -35,23 +36,55 @@ const HomeScreen = ({ route }) => {
   const [places, setPlaces] = useState([])
   const swipeRef = useRef(null)
 
+  // fetch data from API
   useEffect(() => {
-    // fetch data from API
     const distance = radius * 1609.34
-    async function getPlaces() {
-      try {
-        const res = await fetch(
-          `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${distance}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
-        )
-        if (res.status === 200) {
-          const data = await res.json()
-          setPlaces(data.results)
+    const searchUrl = `https://api.tomtom.com/search/2/nearbySearch/.json?key=${TOMTOM_API}&lat=${lat}&lon=${long}&radius=${distance}&categorySet=7315`
+
+    axios
+      .get(searchUrl)
+      .then(response => {
+        let pois = response.data.results.map(v => {
+          return {
+            id: v.id,
+            name: v.poi.name,
+            address: v.address.freeformAddress,
+            phone: v.poi.phone,
+            // image: v.poi.images[0].url,
+          }
+        })
+
+        setPlaces(pois)
+      })
+      .catch(function (error) {
+        if (error.response) {
+          // Request made and server responded
+          console.log(error.response.data)
+          console.log(error.response.status)
+          console.log(error.response.headers)
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.log(error.request)
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message)
         }
-      } catch (error) {
-        throw new Error(`Could not fetch places: ${error}`)
-      }
-    }
-    getPlaces()
+      })
+
+    // async function getPlaces() {
+    //   try {
+    //     const res = await fetch(
+    //       `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${distance}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
+    //     )
+    //     if (res.status === 200) {
+    //       const data = await res.json()
+    //       setPlaces(data.results)
+    //     }
+    //   } catch (error) {
+    //     throw new Error(`Could not fetch places: ${error}`)
+    //   }
+    // }
+    // getPlaces()
     console.warn(places)
   }, [])
 
