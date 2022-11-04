@@ -80,20 +80,6 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "votes": {
-                    "name": "votes",
-                    "isArray": true,
-                    "type": {
-                        "model": "VoteRestaurant"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "restaurant"
-                    }
-                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -126,72 +112,6 @@ export const schema = {
                             "feastID"
                         ]
                     }
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "public",
-                                "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
-                                    "read"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "Vote": {
-            "name": "Vote",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "restaurants": {
-                    "name": "restaurants",
-                    "isArray": true,
-                    "type": {
-                        "model": "VoteRestaurant"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "vote"
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "Votes",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
                 },
                 {
                     "type": "auth",
@@ -284,14 +204,6 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "places": {
-                    "name": "places",
-                    "isArray": true,
-                    "type": "AWSJSON",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true
-                },
                 "updatedAt": {
                     "name": "updatedAt",
                     "isArray": false,
@@ -303,6 +215,90 @@ export const schema = {
             },
             "syncable": true,
             "pluralName": "Feasts",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byUser",
+                        "fields": [
+                            "userID"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "Vote": {
+            "name": "Vote",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "voteType": {
+                    "name": "voteType",
+                    "isArray": false,
+                    "type": {
+                        "enum": "VoteType"
+                    },
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "placeID": {
+                    "name": "placeID",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "userID": {
+                    "name": "userID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Votes",
             "attributes": [
                 {
                     "type": "model",
@@ -387,6 +383,49 @@ export const schema = {
                         "associatedWith": "userID"
                     }
                 },
+                "lat": {
+                    "name": "lat",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "long": {
+                    "name": "long",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "radius": {
+                    "name": "radius",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "places": {
+                    "name": "places",
+                    "isArray": true,
+                    "type": "AWSJSON",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true
+                },
+                "votes": {
+                    "name": "votes",
+                    "isArray": true,
+                    "type": {
+                        "model": "Vote"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "userID"
+                    }
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -428,90 +467,18 @@ export const schema = {
                     }
                 }
             ]
-        },
-        "VoteRestaurant": {
-            "name": "VoteRestaurant",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "restaurant": {
-                    "name": "restaurant",
-                    "isArray": false,
-                    "type": {
-                        "model": "Restaurant"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "restaurantID"
-                    }
-                },
-                "vote": {
-                    "name": "vote",
-                    "isArray": false,
-                    "type": {
-                        "model": "Vote"
-                    },
-                    "isRequired": true,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "voteID"
-                    }
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "VoteRestaurants",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byRestaurant",
-                        "fields": [
-                            "restaurantID"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byVote",
-                        "fields": [
-                            "voteID"
-                        ]
-                    }
-                }
+        }
+    },
+    "enums": {
+        "VoteType": {
+            "name": "VoteType",
+            "values": [
+                "POSITIVE",
+                "NEGATIVE"
             ]
         }
     },
-    "enums": {},
     "nonModels": {},
     "codegenVersion": "3.3.1",
-    "version": "2f48f84242d679b836a21f41a7cdebde"
+    "version": "b6c63c58af62cbc2c4fc371ab5299e2c"
 };

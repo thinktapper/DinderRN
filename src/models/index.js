@@ -2,14 +2,17 @@
 import { initSchema } from '@aws-amplify/datastore';
 import { schema } from './schema';
 
+const VoteType = {
+  "POSITIVE": "POSITIVE",
+  "NEGATIVE": "NEGATIVE"
+};
 
-
-const { Restaurant, Vote, Feast, User, VoteRestaurant } = initSchema(schema);
+const { Restaurant, Feast, Vote, User } = initSchema(schema);
 
 export {
   Restaurant,
-  Vote,
   Feast,
+  Vote,
   User,
-  VoteRestaurant
+  VoteType
 };

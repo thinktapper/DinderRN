@@ -1,3 +1,8 @@
+enum VoteType {
+  POSITIVE
+  NEGATIVE
+}
+
 type Restaurant @model @auth(rules: [{allow: public}]) {
   id: ID!
   name: String
@@ -10,7 +15,6 @@ type Restaurant @model @auth(rules: [{allow: public}]) {
   website: String
   address: String
   feastID: ID! @index(name: "byFeast")
-  votes: [Vote] @manyToMany(relationName: "VoteRestaurant")
 }
 
 type Feast @model @auth(rules: [{allow: public}]) {
@@ -23,12 +27,13 @@ type Feast @model @auth(rules: [{allow: public}]) {
   distance: Int
   restaurants: [Restaurant] @hasMany(indexName: "byFeast", fields: ["id"])
   userID: ID! @index(name: "byUser")
-  places: [AWSJSON]
 }
 
 type Vote @model @auth(rules: [{allow: public}]) {
   id: ID!
-  restaurants: [Restaurant] @manyToMany(relationName: "VoteRestaurant")
+  voteType: VoteType!
+  placeID: String!
+  userID: ID! @index(name: "byUser")
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -38,5 +43,10 @@ type User @model @auth(rules: [{allow: public}]) {
   bio: String
   sub: String!
   feasts: [Feast] @hasMany(indexName: "byUser", fields: ["id"])
+  lat: Float
+  long: Float
+  radius: Int
+  places: [AWSJSON]
+  votes: [Vote] @hasMany(indexName: "byUser", fields: ["id"])
 }
  
