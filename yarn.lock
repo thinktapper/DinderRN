@@ -8983,9 +8983,9 @@ react-native-date-picker@^4.2.5:
     prop-types "^15.8.1"
 
 react-native-deck-swiper@^2.0.10:
-  version "2.0.10"
-  resolved "https://registry.yarnpkg.com/react-native-deck-swiper/-/react-native-deck-swiper-2.0.10.tgz#0e3d5d2c8143d548e8879b6e2b9fb11ad0f1a00d"
-  integrity sha512-4dDrmLyOEwrFyZ1f1Oii37LBw2J8ycTFYGsM1324Z4N/UWb8wfCuvQ6SRRtonTJq5Qwfoe6Jsj4dD7MUj6ldgA==
+  version "2.0.11"
+  resolved "https://registry.yarnpkg.com/react-native-deck-swiper/-/react-native-deck-swiper-2.0.11.tgz#c7a564d72d5f5a28f268bb3cb0da7b8b4ecfb14f"
+  integrity sha512-qXxycuQO+Qn8Z301EGWdHsjYMRgXASAdjSAKTwExNds9T5BeYin1ApOHiWMhHRJr2nayzpWarsgYnQ33pwYYYg==
   dependencies:
     prop-types "15.5.10"
 

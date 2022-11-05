@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Animated,
 } from 'react-native'
 import tw from 'twrnc'
 import {
@@ -18,7 +19,7 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons'
 import { Auth, DataStore } from 'aws-amplify'
-// import users from '../../assets/data/users'
+import users from '../../assets/data/users'
 import { User } from '../models'
 import { Vote } from '../models'
 import { GOOGLE_API } from '@env'
@@ -39,8 +40,9 @@ const HomeScreen = ({ route }) => {
 
   // fetch data from API
   useEffect(() => {
+    let placeDetails = []
     const distance = radius * 1609.34
-    const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurant&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
+    const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
 
     //get our initial places from Google
     const getPlaces = async () => {
@@ -48,7 +50,7 @@ const HomeScreen = ({ route }) => {
         const { data } = await axios.get(searchUrl)
         const { status, results } = data
 
-        //Drill down further to get more information
+        // Loop through results to get more information
         let arrPlacePromises = []
         if (status == 'OK') {
           results.forEach(r => {
@@ -60,30 +62,33 @@ const HomeScreen = ({ route }) => {
           })
 
           let arrPromiseResults = await Promise.all(arrPlacePromises)
-          let placeDetails = []
+
           arrPromiseResults.forEach(pr => {
             let data = pr.data.result
             placeDetails.push({
               id: data.place_id,
               name: data.name,
-              address: data.formatted_address,
-              rating: data.rating,
-              phone: data.formatted_phone_number,
+              address: data.formatted_address || 'Address not available',
+              rating: data.rating || 'No rating',
+              phone: data.formatted_phone_number || 'Phone not available',
               photo: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${data.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`,
-              price: data.price_level,
-              website: data.website,
+              price: data.price_level || 'Price not available',
+              website: data.website || '',
             })
-          }),
-            setPlaces(placeDetails)
+          })
+          setPlaces(placeDetails)
+
+          // console.log(placeDetails)
 
           // TODO: save places to DataStore
         }
       } catch (error) {
-        console.warn(`Error fetching places from Google: ${error}`)
+        console.error(`Error fetching places from Google: ${error}`)
+        // throw new Error(error, 'Error fetching places from Google')
       }
     }
     getPlaces()
-  }, [])
+  }, [places])
 
   console.log(places)
 
@@ -112,7 +117,6 @@ const HomeScreen = ({ route }) => {
 
   return (
     <SafeAreaView style={tw`flex-1`}>
-      {/* <View style={tw`flex-1 justify-center items-center`}> */}
       {/* Header */}
       <View style={tw`flex-row justify-around w-full p-2.5`}>
         <TouchableOpacity onPress={() => setActiveScreen('Home')}>
@@ -157,8 +161,6 @@ const HomeScreen = ({ route }) => {
           />
         </TouchableOpacity>
       </View>
-      {/* </View> */}
-
       {/* End Header */}
 
       {/* Cards */}
@@ -209,9 +211,9 @@ const HomeScreen = ({ route }) => {
                   ]}>
                   <View>
                     <Text style={tw`text-xl font-bold`}>{card.name}</Text>
-                    <Text style={tw`w-9/12`}>{card.bio}</Text>
+                    <Text style={tw`w-9/12`}>{card.price}</Text>
                   </View>
-                  <Text style={tw`text-2xl font-bold`}>{card.age}</Text>
+                  <Text style={tw`text-2xl font-bold`}>{card.rating}</Text>
                 </View>
               </View>
             ) : (
@@ -232,7 +234,9 @@ const HomeScreen = ({ route }) => {
           }
         />
       </View>
+      {/* End Cards */}
 
+      {/* Bottom Buttons */}
       <View style={tw`flex flex-row justify-evenly`}>
         <TouchableOpacity
           onPress={() => swipeRef.current.swipeLeft()}
