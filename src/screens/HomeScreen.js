@@ -53,7 +53,7 @@ const HomeScreen = ({ route }) => {
           results.forEach(r => {
             arrPlacePromises.push(
               axios.get(
-                `https://maps.googleapis.com/maps/api/place/details/json?place_id=${r.place_id}&fields=formatted_address%2Cname%2Crating%2Cformatted_phone_number%2Cphotos%2Cprice_level%2Cwebsite&key=${GOOGLE_API}`,
+                `https://maps.googleapis.com/maps/api/place/details/json?place_id=${r.place_id}&fields=place_id%2Cformatted_address%2Cname%2Crating%2Cformatted_phone_number%2Cphotos%2Cprice_level%2Cwebsite&key=${GOOGLE_API}`,
               ),
             )
           })
@@ -68,7 +68,7 @@ const HomeScreen = ({ route }) => {
               address: data.formatted_address,
               rating: data.rating,
               phone: data.formatted_phone_number,
-              photo: data.photos[0].photo_reference,
+              photo: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${data.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`,
               price: data.price_level,
               website: data.website,
             })
