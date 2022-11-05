@@ -20,7 +20,7 @@ import {
 import { Auth, DataStore } from 'aws-amplify'
 // import users from '../../assets/data/users'
 import { User } from '../models'
-import { TOMTOM_API } from '@env'
+import { GOOGLE_API } from '@env'
 import axios from 'axios'
 import ProfileScreen from './ProfileScreen'
 import Swiper from 'react-native-deck-swiper'
@@ -39,54 +39,50 @@ const HomeScreen = ({ route }) => {
   // fetch data from API
   useEffect(() => {
     const distance = radius * 1609.34
-    const searchUrl = `https://api.tomtom.com/search/2/nearbySearch/.json?key=${TOMTOM_API}&lat=${lat}&lon=${long}&radius=${distance}&categorySet=7315`
+    const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurant&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
 
-    axios
-      .get(searchUrl)
-      .then(response => {
-        let pois = response.data.results.map(v => {
-          return {
-            id: v.id,
-            name: v.poi.name,
-            address: v.address.freeformAddress,
-            phone: v.poi.phone,
-            // image: v.poi.images[0].url,
-          }
-        })
+    //get our initial places from Google
+    const getPlaces = async () => {
+      try {
+        const { data } = await axios.get(searchUrl)
+        const { status, results } = data
 
-        setPlaces(pois)
-      })
-      .catch(function (error) {
-        if (error.response) {
-          // Request made and server responded
-          console.log(error.response.data)
-          console.log(error.response.status)
-          console.log(error.response.headers)
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.log(error.request)
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message)
+        //Drill down further to get more information
+        let arrPlacePromises = []
+        if (status == 'OK') {
+          results.forEach(r => {
+            arrPlacePromises.push(
+              axios.get(
+                `https://maps.googleapis.com/maps/api/place/details/json?place_id=${r.place_id}&fields=formatted_address%2Cname%2Crating%2Cformatted_phone_number%2Cphotos%2Cprice_level%2Cwebsite&key=${GOOGLE_API}`,
+              ),
+            )
+          })
+
+          let arrPromiseResults = await Promise.all(arrPlacePromises)
+          let placeDetails = []
+          arrPromiseResults.forEach(pr => {
+            let data = pr.data.result
+            placeDetails.push({
+              id: data.place_id,
+              name: data.name,
+              address: data.formatted_address,
+              rating: data.rating,
+              phone: data.formatted_phone_number,
+              photo: data.photos[0].photo_reference,
+              price: data.price_level,
+              website: data.website,
+            })
+          }),
+            setPlaces(placeDetails)
         }
-      })
-
-    // async function getPlaces() {
-    //   try {
-    //     const res = await fetch(
-    //       `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${distance}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
-    //     )
-    //     if (res.status === 200) {
-    //       const data = await res.json()
-    //       setPlaces(data.results)
-    //     }
-    //   } catch (error) {
-    //     throw new Error(`Could not fetch places: ${error}`)
-    //   }
-    // }
-    // getPlaces()
-    console.warn(places)
+      } catch (error) {
+        console.warn(`Error fetching places from Google: ${error}`)
+      }
+    }
+    getPlaces()
   }, [])
+
+  console.log(places)
 
   const onSwipeLeft = card => {
     console.warn('swipe left', card.name)
@@ -185,7 +181,7 @@ const HomeScreen = ({ route }) => {
                 key={card.id}
                 style={tw`relative bg-white h-3/4 rounded-xl`}>
                 <Image
-                  source={{ uri: card.image }}
+                  source={{ uri: card.photo }}
                   style={tw`absolute top-0 h-full w-full rounded-xl`}
                 />
                 <View
