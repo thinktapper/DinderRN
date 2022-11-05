@@ -20,6 +20,7 @@ import {
 import { Auth, DataStore } from 'aws-amplify'
 // import users from '../../assets/data/users'
 import { User } from '../models'
+import { Vote } from '../models'
 import { GOOGLE_API } from '@env'
 import axios from 'axios'
 import ProfileScreen from './ProfileScreen'
@@ -74,6 +75,8 @@ const HomeScreen = ({ route }) => {
             })
           }),
             setPlaces(placeDetails)
+
+          // TODO: save places to DataStore
         }
       } catch (error) {
         console.warn(`Error fetching places from Google: ${error}`)
@@ -84,12 +87,27 @@ const HomeScreen = ({ route }) => {
 
   console.log(places)
 
-  const onSwipeLeft = card => {
-    console.warn('swipe left', card.name)
+  const swipeLeft = async cardIndex => {
+    if (!places[cardIndex]) return
+
+    const placeSwiped = places[cardIndex]
+    try {
+      await DataStore.save(
+        new Vote({
+          voteType: VoteType.NEGATIVE,
+          placeID: placeSwiped.id,
+          userID: user.attributes.id,
+        }),
+      )
+    } catch (error) {
+      console.warn(`Error saving negative vote: ${error}`)
+    } finally {
+      console.warn('swiped NAY on', places[cardIndex].name)
+    }
   }
 
-  const onSwipeRight = card => {
-    console.warn('swipe right: ', card.name)
+  const swipeRight = async cardIndex => {
+    console.warn('swipe right: ', places[cardIndex].name)
   }
 
   return (
@@ -149,7 +167,7 @@ const HomeScreen = ({ route }) => {
           ref={swipeRef}
           containerStyle={{ backgroundColor: 'transparent' }}
           cards={places}
-          stackSize={5}
+          stackSize={places.length}
           cardIndex={0}
           animateCardOpacity
           verticalSwipe={false}
@@ -173,8 +191,8 @@ const HomeScreen = ({ route }) => {
             },
           }}
           backgroundColor={'#4FD0E9'}
-          onSwipedLeft={onSwipeLeft}
-          onSwipedRight={onSwipeRight}
+          onSwipedLeft={cardIndex => swipeLeft(cardIndex)}
+          onSwipedRight={cardIndex => swipeRight(cardIndex)}
           renderCard={card =>
             card ? (
               <View
