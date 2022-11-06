@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import {
   View,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Animated,
 } from 'react-native'
 import tw from 'twrnc'
 import {
@@ -17,32 +18,105 @@ import {
   Fontisto,
   MaterialCommunityIcons,
 } from '@expo/vector-icons'
-// import Card from '../components/TinderCard'
-import { Auth } from 'aws-amplify'
+import { Auth, DataStore } from 'aws-amplify'
 import users from '../../assets/data/users'
-// import AnimatedStack from '../components/AnimatedStack'
-import ProfileScreen from './ProfileScreen'
+import { User } from '../models'
+import { Vote } from '../models'
+import { GOOGLE_API } from '@env'
+import axios from 'axios'
 import Swiper from 'react-native-deck-swiper'
 
-const HomeScreen = () => {
+const HomeScreen = ({ route }) => {
+  const { lat, long, radius } = route.params
+  // const { places } = props.params
   const [activeScreen, setActiveScreen] = useState('Home')
   const color = '#b5b5b5'
   const activeColor = '#F76C6B'
   const navigation = useNavigation()
   const { user, signOut } = Auth
+  const [places, setPlaces] = useState([])
   const swipeRef = useRef(null)
 
-  const onSwipeLeft = card => {
-    console.warn('swipe left', card.name)
+  // fetch data from API
+  useEffect(() => {
+    let placeDetails = []
+    const distance = radius * 1609.34
+    const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
+
+    //get our initial places from Google
+    const getPlaces = async () => {
+      try {
+        const { data } = await axios.get(searchUrl)
+        const { status, results } = data
+
+        // Loop through results to get more information
+        let arrPlacePromises = []
+        if (status == 'OK') {
+          results.forEach(r => {
+            arrPlacePromises.push(
+              axios.get(
+                `https://maps.googleapis.com/maps/api/place/details/json?place_id=${r.place_id}&fields=place_id%2Cformatted_address%2Cname%2Crating%2Cformatted_phone_number%2Cphotos%2Cprice_level%2Cwebsite&key=${GOOGLE_API}`,
+              ),
+            )
+          })
+
+          let arrPromiseResults = await Promise.all(arrPlacePromises)
+
+          arrPromiseResults.forEach(pr => {
+            let data = pr.data.result
+            placeDetails.push({
+              id: data.place_id,
+              name: data.name,
+              address: data.formatted_address || 'Address not available',
+              rating: data.rating || 'No rating',
+              phone: data.formatted_phone_number || 'Phone not available',
+              photo: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${data.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`,
+              price: data.price_level || 'Price not available',
+              website: data.website || '',
+              votingRank: 0,
+            })
+          })
+          setPlaces(placeDetails)
+
+          // console.log(placeDetails)
+
+          // TODO: save places to DataStore
+        }
+      } catch (error) {
+        console.error(`Error fetching places from Google: ${error}`)
+        // throw new Error(error, 'Error fetching places from Google')
+      }
+    }
+    getPlaces()
+  }, [])
+
+  console.log(places)
+
+  const swipeLeft = async cardIndex => {
+    if (!places[cardIndex]) return
+
+    const placeSwiped = places[cardIndex]
+    try {
+      await DataStore.save(
+        new Vote({
+          voteType: VoteType.NEGATIVE,
+          placeID: placeSwiped.id,
+          userID: user.attributes.id,
+        }),
+      )
+    } catch (error) {
+      console.warn(`Error saving negative vote: ${error}`)
+    } finally {
+      console.warn('swiped NAY on', places[cardIndex].name)
+    }
   }
 
-  const onSwipeRight = card => {
-    console.warn('swipe right: ', card.name)
+  const swipeRight = async cardIndex => {
+    console.warn('swipe right: ', places[cardIndex].name)
   }
 
   return (
     <SafeAreaView style={tw`flex-1`}>
-      {/* <View style={tw`flex-1 justify-center items-center`}> */}
       {/* Header */}
       <View style={tw`flex-row justify-around w-full p-2.5`}>
         <TouchableOpacity onPress={() => setActiveScreen('Home')}>
@@ -67,7 +141,7 @@ const HomeScreen = () => {
         <TouchableOpacity
           onPress={() => {
             setActiveScreen('Chat')
-            navigation.navigate('Chat')
+            navigation.navigate('Feast')
           }}>
           <Ionicons
             name="ios-chatbubbles"
@@ -87,26 +161,15 @@ const HomeScreen = () => {
           />
         </TouchableOpacity>
       </View>
-      {/* </View> */}
-
       {/* End Header */}
-
-      {/* <View style={tw`flex-1 justify-center items-center w-full`}>
-          <AnimatedStack
-            data={users}
-            renderItem={({ item }) => <Card user={item} />}
-            onSwipeLeft={onSwipeLeft}
-            onSwipeRight={onSwipeRight}
-          />
-        </View> */}
 
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Swiper
           ref={swipeRef}
           containerStyle={{ backgroundColor: 'transparent' }}
-          cards={users}
-          stackSize={5}
+          cards={places}
+          stackSize={places.length}
           cardIndex={0}
           animateCardOpacity
           verticalSwipe={false}
@@ -130,30 +193,50 @@ const HomeScreen = () => {
             },
           }}
           backgroundColor={'#4FD0E9'}
-          onSwipedLeft={onSwipeLeft}
-          onSwipedRight={onSwipeRight}
-          renderCard={card => (
-            <View key={card.id} style={tw`relative bg-white h-3/4 rounded-xl`}>
-              <Image
-                source={{ uri: card.image }}
-                style={tw`absolute top-0 h-full w-full rounded-xl`}
-              />
+          onSwipedLeft={cardIndex => swipeLeft(cardIndex)}
+          onSwipedRight={cardIndex => swipeRight(cardIndex)}
+          renderCard={card =>
+            card ? (
+              <View
+                key={card.id}
+                style={tw`relative bg-white h-3/4 rounded-xl`}>
+                <Image
+                  source={{ uri: card.photo }}
+                  style={tw`absolute top-0 h-full w-full rounded-xl`}
+                />
+                <View
+                  style={[
+                    tw`absolute bottom-0 bg-white w-full flex-row justify-around items-stretch h-20 px-8 py-2 rounded-b-xl`,
+                    styles.cardShadow,
+                  ]}>
+                  <View>
+                    <Text style={tw`text-xl font-bold`}>{card.name}</Text>
+                    <Text style={tw`w-9/12`}>{card.price}</Text>
+                  </View>
+                  <Text style={tw`text-2xl font-bold`}>{card.rating}</Text>
+                </View>
+              </View>
+            ) : (
               <View
                 style={[
-                  tw`absolute bottom-0 bg-white w-full flex-row justify-around items-stretch h-20 px-8 py-2 rounded-b-xl`,
+                  tw`relative bg-white h-3/4 rounded-xl justify-center items-center`,
                   styles.cardShadow,
                 ]}>
-                <View>
-                  <Text style={tw`text-xl font-bold`}>{card.name}</Text>
-                  <Text style={tw`w-9/12`}>{card.bio}</Text>
-                </View>
-                <Text style={tw`text-2xl font-bold`}>{card.age}</Text>
+                <Text style={tw`font-bold pb-5`}>No more places</Text>
+                <Image
+                  style={tw`h-20 w-full`}
+                  height={100}
+                  width={100}
+                  source={{ uri: 'https://links.papareact.com/6gb' }}
+                />
               </View>
-            </View>
-          )}
+            )
+          }
         />
       </View>
+      {/* End Cards */}
 
+      {/* Bottom Buttons */}
       <View style={tw`flex flex-row justify-evenly`}>
         <TouchableOpacity
           onPress={() => swipeRef.current.swipeLeft()}

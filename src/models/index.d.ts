@@ -1,8 +1,21 @@
 import { ModelInit, MutableModel } from "@aws-amplify/datastore";
 // @ts-ignore
-import { LazyLoading, LazyLoadingDisabled, AsyncCollection, AsyncItem } from "@aws-amplify/datastore";
+import { LazyLoading, LazyLoadingDisabled, AsyncCollection } from "@aws-amplify/datastore";
 
-type MatchMetaData = {
+export enum VoteType {
+  POSITIVE = "POSITIVE",
+  NEGATIVE = "NEGATIVE"
+}
+
+type RestaurantMetaData = {
+  readOnlyFields: 'createdAt' | 'updatedAt';
+}
+
+type FeastMetaData = {
+  readOnlyFields: 'updatedAt';
+}
+
+type VoteMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
@@ -10,28 +23,98 @@ type UserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type UserMatchMetaData = {
-  readOnlyFields: 'createdAt' | 'updatedAt';
-}
-
-type EagerMatch = {
+type EagerRestaurant = {
   readonly id: string;
-  readonly users?: (UserMatch | null)[] | null;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly image?: string | null;
+  readonly price?: string | null;
+  readonly ranking?: string | null;
+  readonly rating?: string | null;
+  readonly phone?: string | null;
+  readonly website?: string | null;
+  readonly address?: string | null;
+  readonly feastID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-type LazyMatch = {
+type LazyRestaurant = {
   readonly id: string;
-  readonly users: AsyncCollection<UserMatch>;
+  readonly name?: string | null;
+  readonly description?: string | null;
+  readonly image?: string | null;
+  readonly price?: string | null;
+  readonly ranking?: string | null;
+  readonly rating?: string | null;
+  readonly phone?: string | null;
+  readonly website?: string | null;
+  readonly address?: string | null;
+  readonly feastID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
 
-export declare type Match = LazyLoading extends LazyLoadingDisabled ? EagerMatch : LazyMatch
+export declare type Restaurant = LazyLoading extends LazyLoadingDisabled ? EagerRestaurant : LazyRestaurant
 
-export declare const Match: (new (init: ModelInit<Match, MatchMetaData>) => Match) & {
-  copyOf(source: Match, mutator: (draft: MutableModel<Match, MatchMetaData>) => MutableModel<Match, MatchMetaData> | void): Match;
+export declare const Restaurant: (new (init: ModelInit<Restaurant, RestaurantMetaData>) => Restaurant) & {
+  copyOf(source: Restaurant, mutator: (draft: MutableModel<Restaurant, RestaurantMetaData>) => MutableModel<Restaurant, RestaurantMetaData> | void): Restaurant;
+}
+
+type EagerFeast = {
+  readonly id: string;
+  readonly createdAt?: string | null;
+  readonly endsAt?: string | null;
+  readonly name?: string | null;
+  readonly lat?: number | null;
+  readonly long?: number | null;
+  readonly distance?: number | null;
+  readonly restaurants?: (Restaurant | null)[] | null;
+  readonly userID: string;
+  readonly updatedAt?: string | null;
+}
+
+type LazyFeast = {
+  readonly id: string;
+  readonly createdAt?: string | null;
+  readonly endsAt?: string | null;
+  readonly name?: string | null;
+  readonly lat?: number | null;
+  readonly long?: number | null;
+  readonly distance?: number | null;
+  readonly restaurants: AsyncCollection<Restaurant>;
+  readonly userID: string;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Feast = LazyLoading extends LazyLoadingDisabled ? EagerFeast : LazyFeast
+
+export declare const Feast: (new (init: ModelInit<Feast, FeastMetaData>) => Feast) & {
+  copyOf(source: Feast, mutator: (draft: MutableModel<Feast, FeastMetaData>) => MutableModel<Feast, FeastMetaData> | void): Feast;
+}
+
+type EagerVote = {
+  readonly id: string;
+  readonly voteType: VoteType | keyof typeof VoteType;
+  readonly placeID: string;
+  readonly userID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+type LazyVote = {
+  readonly id: string;
+  readonly voteType: VoteType | keyof typeof VoteType;
+  readonly placeID: string;
+  readonly userID: string;
+  readonly createdAt?: string | null;
+  readonly updatedAt?: string | null;
+}
+
+export declare type Vote = LazyLoading extends LazyLoadingDisabled ? EagerVote : LazyVote
+
+export declare const Vote: (new (init: ModelInit<Vote, VoteMetaData>) => Vote) & {
+  copyOf(source: Vote, mutator: (draft: MutableModel<Vote, VoteMetaData>) => MutableModel<Vote, VoteMetaData> | void): Vote;
 }
 
 type EagerUser = {
@@ -40,7 +123,12 @@ type EagerUser = {
   readonly image?: string | null;
   readonly bio?: string | null;
   readonly sub: string;
-  readonly matches?: (UserMatch | null)[] | null;
+  readonly feasts?: (Feast | null)[] | null;
+  readonly lat?: number | null;
+  readonly long?: number | null;
+  readonly radius?: number | null;
+  readonly places?: (string | null)[] | null;
+  readonly votes?: (Vote | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -51,7 +139,12 @@ type LazyUser = {
   readonly image?: string | null;
   readonly bio?: string | null;
   readonly sub: string;
-  readonly matches: AsyncCollection<UserMatch>;
+  readonly feasts: AsyncCollection<Feast>;
+  readonly lat?: number | null;
+  readonly long?: number | null;
+  readonly radius?: number | null;
+  readonly places?: (string | null)[] | null;
+  readonly votes: AsyncCollection<Vote>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -60,26 +153,4 @@ export declare type User = LazyLoading extends LazyLoadingDisabled ? EagerUser :
 
 export declare const User: (new (init: ModelInit<User, UserMetaData>) => User) & {
   copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
-}
-
-type EagerUserMatch = {
-  readonly id: string;
-  readonly match: Match;
-  readonly user: User;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-type LazyUserMatch = {
-  readonly id: string;
-  readonly match: AsyncItem<Match>;
-  readonly user: AsyncItem<User>;
-  readonly createdAt?: string | null;
-  readonly updatedAt?: string | null;
-}
-
-export declare type UserMatch = LazyLoading extends LazyLoadingDisabled ? EagerUserMatch : LazyUserMatch
-
-export declare const UserMatch: (new (init: ModelInit<UserMatch, UserMatchMetaData>) => UserMatch) & {
-  copyOf(source: UserMatch, mutator: (draft: MutableModel<UserMatch, UserMatchMetaData>) => MutableModel<UserMatch, UserMatchMetaData> | void): UserMatch;
 }

@@ -1,6 +1,39 @@
-type Match @model @auth(rules: [{allow: public}]) {
+enum VoteType {
+  POSITIVE
+  NEGATIVE
+}
+
+type Restaurant @model @auth(rules: [{allow: public}]) {
   id: ID!
-  users: [User] @manyToMany(relationName: "UserMatch")
+  name: String
+  description: String
+  image: String
+  price: String
+  ranking: String
+  rating: String
+  phone: String
+  website: String
+  address: String
+  feastID: ID! @index(name: "byFeast")
+}
+
+type Feast @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  createdAt: String
+  endsAt: String
+  name: String
+  lat: Float
+  long: Float
+  distance: Int
+  restaurants: [Restaurant] @hasMany(indexName: "byFeast", fields: ["id"])
+  userID: ID! @index(name: "byUser")
+}
+
+type Vote @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  voteType: VoteType!
+  placeID: String!
+  userID: ID! @index(name: "byUser")
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -9,6 +42,11 @@ type User @model @auth(rules: [{allow: public}]) {
   image: String
   bio: String
   sub: String!
-  matches: [Match] @manyToMany(relationName: "UserMatch")
+  feasts: [Feast] @hasMany(indexName: "byUser", fields: ["id"])
+  lat: Float
+  long: Float
+  radius: Int
+  places: [AWSJSON]
+  votes: [Vote] @hasMany(indexName: "byUser", fields: ["id"])
 }
  

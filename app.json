@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/images/tinder.png",
+      "image": "./assets/images/dinder-splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
