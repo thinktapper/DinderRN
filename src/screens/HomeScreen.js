@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import {
   View,
@@ -38,55 +38,56 @@ const HomeScreen = ({ route }) => {
   const swipeRef = useRef(null)
 
   // fetch data from API
-  useEffect(() => {
+  const getPlaces = useCallback(async () => {
     let placeDetails = []
     const distance = radius * 1609.34
     const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
 
     //get our initial places from Google
-    const getPlaces = async () => {
-      try {
-        const { data } = await axios.get(searchUrl)
-        const { status, results } = data
+    try {
+      const { data } = await axios.get(searchUrl)
+      const { status, results } = data
 
-        // Loop through results to get more information
-        let arrPlacePromises = []
-        if (status == 'OK') {
-          results.forEach(r => {
-            arrPlacePromises.push(
-              axios.get(
-                `https://maps.googleapis.com/maps/api/place/details/json?place_id=${r.place_id}&fields=place_id%2Cformatted_address%2Cname%2Crating%2Cformatted_phone_number%2Cphotos%2Cprice_level%2Cwebsite&key=${GOOGLE_API}`,
-              ),
-            )
+      // Loop through results to get more information
+      let arrPlacePromises = []
+      if (status == 'OK') {
+        results.forEach(r => {
+          arrPlacePromises.push(
+            axios.get(
+              `https://maps.googleapis.com/maps/api/place/details/json?place_id=${r.place_id}&fields=place_id%2Cformatted_address%2Cname%2Crating%2Cformatted_phone_number%2Cphotos%2Cprice_level%2Cwebsite&key=${GOOGLE_API}`,
+            ),
+          )
+        })
+
+        let arrPromiseResults = await Promise.all(arrPlacePromises)
+
+        arrPromiseResults.forEach(pr => {
+          let data = pr.data.result
+          placeDetails.push({
+            id: data.place_id,
+            name: data.name,
+            address: data.formatted_address || 'Address not available',
+            rating: data.rating || 'No rating',
+            phone: data.formatted_phone_number || 'Phone not available',
+            photo: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${data.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`,
+            price: data.price_level || 'Price not available',
+            website: data.website || '',
+            votingRank: 0,
           })
+        })
+        setPlaces(placeDetails)
 
-          let arrPromiseResults = await Promise.all(arrPlacePromises)
+        // console.log(placeDetails)
 
-          arrPromiseResults.forEach(pr => {
-            let data = pr.data.result
-            placeDetails.push({
-              id: data.place_id,
-              name: data.name,
-              address: data.formatted_address || 'Address not available',
-              rating: data.rating || 'No rating',
-              phone: data.formatted_phone_number || 'Phone not available',
-              photo: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${data.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`,
-              price: data.price_level || 'Price not available',
-              website: data.website || '',
-              votingRank: 0,
-            })
-          })
-          setPlaces(placeDetails)
-
-          // console.log(placeDetails)
-
-          // TODO: save places to DataStore
-        }
-      } catch (error) {
-        console.error(`Error fetching places from Google: ${error}`)
-        // throw new Error(error, 'Error fetching places from Google')
+        // TODO: save places to DataStore
       }
+    } catch (error) {
+      console.error(`Error fetching places from Google: ${error}`)
+      // throw new Error(error, 'Error fetching places from Google')
     }
+  }, [])
+
+  useEffect(() => {
     getPlaces()
   }, [])
 
