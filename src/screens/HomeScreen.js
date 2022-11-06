@@ -24,7 +24,6 @@ import { User } from '../models'
 import { Vote } from '../models'
 import { GOOGLE_API } from '@env'
 import axios from 'axios'
-import ProfileScreen from './ProfileScreen'
 import Swiper from 'react-native-deck-swiper'
 
 const HomeScreen = ({ route }) => {
@@ -74,6 +73,7 @@ const HomeScreen = ({ route }) => {
               photo: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${data.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`,
               price: data.price_level || 'Price not available',
               website: data.website || '',
+              votingRank: 0,
             })
           })
           setPlaces(placeDetails)
@@ -88,7 +88,7 @@ const HomeScreen = ({ route }) => {
       }
     }
     getPlaces()
-  }, [places])
+  }, [])
 
   console.log(places)
 
