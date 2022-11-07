@@ -119,6 +119,7 @@ const HomeScreen = ({ route }) => {
           place.types = googlePlace.types
           place.address =
             googlePlace.formatted_address || 'Address not available'
+          place.open = googlePlace.opening_hours.open_now
           place.price = googlePlace.price_level || 'Price level unavailable'
           place.rating = googlePlace.rating || 'No ratings'
           place.ratingsTotal = googlePlace.user_ratings_total || 'N/A'
@@ -231,13 +232,13 @@ const HomeScreen = ({ route }) => {
             verticalSwipe={false}
             overlayLabels={{
               left: {
-                element: (
-                  <Image
-                    source={'../../assets/images/nope.png'}
-                    width={150}
-                    height={150}
-                  />
-                ),
+                // element: (
+                //   <Image
+                //     source={'../../assets/images/nope.png'}
+                //     width={150}
+                //     height={150}
+                //   />
+                // ),
                 title: 'NOPE',
                 style: {
                   label: {
@@ -247,13 +248,13 @@ const HomeScreen = ({ route }) => {
                 },
               },
               right: {
-                element: (
-                  <Image
-                    source={'../../assets/images/yass.png'}
-                    width={150}
-                    height={150}
-                  />
-                ),
+                // element: (
+                //   <Image
+                //     source={'../../assets/images/yass.png'}
+                //     width={150}
+                //     height={150}
+                //   />
+                // ),
                 title: 'LIKE',
                 style: {
                   label: {
@@ -281,9 +282,13 @@ const HomeScreen = ({ route }) => {
                     ]}>
                     <View>
                       <Text style={tw`text-xl font-bold`}>{card.name}</Text>
-                      <Text style={tw`w-9/12`}>{card.address}</Text>
+                      <Text style={tw`w-9/12`}>
+                        Rating: {card.rating} ({card.ratingsTotal})
+                      </Text>
                     </View>
-                    <Text style={tw`text-2xl font-bold`}>{card.rating}</Text>
+                    <Text style={tw`text-2xl font-bold`}>
+                      {card.open ? 'Open now' : 'Closed'}
+                    </Text>
                   </View>
                 </View>
               ) : (
