@@ -1,26 +1,19 @@
-import 'react-native-gesture-handler'
-import { NavigationContainer } from '@react-navigation/native'
+// import 'react-native-gesture-handler'
 import { StatusBar } from 'expo-status-bar'
-import { SafeAreaView, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native'
 import tw from 'twrnc'
 import Navigation from './src/navigation'
-// import StackNavigator from './src/lib/StackNavigator'
-import { Amplify, Auth } from 'aws-amplify'
+import { Amplify } from 'aws-amplify'
 import config from './src/aws-exports'
 
 Amplify.configure(config)
 
 const App = () => {
   return (
-    // <NavigationContainer>
-    //   <StackNavigator />
-    // </NavigationContainer>
-
     <SafeAreaView style={tw`flex-1 bg-slate-200`}>
       <Navigation />
     </SafeAreaView>
   )
 }
 
-// export default withAuthenticator(App, { signUpConfig })
 export default App
