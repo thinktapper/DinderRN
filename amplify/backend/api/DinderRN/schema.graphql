@@ -1,39 +1,44 @@
-enum VoteType {
-  POSITIVE
-  NEGATIVE
-}
-
-type Restaurant @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  name: String
-  description: String
-  image: String
-  price: String
-  ranking: String
-  rating: String
-  phone: String
-  website: String
-  address: String
-  feastID: ID! @index(name: "byFeast")
-}
-
 type Feast @model @auth(rules: [{allow: public}]) {
   id: ID!
-  createdAt: String
+  createdAt: AWSDateTime
   endsAt: String
-  name: String
-  lat: Float
-  long: Float
-  distance: Int
-  restaurants: [Restaurant] @hasMany(indexName: "byFeast", fields: ["id"])
+  name: String!
+  lat: Float!
+  long: Float!
+  radius: Int!
+  organizer: User @belongsTo
   userID: ID! @index(name: "byUser")
+  places: [Place] @hasMany(indexName: "byFeast", fields: ["id"])
+  winner: Place @hasOne
+  sub: String!
+}
+
+type Place @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  placeID: String!
+  name: String
+  types: [String]
+  address: String
+  open: Boolean
+  price: Int
+  rating: Float
+  ratingsTotal: Int
+  photo: String
+  feastID: ID! @index(name: "byFeast")
+  votes: [Vote] @hasMany(indexName: "byPlace", fields: ["id"])
+  sub: String!
+}
+
+enum VoteType {
+  YASS
+  NOPE
 }
 
 type Vote @model @auth(rules: [{allow: public}]) {
   id: ID!
   voteType: VoteType!
-  placeID: String!
   userID: ID! @index(name: "byUser")
+  placeID: ID! @index(name: "byPlace")
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -42,11 +47,7 @@ type User @model @auth(rules: [{allow: public}]) {
   image: String
   bio: String
   sub: String!
-  feasts: [Feast] @hasMany(indexName: "byUser", fields: ["id"])
-  lat: Float
-  long: Float
-  radius: Int
-  places: [AWSJSON]
   votes: [Vote] @hasMany(indexName: "byUser", fields: ["id"])
+  feasts: [Feast] @hasMany(indexName: "byUser", fields: ["id"])
 }
  
