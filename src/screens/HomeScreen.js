@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import {
   View,
@@ -38,56 +38,111 @@ const HomeScreen = ({ route }) => {
   const swipeRef = useRef(null)
 
   // fetch data from API
-  useEffect(() => {
-    let placeDetails = []
+  const handleGetPlaces = useCallback(async () => {
+    // let placeDetails = []
     const distance = radius * 1609.34
     const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
 
     //get our initial places from Google
-    const getPlaces = async () => {
-      try {
-        const { data } = await axios.get(searchUrl)
-        const { status, results } = data
+    // try {
+    //   const { data } = await axios.get(searchUrl)
+    //   const { status, results } = data
 
-        // Loop through results to get more information
-        let arrPlacePromises = []
-        if (status == 'OK') {
-          results.forEach(r => {
-            arrPlacePromises.push(
-              axios.get(
-                `https://maps.googleapis.com/maps/api/place/details/json?place_id=${r.place_id}&fields=place_id%2Cformatted_address%2Cname%2Crating%2Cformatted_phone_number%2Cphotos%2Cprice_level%2Cwebsite&key=${GOOGLE_API}`,
-              ),
-            )
-          })
+    //   // Loop through results to get more information
+    //   let arrPlacePromises = []
+    //   if (status == 'OK') {
+    //     results.forEach(r => {
+    //       arrPlacePromises.push(
+    //         axios.get(
+    //           `https://maps.googleapis.com/maps/api/place/details/json?place_id=${r.place_id}&fields=place_id%2Cformatted_address%2Cname%2Crating%2Cformatted_phone_number%2Cphotos%2Cprice_level%2Cwebsite&key=${GOOGLE_API}`,
+    //         ),
+    //       )
+    //     })
 
-          let arrPromiseResults = await Promise.all(arrPlacePromises)
+    //     let arrPromiseResults = await Promise.all(arrPlacePromises)
 
-          arrPromiseResults.forEach(pr => {
-            let data = pr.data.result
-            placeDetails.push({
-              id: data.place_id,
-              name: data.name,
-              address: data.formatted_address || 'Address not available',
-              rating: data.rating || 'No rating',
-              phone: data.formatted_phone_number || 'Phone not available',
-              photo: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${data.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`,
-              price: data.price_level || 'Price not available',
-              website: data.website || '',
-              votingRank: 0,
-            })
-          })
-          setPlaces(placeDetails)
+    //     arrPromiseResults.forEach(pr => {
+    //       let data = pr.data.result
+    //       placeDetails.push({
+    //         id: data.place_id,
+    //         name: data.name,
+    //         address: data.formatted_address || 'Address not available',
+    //         rating: data.rating || 'No rating',
+    //         phone: data.formatted_phone_number || 'Phone not available',
+    //         photo: `https://maps.googleapis.com/maps/api/place/photo?photoreference=${data.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`,
+    //         price: data.price_level || 'Price not available',
+    //         website: data.website || '',
+    //         votingRank: 0,
+    //       })
+    //     })
+    //     setPlaces(placeDetails)
 
-          // console.log(placeDetails)
+    //     // console.log(placeDetails)
 
-          // TODO: save places to DataStore
+    //     // TODO: save places to DataStore
+    //   }
+    try {
+      const res = await fetch(searchUrl)
+      const data = await res.json()
+      if (res.ok) {
+        let fetchedPlaces = []
+        for (let googlePlace of data.results) {
+          let place = {}
+          // let gallery = []
+
+          // if (googlePlace.photos) {
+          //   for (let photo of googlePlace.photos) {
+          //     // gallery.push(`https://maps.googleapis.com/maps/api/place/photo?photoreference=${photo.photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`)
+          //     // let photoUrl =
+          //     //   Urls.GooglePicBaseUrl +
+          //     //   photo.photo_reference +
+          //     //   Urls.GooglePicParams +
+          //     //   GOOGLE_API
+          //     let photoUrl = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${photo.photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`
+          //     gallery.push(photoUrl)
+          //   }
+          // }
+
+          // place['id'] = googlePlace.place_id
+          // place['name'] = googlePlace.name
+          // place['types'] = googlePlace.types
+          // place['address'] =
+          //   googlePlace.formatted_address || 'Address not available'
+          // place['price'] = googlePlace.price_level || 'Price level unavailable'
+          // place['rating'] = googlePlace.rating || 'No ratings'
+          // place['ratingsTotal'] = googlePlace.user_ratings_total || 'N/A'
+          // place['photo'] = gallery[0]
+          // place['gallery'] = gallery
+
+          place.id = googlePlace.place_id
+          place.name = googlePlace.name
+          place.types = googlePlace.types
+          place.address =
+            googlePlace.formatted_address || 'Address not available'
+          place.open = googlePlace.opening_hours.open_now
+          place.price = googlePlace.price_level || 'Price level unavailable'
+          place.rating = googlePlace.rating || 'No ratings'
+          place.ratingsTotal = googlePlace.user_ratings_total || 'N/A'
+          place.photo = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${googlePlace.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`
+
+          fetchedPlaces.push(place)
         }
-      } catch (error) {
-        console.error(`Error fetching places from Google: ${error}`)
-        // throw new Error(error, 'Error fetching places from Google')
+
+        // Set fetchedPlaces array to state
+        setPlaces(fetchedPlaces)
       }
+    } catch (error) {
+      console.error(`Error fetching places from Google: ${error}`)
+      // throw new Error(error, 'Error fetching places from Google')
     }
-    getPlaces()
+    // console.log(places)
+  })
+
+  useEffect(() => {
+    // const fetchPlaces = async () => {
+    //   await handleGetPlaces()
+    // }
+    handleGetPlaces()
   }, [])
 
   console.log(places)
@@ -165,74 +220,99 @@ const HomeScreen = ({ route }) => {
 
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
-        <Swiper
-          ref={swipeRef}
-          containerStyle={{ backgroundColor: 'transparent' }}
-          cards={places}
-          stackSize={places.length}
-          cardIndex={0}
-          animateCardOpacity
-          verticalSwipe={false}
-          overlayLabels={{
-            left: {
-              title: 'NOPE',
-              style: {
-                label: {
-                  textAlign: 'right',
-                  color: 'red',
+        {places.length ? (
+          <Swiper
+            ref={swipeRef}
+            containerStyle={{ backgroundColor: 'transparent' }}
+            cards={places}
+            stackSize={places.length}
+            cardIndex={0}
+            key={places.length}
+            animateCardOpacity
+            verticalSwipe={false}
+            overlayLabels={{
+              left: {
+                // element: (
+                //   <Image
+                //     source={'../../assets/images/nope.png'}
+                //     width={150}
+                //     height={150}
+                //   />
+                // ),
+                title: 'NOPE',
+                style: {
+                  label: {
+                    textAlign: 'right',
+                    color: 'red',
+                  },
                 },
               },
-            },
-            right: {
-              title: 'LIKE',
-              style: {
-                label: {
-                  color: '#4DED30',
+              right: {
+                // element: (
+                //   <Image
+                //     source={'../../assets/images/yass.png'}
+                //     width={150}
+                //     height={150}
+                //   />
+                // ),
+                title: 'LIKE',
+                style: {
+                  label: {
+                    color: '#4DED30',
+                  },
                 },
               },
-            },
-          }}
-          backgroundColor={'#4FD0E9'}
-          onSwipedLeft={cardIndex => swipeLeft(cardIndex)}
-          onSwipedRight={cardIndex => swipeRight(cardIndex)}
-          renderCard={card =>
-            card ? (
-              <View
-                key={card.id}
-                style={tw`relative bg-white h-3/4 rounded-xl`}>
-                <Image
-                  source={{ uri: card.photo }}
-                  style={tw`absolute top-0 h-full w-full rounded-xl`}
-                />
+            }}
+            backgroundColor={'#4FD0E9'}
+            onSwipedLeft={cardIndex => swipeLeft(cardIndex)}
+            onSwipedRight={cardIndex => swipeRight(cardIndex)}
+            renderCard={card => {
+              return card ? (
+                <View
+                  key={card.id}
+                  style={tw`relative bg-white h-3/4 rounded-xl`}>
+                  <Image
+                    source={{ uri: card.photo }}
+                    style={tw`absolute top-0 h-full w-full rounded-xl`}
+                  />
+                  <View
+                    style={[
+                      tw`absolute bottom-0 bg-white w-full flex-row justify-around items-stretch h-20 px-8 py-2 rounded-b-xl`,
+                      styles.cardShadow,
+                    ]}>
+                    <View>
+                      <Text style={tw`text-xl font-bold`}>{card.name}</Text>
+                      <Text style={tw`w-9/12`}>
+                        Rating: {card.rating} ({card.ratingsTotal})
+                      </Text>
+                    </View>
+                    <Text style={tw`text-2xl font-bold`}>
+                      {card.open ? 'Open now' : 'Closed'}
+                    </Text>
+                  </View>
+                </View>
+              ) : (
                 <View
                   style={[
-                    tw`absolute bottom-0 bg-white w-full flex-row justify-around items-stretch h-20 px-8 py-2 rounded-b-xl`,
+                    tw`relative bg-white h-3/4 rounded-xl justify-center items-center`,
                     styles.cardShadow,
                   ]}>
-                  <View>
-                    <Text style={tw`text-xl font-bold`}>{card.name}</Text>
-                    <Text style={tw`w-9/12`}>{card.price}</Text>
-                  </View>
-                  <Text style={tw`text-2xl font-bold`}>{card.rating}</Text>
+                  <Text style={tw`font-bold pb-5`}>No more places</Text>
+                  <Image
+                    style={tw`h-20 w-full`}
+                    height={100}
+                    width={100}
+                    source={{ uri: 'https://links.papareact.com/6gb' }}
+                  />
                 </View>
-              </View>
-            ) : (
-              <View
-                style={[
-                  tw`relative bg-white h-3/4 rounded-xl justify-center items-center`,
-                  styles.cardShadow,
-                ]}>
-                <Text style={tw`font-bold pb-5`}>No more places</Text>
-                <Image
-                  style={tw`h-20 w-full`}
-                  height={100}
-                  width={100}
-                  source={{ uri: 'https://links.papareact.com/6gb' }}
-                />
-              </View>
-            )
-          }
-        />
+              )
+            }}
+          />
+        ) : (
+          <View>
+            <Text>Loading...</Text>
+          </View>
+        )}
       </View>
       {/* End Cards */}
 
@@ -264,6 +344,14 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
 
     elevation: 2,
+  },
+  like: {
+    width: 150,
+    height: 150,
+    position: 'absolute',
+    top: 10,
+    zIndex: 1,
+    elevation: 1,
   },
 })
 
