@@ -6,11 +6,7 @@ type Feast @model @auth(rules: [{allow: public}]) {
   lat: Float!
   long: Float!
   radius: Int!
-  organizer: User @belongsTo
   userID: ID! @index(name: "byUser")
-  places: [Place] @hasMany(indexName: "byFeast", fields: ["id"])
-  winner: Place @hasOne
-  sub: String!
 }
 
 type Place @model @auth(rules: [{allow: public}]) {
@@ -24,9 +20,6 @@ type Place @model @auth(rules: [{allow: public}]) {
   rating: Float
   ratingsTotal: Int
   photo: String
-  feastID: ID! @index(name: "byFeast")
-  votes: [Vote] @hasMany(indexName: "byPlace", fields: ["id"])
-  sub: String!
 }
 
 enum VoteType {
@@ -38,7 +31,7 @@ type Vote @model @auth(rules: [{allow: public}]) {
   id: ID!
   voteType: VoteType!
   userID: ID! @index(name: "byUser")
-  placeID: ID! @index(name: "byPlace")
+  placeId: String!
 }
 
 type User @model @auth(rules: [{allow: public}]) {
@@ -49,5 +42,9 @@ type User @model @auth(rules: [{allow: public}]) {
   sub: String!
   votes: [Vote] @hasMany(indexName: "byUser", fields: ["id"])
   feasts: [Feast] @hasMany(indexName: "byUser", fields: ["id"])
+  lat: Float
+  long: Float
+  radius: Int
+  restaurants: [AWSJSON]
 }
  

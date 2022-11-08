@@ -52,58 +52,10 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "organizer": {
-                    "name": "organizer",
-                    "isArray": false,
-                    "type": {
-                        "model": "User"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "BELONGS_TO",
-                        "targetName": "userFeastsId"
-                    }
-                },
                 "userID": {
                     "name": "userID",
                     "isArray": false,
                     "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "places": {
-                    "name": "places",
-                    "isArray": true,
-                    "type": {
-                        "model": "Place"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "feastID"
-                    }
-                },
-                "winner": {
-                    "name": "winner",
-                    "isArray": false,
-                    "type": {
-                        "model": "Place"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "association": {
-                        "connectionType": "HAS_ONE",
-                        "associatedWith": "id",
-                        "targetName": "feastWinnerId"
-                    }
-                },
-                "sub": {
-                    "name": "sub",
-                    "isArray": false,
-                    "type": "String",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -114,17 +66,210 @@ export const schema = {
                     "isRequired": false,
                     "attributes": [],
                     "isReadOnly": true
-                },
-                "feastWinnerId": {
-                    "name": "feastWinnerId",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": false,
-                    "attributes": []
                 }
             },
             "syncable": true,
             "pluralName": "Feasts",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byUser",
+                        "fields": [
+                            "userID"
+                        ]
+                    }
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "Place": {
+            "name": "Place",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "placeID": {
+                    "name": "placeID",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "name": {
+                    "name": "name",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "types": {
+                    "name": "types",
+                    "isArray": true,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true
+                },
+                "address": {
+                    "name": "address",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "open": {
+                    "name": "open",
+                    "isArray": false,
+                    "type": "Boolean",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "price": {
+                    "name": "price",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "rating": {
+                    "name": "rating",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "ratingsTotal": {
+                    "name": "ratingsTotal",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "photo": {
+                    "name": "photo",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Places",
+            "attributes": [
+                {
+                    "type": "model",
+                    "properties": {}
+                },
+                {
+                    "type": "auth",
+                    "properties": {
+                        "rules": [
+                            {
+                                "allow": "public",
+                                "operations": [
+                                    "create",
+                                    "update",
+                                    "delete",
+                                    "read"
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "Vote": {
+            "name": "Vote",
+            "fields": {
+                "id": {
+                    "name": "id",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "voteType": {
+                    "name": "voteType",
+                    "isArray": false,
+                    "type": {
+                        "enum": "VoteType"
+                    },
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "userID": {
+                    "name": "userID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "placeId": {
+                    "name": "placeId",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "createdAt": {
+                    "name": "createdAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                },
+                "updatedAt": {
+                    "name": "updatedAt",
+                    "isArray": false,
+                    "type": "AWSDateTime",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isReadOnly": true
+                }
+            },
+            "syncable": true,
+            "pluralName": "Votes",
             "attributes": [
                 {
                     "type": "model",
@@ -223,6 +368,35 @@ export const schema = {
                         "associatedWith": "userID"
                     }
                 },
+                "lat": {
+                    "name": "lat",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "long": {
+                    "name": "long",
+                    "isArray": false,
+                    "type": "Float",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "radius": {
+                    "name": "radius",
+                    "isArray": false,
+                    "type": "Int",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "restaurants": {
+                    "name": "restaurants",
+                    "isArray": true,
+                    "type": "AWSJSON",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -264,252 +438,6 @@ export const schema = {
                     }
                 }
             ]
-        },
-        "Vote": {
-            "name": "Vote",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "voteType": {
-                    "name": "voteType",
-                    "isArray": false,
-                    "type": {
-                        "enum": "VoteType"
-                    },
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "userID": {
-                    "name": "userID",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "placeID": {
-                    "name": "placeID",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "Votes",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byUser",
-                        "fields": [
-                            "userID"
-                        ]
-                    }
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byPlace",
-                        "fields": [
-                            "placeID"
-                        ]
-                    }
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "public",
-                                "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
-                                    "read"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
-        "Place": {
-            "name": "Place",
-            "fields": {
-                "id": {
-                    "name": "id",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "placeID": {
-                    "name": "placeID",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "name": {
-                    "name": "name",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "types": {
-                    "name": "types",
-                    "isArray": true,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true
-                },
-                "address": {
-                    "name": "address",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "open": {
-                    "name": "open",
-                    "isArray": false,
-                    "type": "Boolean",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "price": {
-                    "name": "price",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "rating": {
-                    "name": "rating",
-                    "isArray": false,
-                    "type": "Float",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "ratingsTotal": {
-                    "name": "ratingsTotal",
-                    "isArray": false,
-                    "type": "Int",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "photo": {
-                    "name": "photo",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "feastID": {
-                    "name": "feastID",
-                    "isArray": false,
-                    "type": "ID",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "votes": {
-                    "name": "votes",
-                    "isArray": true,
-                    "type": {
-                        "model": "Vote"
-                    },
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true,
-                    "association": {
-                        "connectionType": "HAS_MANY",
-                        "associatedWith": "placeID"
-                    }
-                },
-                "sub": {
-                    "name": "sub",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": true,
-                    "attributes": []
-                },
-                "createdAt": {
-                    "name": "createdAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                },
-                "updatedAt": {
-                    "name": "updatedAt",
-                    "isArray": false,
-                    "type": "AWSDateTime",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isReadOnly": true
-                }
-            },
-            "syncable": true,
-            "pluralName": "Places",
-            "attributes": [
-                {
-                    "type": "model",
-                    "properties": {}
-                },
-                {
-                    "type": "key",
-                    "properties": {
-                        "name": "byFeast",
-                        "fields": [
-                            "feastID"
-                        ]
-                    }
-                },
-                {
-                    "type": "auth",
-                    "properties": {
-                        "rules": [
-                            {
-                                "allow": "public",
-                                "operations": [
-                                    "create",
-                                    "update",
-                                    "delete",
-                                    "read"
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
         }
     },
     "enums": {
@@ -523,5 +451,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.3.1",
-    "version": "9556c5da89c0f5799153a419dad1130c"
+    "version": "c547484fad15e73fc14c02880463aedf"
 };
