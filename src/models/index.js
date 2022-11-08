@@ -7,12 +7,12 @@ const VoteType = {
   "NOPE": "NOPE"
 };
 
-const { Feast, User, Vote, Place } = initSchema(schema);
+const { Feast, Place, Vote, User } = initSchema(schema);
 
 export {
   Feast,
-  User,
-  Vote,
   Place,
+  Vote,
+  User,
   VoteType
 };
