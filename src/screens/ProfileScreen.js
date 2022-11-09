@@ -14,7 +14,6 @@ import { Auth, DataStore } from 'aws-amplify'
 import { User } from '../models/'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
-import { TOMTOM_API } from '@env'
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(null)
@@ -24,7 +23,6 @@ const ProfileScreen = () => {
   const [lat, setLat] = useState(0)
   const [long, setLong] = useState(0)
   const [radius, setRadius] = useState(1)
-  // const [places, setPlaces] = useState([])
 
   useEffect(() => {
     const getCurrentUser = async () => {
@@ -45,26 +43,6 @@ const ProfileScreen = () => {
     getCurrentUser()
   }, [])
 
-  // useEffect(() => {
-  //   // fetch request to TomTom API
-  //   const distance = radius * 1609.34
-  //   async function getPlaces() {
-  //     try {
-  //       const res = await fetch(
-  //         `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${distance}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
-  //       )
-  //       if (res.status === 200) {
-  //         const data = await res.json()
-  //         setPlaces(data.results)
-  //       }
-  //     } catch (error) {
-  //       throw new Error(`Could not fetch places: ${error}`)
-  //     }
-  //   }
-  //   getPlaces()
-  //   console.warn(places)
-  // }, [setRadius])
-
   const signOut = async () => {
     await DataStore.clear()
     Auth.signOut()
@@ -83,25 +61,11 @@ const ProfileScreen = () => {
     // }
   }
 
-  // const getPlaces = async () => {
-  //   // fetch request to TomTom API
-  //   const radius = radius * 1609.34
-  //   const res = await fetch(
-  //     `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${radius}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
-  //   )
-  //   if (res.status === 200) {
-  //     setPlaces(res.results)
-  //   } else {
-  //     console.warn('Could not get places from TomTom API')
-  //   }
-  // }
-
   const isValid = () => {
     return name && bio && lat && long && radius
   }
 
   const save = async () => {
-    // getPlaces()
     if (!isValid()) {
       console.warn('Not valid')
       return
@@ -126,12 +90,10 @@ const ProfileScreen = () => {
         sub: authUser.attributes.sub,
         name,
         bio,
-        image:
-          'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg',
+        image: 'https://ptpimg.me/ud7dea.png',
         lat,
         long,
         radius,
-        // places,
       })
       await DataStore.save(newUser)
     }
