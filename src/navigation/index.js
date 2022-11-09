@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, ActivityIndicator } from 'react-native'
+import { View, ActivityIndicator } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Auth, Hub } from 'aws-amplify'
-import tw from 'twrnc'
 
 import SignInScreen from '../screens/SignInScreen'
 import SignUpScreen from '../screens/SignUpScreen'
@@ -20,6 +19,7 @@ const Navigation = () => {
   // TODO: Move auth state to context
   const [user, setUser] = useState(undefined)
 
+  // Check user authentication status
   const checkUser = async () => {
     try {
       const authUser = await Auth.currentAuthenticatedUser({
