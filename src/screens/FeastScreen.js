@@ -16,71 +16,56 @@ import { Feast } from '../models'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
-import { TOMTOM_API } from '@env'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
+import { useAppContext } from '../utils/AppProvider'
 
 const FeastScreen = () => {
   const navigation = useNavigation()
-  const [name, setName] = useState('')
-  const [endsAt, setEndsAt] = useState(new Date())
-  const [lat, setLat] = useState(0)
-  const [long, setLong] = useState(0)
-  const [distance, setDistance] = useState(0)
-  const [places, setPlaces] = useState([])
+  const appContext = useAppContext()
+  const [newFeastName, setNewFeastName] = useState('')
+  const [newRadius, setNewRadius] = useState(1)
+  // const [endsAt, setEndsAt] = useState(new Date())
 
   // useEffect(() => {
 
   // }, [])
-
-  const getCoords = details => {
-    // console.warn(details)
-    try {
-      setLat(details.geometry.location.lat)
-      setLong(details.geometry.location.lng)
-    } catch (error) {
-      console.warn(`Could not set coords: ${error}`)
-    } finally {
-      console.warn(`Latitude set to: ${lat}, Longitude set to: ${long}`)
-    }
-  }
-
-  const getPlaces = async () => {
-    // fetch request to TomTom API
-    const radius = distance * 1609.34
-    const res = await fetch(
-      `https://api.tomtom.com/search/2/nearbySearch/.json?lat=${lat}&lon=${long}&radius=${radius}&categorySet=7315&view=Unified&key=${TOMTOM_API}`,
-    )
-    if (res.ok) {
-      const data = await res.json()
-      setPlaces(data.results)
-    }
-  }
 
   const isValid = () => {
     return name && endsAt && lat && long && distance && places
   }
 
   const save = async () => {
-    if (!isValid()) {
-      console.warn('Not valid')
-      return
-    }
+    // if (!isValid()) {
+    //   console.warn('Not valid')
+    //   return
+    // }
     // create a new feast
-    try {
-      const newFeast = new Feast({
-        name,
-        endsAt: endsAt.toISOString(),
-        lat,
-        long,
-        distance,
-        places,
-      })
-      await DataStore.save(newFeast)
+    // try {
+    //   const newFeast = new Feast({
+    //     name,
+    //     endsAt: endsAt.toISOString(),
+    //     lat,
+    //     long,
+    //     distance,
+    //     places,
+    //   })
+    //   await DataStore.save(newFeast)
 
-      Alert.alert('Feast saved successfully')
-      navigation.navigate('Home', { places })
-    } catch (error) {
-      console.warn(`Error saving feast: ${error}`)
+    //   Alert.alert('Feast saved successfully')
+    //   navigation.navigate('Home')
+    // } catch (error) {
+    //   console.warn(`Error saving feast: ${error}`)
+    // }
+
+    // Fetch new places
+    try {
+      await appContext.handleSaveFeast({ newFeastName, newRadius })
+
+      Alert.alert('Feast info saved successfully')
+
+      navigation.navigate('Home')
+    } catch (err) {
+      console.log(`Error saving feast: ${err}`)
     }
   }
   return (
@@ -88,13 +73,13 @@ const FeastScreen = () => {
       <View style={styles.container}>
         {/* <ScrollView showsVerticalScrollIndicator={false}> */}
 
-        <Text style={styles.title}>Create a Feast</Text>
+        <Text style={styles.title}>Set your swipe session</Text>
 
         <TextInput
           style={styles.input}
           placeholder="Feast name..."
-          value={name}
-          onChangeText={setName}
+          value={newFeastName}
+          onChangeText={setNewFeastName}
         />
       </View>
 
@@ -104,7 +89,7 @@ const FeastScreen = () => {
         onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
           // console.warn(data, details)
-          getCoords(details)
+          appContext.getCoords(details)
         }}
         query={{
           key: GOOGLE_API,
@@ -118,7 +103,7 @@ const FeastScreen = () => {
         )}
       />
 
-      <View style={styles.container}>
+      {/* <View style={styles.container}>
         <Text>Date</Text>
         <RNDateTimePicker
           // display="inline"
@@ -126,30 +111,30 @@ const FeastScreen = () => {
           onChange={(e, selectedDate) => {
             setEndsAt(selectedDate)
           }}
-        />
+        /> */}
 
-        <Text>Distance</Text>
-        <Picker
-          label="Distance"
-          selectedValue={distance}
-          onValueChange={itemValue => setDistance(itemValue)}>
-          <Picker.Item label="1 Mile" value={1} />
-          <Picker.Item label="2 Miles" value={2} />
-          <Picker.Item label="3 Miles" value={3} />
-          <Picker.Item label="4 Miles" value={4} />
-          <Picker.Item label="5 Miles" value={5} />
-        </Picker>
+      <Text>Radius</Text>
+      <Picker
+        label="Radius"
+        selectedValue={newRadius}
+        onValueChange={itemValue => setNewRadius(itemValue)}>
+        <Picker.Item label="1 Mile" value={1} />
+        <Picker.Item label="2 Miles" value={2} />
+        <Picker.Item label="3 Miles" value={3} />
+        <Picker.Item label="4 Miles" value={4} />
+        <Picker.Item label="5 Miles" value={5} />
+      </Picker>
 
-        <Pressable onPress={save} style={styles.button}>
-          <Text>Save</Text>
-        </Pressable>
+      <Pressable onPress={save} style={styles.button}>
+        <Text>Save</Text>
+      </Pressable>
 
-        <Pressable
-          onPress={() => navigation.navigate('Home')}
-          style={styles.button}>
-          <Text>Cancel</Text>
-        </Pressable>
-      </View>
+      <Pressable
+        onPress={() => navigation.navigate('Home')}
+        style={styles.button}>
+        <Text>Cancel</Text>
+      </Pressable>
+      {/* </View> */}
     </SafeAreaView>
   )
 }
