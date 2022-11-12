@@ -31,6 +31,7 @@ const HomeScreen = ({ navigation }) => {
   const activeColor = '#F76C6B'
   const { user, signOut } = Auth
   const swipeRef = useRef(null)
+  const places = appContext.places
 
   // console.log(places)
 
@@ -111,14 +112,14 @@ const HomeScreen = ({ navigation }) => {
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
           {appContext.feastName ? appContext.feastName : 'No Feast Context'}
         </Text>
-        {appContext.places.length ? (
+        {places?.length ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={appContext.places}
-            stackSize={appContext.places.length}
+            cards={places}
+            stackSize={places.length}
             cardIndex={0}
-            key={appContext.places.length}
+            key={places.length}
             animateCardOpacity
             verticalSwipe={false}
             overlayLabels={{

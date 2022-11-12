@@ -55,7 +55,12 @@ export const AppProvider = ({ children }) => {
 
   const handleGetPlaces = useCallback(async () => {
     const distance = radius * 1609.34
-    const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
+    const googlePlacesBaseUrl = 'https://maps.googleapis.com/maps/api/place'
+    const searchUrl = `${googlePlacesBaseUrl}/textsearch/json?query=restaurants&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
+    const fields =
+      'name,place_id,rating,user_ratings_total,price_level,photos,editorial_summary'
+    const extraFields =
+      'opening_hours,formatted_address,formatted_phone_number,website'
 
     // fetch data from Google Maps API
     try {
@@ -63,8 +68,39 @@ export const AppProvider = ({ children }) => {
       const data = await res.json()
       if (res.ok) {
         let fetchedPlaces = []
-        for (let googlePlace of data.results) {
+        let arrPlaceDetails = []
+
+        // data.results.forEach(place => {
+        //   arrPlaceDetails.push(
+        //     fetch(
+        //       `${googlePlacesBaseUrl}/details/json?place_id=${result.place_id}&fields=${fields}&key=${GOOGLE_API}`,
+        //     ),
+        //   )
+        // })
+        for (result of data.results) {
+          arrPlaceDetails.push(
+            fetch(
+              `${googlePlacesBaseUrl}/details/json?place_id=${result.place_id}&fields=${fields}&key=${GOOGLE_API}`,
+            ),
+          )
+        }
+
+        const arrDetailsResults = await Promise.all(arrPlaceDetails)
+
+        for (let pr of arrDetailsResults) {
+          let data = await pr.json()
+          let googlePlace = data.result
+
+          console.log(`googlePlace (stringified): ${googlePlace}`)
           let place = {}
+          let gallery = await googlePlace.photos?.map(
+            photo =>
+              `${googlePlacesBaseUrl}/photo?maxwidth=600&photoreference=${photo.photo_reference}&key=${GOOGLE_API}`,
+          )
+          let summary = googlePlace.editorial_summary
+            ? googlePlace.editorial_summary.overview
+            : 'No description available'
+          // Transform price level to dollar signs
           let pl = ''
           if (googlePlace.price_level) {
             for (let i = 0; i < googlePlace.price_level; i++) {
@@ -73,24 +109,30 @@ export const AppProvider = ({ children }) => {
           } else {
             pl = 'Price N/A'
           }
+          // Transform rating to stars
+          let starRating = ''
+          if (googlePlace.rating) {
+            for (let i = 0; i < googlePlace.rating; i++) {
+              starRating += '★'
+            }
+          }
 
           place.placeID = googlePlace.place_id
           place.name = googlePlace.name
-          place.types = googlePlace.types
-          place.address =
-            googlePlace.formatted_address || 'Address not available'
-          place.open = googlePlace.opening_hours.open_now
           place.price = pl
           place.rating = googlePlace.rating || 'No ratings'
           place.ratingsTotal = googlePlace.user_ratings_total || 'N/A'
-          place.photo = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${googlePlace.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`
+          place.stars = starRating
+          place.photos = gallery
+          place.description = summary
 
           fetchedPlaces.push(place)
         }
 
         // Set fetchedPlaces array to state
         // TODO: save places to DataStore
-        setPlaces(fetchedPlaces)
+        console.log(fetchedPlaces)
+        // setPlaces(fetchedPlaces)
         return fetchedPlaces
       }
     } catch (error) {
@@ -104,18 +146,11 @@ export const AppProvider = ({ children }) => {
 
     try {
       const newPlaces = await handleGetPlaces()
+      setPlaces(newPlaces)
       setAppData({ feastName: newFeastName, places: newPlaces })
     } catch (err) {
       console.log(`Error saving feast: ${err}`)
     }
-
-    // try {
-    //   await appContext.handleGetPlaces()
-
-    //   Alert.alert('Feast info saved successfully')
-    // } catch (err) {
-    //   console.log(`Error saving feast: ${err}`)
-    // }
   }, [])
 
   useEffect(() => {
