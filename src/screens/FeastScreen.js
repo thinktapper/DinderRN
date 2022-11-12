@@ -22,8 +22,8 @@ import { useAppContext } from '../utils/AppProvider'
 const FeastScreen = () => {
   const navigation = useNavigation()
   const appContext = useAppContext()
-  const [newFeastName, setNewFeastName] = useState('')
-  const [newRadius, setNewRadius] = useState(1)
+  const [newFeastName, setNewFeastName] = useState(appContext.feastName)
+  const [newRadius, setNewRadius] = useState(appContext.radius)
   // const [endsAt, setEndsAt] = useState(new Date())
 
   // useEffect(() => {
@@ -78,6 +78,9 @@ const FeastScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Feast name..."
+          // placeholder={
+          //   appContext.feastName ? appContext.feastName : 'Feast name...'
+          // }
           value={newFeastName}
           onChangeText={setNewFeastName}
         />

@@ -25,14 +25,14 @@ import { GOOGLE_API } from '@env'
 import Swiper from 'react-native-deck-swiper'
 import { useAppContext } from '../utils/AppProvider'
 
-const HomeScreen = ({ route }) => {
+const HomeScreen = ({ navigation }) => {
   const appContext = useAppContext()
 
   // const { lat, long, radius } = route.params
   const [activeScreen, setActiveScreen] = useState('Home')
   const color = '#b5b5b5'
   const activeColor = '#F76C6B'
-  const navigation = useNavigation()
+  // const navigation = useNavigation()
   const { user, signOut } = Auth
   // const [places, setPlaces] = useState([])
   const swipeRef = useRef(null)
@@ -153,7 +153,7 @@ const HomeScreen = ({ route }) => {
 
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
-        <Text style={tw`text-2xl font-bold`}>
+        <Text style={tw`text-2xl text-center mt-4 font-bold`}>
           {appContext.feastName ? appContext.feastName : 'No Feast Context'}
         </Text>
         {appContext.places.length ? (
