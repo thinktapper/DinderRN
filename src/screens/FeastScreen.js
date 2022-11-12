@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigation } from '@react-navigation/native'
 import {
   View,
   Text,
@@ -19,16 +18,11 @@ import { GOOGLE_API } from '@env'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useAppContext } from '../utils/AppProvider'
 
-const FeastScreen = () => {
-  const navigation = useNavigation()
+const FeastScreen = ({ navigation }) => {
   const appContext = useAppContext()
   const [newFeastName, setNewFeastName] = useState(appContext.feastName)
   const [newRadius, setNewRadius] = useState(appContext.radius)
   // const [endsAt, setEndsAt] = useState(new Date())
-
-  // useEffect(() => {
-
-  // }, [])
 
   const isValid = () => {
     return name && endsAt && lat && long && distance && places

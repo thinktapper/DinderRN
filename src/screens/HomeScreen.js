@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { useNavigation } from '@react-navigation/native'
 import {
   View,
   Text,
@@ -27,55 +26,11 @@ import { useAppContext } from '../utils/AppProvider'
 
 const HomeScreen = ({ navigation }) => {
   const appContext = useAppContext()
-
-  // const { lat, long, radius } = route.params
   const [activeScreen, setActiveScreen] = useState('Home')
   const color = '#b5b5b5'
   const activeColor = '#F76C6B'
-  // const navigation = useNavigation()
   const { user, signOut } = Auth
-  // const [places, setPlaces] = useState([])
   const swipeRef = useRef(null)
-
-  // const handleGetPlaces = useCallback(async () => {
-  //   const distance = radius * 1609.34
-  //   const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
-
-  //   // fetch data from Google Maps API
-  //   try {
-  //     const res = await fetch(searchUrl)
-  //     const data = await res.json()
-  //     if (res.ok) {
-  //       let fetchedPlaces = []
-  //       for (let googlePlace of data.results) {
-  //         let place = {}
-
-  //         place.placeID = googlePlace.place_id
-  //         place.name = googlePlace.name
-  //         place.types = googlePlace.types
-  //         place.address =
-  //           googlePlace.formatted_address || 'Address not available'
-  //         place.open = googlePlace.opening_hours.open_now
-  //         place.price = googlePlace.price_level || 'Price level unavailable'
-  //         place.rating = googlePlace.rating || 'No ratings'
-  //         place.ratingsTotal = googlePlace.user_ratings_total || 'N/A'
-  //         place.photo = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${googlePlace.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`
-
-  //         fetchedPlaces.push(place)
-  //       }
-
-  //       // Set fetchedPlaces array to state
-  //       // TODO: save places to DataStore
-  //       setPlaces(fetchedPlaces)
-  //     }
-  //   } catch (error) {
-  //     console.error(`Error fetching places from Google: ${error}`)
-  //   }
-  // })
-
-  // useEffect(() => {
-  //   handleGetPlaces()
-  // }, [])
 
   // console.log(places)
 
@@ -213,18 +168,25 @@ const HomeScreen = ({ navigation }) => {
                   />
                   <View
                     style={[
-                      tw`absolute bottom-0 bg-white w-full flex-row justify-around items-stretch h-20 px-8 py-2 rounded-b-xl`,
+                      tw`absolute bottom-0 bg-white w-full flex-row justify-between items-center h-20 px-6 py-2 rounded-b-xl`,
                       styles.cardShadow,
                     ]}>
-                    <View>
-                      <Text style={tw`text-xl font-bold`}>{card.name}</Text>
-                      <Text style={tw`w-9/12`}>
-                        Rating: {card.rating} ({card.ratingsTotal})
+                    <View style={[tw`w-9/12`, styles.truncate]}>
+                      <Text style={[tw`text-xl font-bold`, styles.truncate]}>
+                        {card.name}
                       </Text>
+                      {card.open ? (
+                        <Text style={tw`text-lg text-green-500`}>Open now</Text>
+                      ) : (
+                        <Text style={tw`text-lg text-rose-500`}>Closed</Text>
+                      )}
                     </View>
-                    <Text style={tw`text-2xl font-bold`}>
-                      {card.open ? 'Open now' : 'Closed'}
-                    </Text>
+                    <View style={[tw`w-1/4`, styles.truncate]}>
+                      <Text style={tw`text-xl font-bold`}>
+                        {card.rating} ⭐️
+                      </Text>
+                      <Text>({card.ratingsTotal})</Text>
+                    </View>
                   </View>
                 </View>
               ) : (
@@ -288,6 +250,11 @@ const styles = StyleSheet.create({
     top: 10,
     zIndex: 1,
     elevation: 1,
+  },
+  truncate: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
 })
 
