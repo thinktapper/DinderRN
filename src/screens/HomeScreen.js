@@ -22,7 +22,7 @@ import { User } from '../models'
 import { Vote, VoteType } from '../models'
 import { GOOGLE_API } from '@env'
 import Swiper from 'react-native-deck-swiper'
-import { useAppContext } from '../utils/AppProvider'
+import { useAppContext } from '../context/AppProvider'
 
 const HomeScreen = ({ navigation }) => {
   const appContext = useAppContext()
