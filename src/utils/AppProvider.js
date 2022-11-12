@@ -1,6 +1,34 @@
-import React, { createContext, useCallback, useState } from 'react'
-import { useContext } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useCallback,
+  useState,
+  useEffect,
+} from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { GOOGLE_API } from '@env'
+
+const dataKey = 'my-app-data'
+
+const setAppData = async appData => {
+  try {
+    await AsyncStorage.setItem(dataKey, JSON.stringify(appData))
+  } catch (err) {
+    console.log(`Oops saving async data: ${err}`)
+  }
+}
+
+const getAppData = async () => {
+  try {
+    const data = await AsyncStorage.getItem(dataKey)
+    if (data) {
+      return JSON.parse(data)
+    }
+  } catch (err) {
+    console.log(`Oops getting async data: ${err}`)
+    return null
+  }
+}
 
 const AppContext = createContext({})
 
@@ -54,6 +82,7 @@ export const AppProvider = ({ children }) => {
         // Set fetchedPlaces array to state
         // TODO: save places to DataStore
         setPlaces(fetchedPlaces)
+        return fetchedPlaces
       }
     } catch (error) {
       console.error(`Error fetching places from Google: ${error}`)
@@ -65,6 +94,8 @@ export const AppProvider = ({ children }) => {
     setRadius(newRadius)
 
     await handleGetPlaces()
+
+    setAppData({ places: places, feastName: feastName })
     // try {
     //   await appContext.handleGetPlaces()
 
@@ -72,6 +103,18 @@ export const AppProvider = ({ children }) => {
     // } catch (err) {
     //   console.log(`Error saving feast: ${err}`)
     // }
+  }, [])
+
+  useEffect(() => {
+    const fetchAppData = async () => {
+      const data = await getAppData()
+      if (data) {
+        setFeastName(data.feastName)
+        setPlaces(data.places)
+      }
+    }
+
+    fetchAppData()
   }, [])
 
   return (
