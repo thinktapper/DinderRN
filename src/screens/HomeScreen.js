@@ -126,8 +126,8 @@ const HomeScreen = ({ navigation }) => {
                 element: (
                   <Image
                     source={require('../../assets/images/nope.png')}
-                    width={150}
-                    height={150}
+                    width={50}
+                    height={50}
                   />
                 ),
                 title: 'NOPE',
@@ -142,8 +142,8 @@ const HomeScreen = ({ navigation }) => {
                 element: (
                   <Image
                     source={require('../../assets/images/yass.png')}
-                    width={150}
-                    height={150}
+                    width={50}
+                    height={50}
                   />
                 ),
                 title: 'LIKE',
@@ -168,26 +168,45 @@ const HomeScreen = ({ navigation }) => {
                   />
                   <View
                     style={[
-                      tw`absolute bottom-0 bg-white w-full flex-row justify-between items-center h-20 px-6 py-2 rounded-b-xl`,
+                      tw`absolute bottom-0 bg-white w-full flex-row justify-center items-center h-20 px-4 py-2 rounded-b-xl`,
                       styles.cardShadow,
+                      styles.truncate,
                     ]}>
-                    <View style={[tw`w-9/12`, styles.truncate]}>
+                    <View style={tw`flex-1`}>
+                      <Text style={[tw`text-xl`, styles.truncate]}>
+                        {card.name}
+                      </Text>
+                      <Text style={tw`text-lg text-slate-500`}>
+                        {card.rating} ⭐️ ({card.ratingsTotal})
+                      </Text>
+                    </View>
+                    <Text style={tw`text-2xl font-semibold`}>{card.price}</Text>
+                  </View>
+                  {/* <View style={[tw`w-9/12`, styles.truncate]}> */}
+                  {/* <View>
                       <Text style={[tw`text-xl font-bold`, styles.truncate]}>
                         {card.name}
                       </Text>
-                      {card.open ? (
-                        <Text style={tw`text-lg text-green-500`}>Open now</Text>
-                      ) : (
-                        <Text style={tw`text-lg text-rose-500`}>Closed</Text>
-                      )}
-                    </View>
-                    <View style={[tw`w-1/4`, styles.truncate]}>
-                      <Text style={tw`text-xl font-bold`}>
-                        {card.rating} ⭐️
+                      <Text>
+                        {card.rating} ⭐️ ({card.ratingsTotal})
                       </Text>
-                      <Text>({card.ratingsTotal})</Text>
                     </View>
-                  </View>
+                    <Text style={tw`text-2xl font-semibold`}>{card.price}</Text>
+                  </View> */}
+                  {/* <View
+                    style={[
+                      styles.imageTextContainer,
+                      styles.cardShadow,
+                      styles.truncate,
+                    ]}>
+                    <View style={tw`flex-1`}>
+                      <Text style={styles.imageTextName}>{card.name}</Text>
+                      <Text style={styles.imageTextJob}>
+                        {card.rating} ⭐️ ({card.ratingsTotal})
+                      </Text>
+                    </View>
+                    <Text style={styles.imageTextAge}>{card.price}</Text>
+                  </View> */}
                 </View>
               ) : (
                 <View
@@ -244,12 +263,37 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   like: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
     position: 'absolute',
     top: 10,
     zIndex: 1,
     elevation: 1,
+  },
+  imageTextContainer: {
+    position: 'absolute',
+    bottom: 0,
+    backgroundColor: 'white',
+    width: '100%',
+    height: 80,
+    paddingHorizontal: 15,
+    paddingVertical: 5,
+    borderBottomRightRadius: 12,
+    borderBottomLeftRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  imageTextName: {
+    fontSize: 25,
+  },
+  imageTextAge: {
+    fontWeight: 'bold',
+    fontSize: 25,
+  },
+  imageTextJob: {
+    color: 'grey',
+    // fontSize: 20,
+    marginTop: 5,
   },
   truncate: {
     overflow: 'hidden',

@@ -8,11 +8,11 @@ import React, {
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { GOOGLE_API } from '@env'
 
-const dataKey = 'my-app-data'
+const storageKey = 'my-app-data'
 
-const setAppData = async appData => {
+const setAppData = async newData => {
   try {
-    await AsyncStorage.setItem(dataKey, JSON.stringify(appData))
+    await AsyncStorage.setItem(storageKey, JSON.stringify(newData))
   } catch (err) {
     console.log(`Oops saving async data: ${err}`)
   }
@@ -20,10 +20,11 @@ const setAppData = async appData => {
 
 const getAppData = async () => {
   try {
-    const data = await AsyncStorage.getItem(dataKey)
+    const data = await AsyncStorage.getItem(storageKey)
     if (data) {
       return JSON.parse(data)
     }
+    return null
   } catch (err) {
     console.log(`Oops getting async data: ${err}`)
     return null
@@ -64,6 +65,14 @@ export const AppProvider = ({ children }) => {
         let fetchedPlaces = []
         for (let googlePlace of data.results) {
           let place = {}
+          let pl = ''
+          if (googlePlace.price_level) {
+            for (let i = 0; i < googlePlace.price_level; i++) {
+              pl += '$'
+            }
+          } else {
+            pl = 'Price N/A'
+          }
 
           place.placeID = googlePlace.place_id
           place.name = googlePlace.name
@@ -71,7 +80,7 @@ export const AppProvider = ({ children }) => {
           place.address =
             googlePlace.formatted_address || 'Address not available'
           place.open = googlePlace.opening_hours.open_now
-          place.price = googlePlace.price_level || 'Price level unavailable'
+          place.price = pl
           place.rating = googlePlace.rating || 'No ratings'
           place.ratingsTotal = googlePlace.user_ratings_total || 'N/A'
           place.photo = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${googlePlace.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`
@@ -93,9 +102,13 @@ export const AppProvider = ({ children }) => {
     setFeastName(newFeastName)
     setRadius(newRadius)
 
-    await handleGetPlaces()
+    try {
+      const newPlaces = await handleGetPlaces()
+      setAppData({ feastName: newFeastName, places: newPlaces })
+    } catch (err) {
+      console.log(`Error saving feast: ${err}`)
+    }
 
-    setAppData({ places: places, feastName: feastName })
     // try {
     //   await appContext.handleGetPlaces()
 
@@ -106,7 +119,7 @@ export const AppProvider = ({ children }) => {
   }, [])
 
   useEffect(() => {
-    const fetchAppData = async () => {
+    const getDataFromStorage = async () => {
       const data = await getAppData()
       if (data) {
         setFeastName(data.feastName)
@@ -114,7 +127,7 @@ export const AppProvider = ({ children }) => {
       }
     }
 
-    fetchAppData()
+    getDataFromStorage()
   }, [])
 
   return (
