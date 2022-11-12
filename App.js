@@ -5,7 +5,8 @@ import tw from 'twrnc'
 import Navigation from './src/navigation'
 import { Amplify } from 'aws-amplify'
 import config from './src/aws-exports'
-import { AppProvider } from './src/utils/AppProvider'
+import { AppProvider } from './src/context/AppProvider'
+
 
 Amplify.configure(config)
 

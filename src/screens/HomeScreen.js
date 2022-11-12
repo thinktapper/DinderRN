@@ -22,7 +22,7 @@ import { User } from '../models'
 import { Vote, VoteType } from '../models'
 import { GOOGLE_API } from '@env'
 import Swiper from 'react-native-deck-swiper'
-import { useAppContext } from '../utils/AppProvider'
+import { useAppContext } from '../context/AppProvider'
 
 const HomeScreen = ({ navigation }) => {
   const appContext = useAppContext()
@@ -31,8 +31,7 @@ const HomeScreen = ({ navigation }) => {
   const activeColor = '#F76C6B'
   const { user, signOut } = Auth
   const swipeRef = useRef(null)
-
-  // console.log(places)
+  const places = appContext.places
 
   const swipeLeft = async cardIndex => {
     if (!places[cardIndex]) return
@@ -111,7 +110,7 @@ const HomeScreen = ({ navigation }) => {
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
           {appContext.feastName ? appContext.feastName : 'No Feast Context'}
         </Text>
-        {appContext.places.length ? (
+        {places?.length ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}

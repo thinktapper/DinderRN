@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import { Auth, DataStore } from 'aws-amplify'
 import { User } from '../models/'
-import { useAppContext } from '../utils/AppProvider'
+import { useAppContext } from '../context/AppProvider'
 
 const ProfileScreen = ({ navigation }) => {
   const appContext = useAppContext()

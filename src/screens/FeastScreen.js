@@ -16,7 +16,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
-import { useAppContext } from '../utils/AppProvider'
+import { useAppContext } from '../context/AppProvider'
 
 const FeastScreen = ({ navigation }) => {
   const appContext = useAppContext()
