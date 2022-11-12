@@ -9,17 +9,13 @@ import {
   TextInput,
   Alert,
 } from 'react-native'
-import { Picker } from '@react-native-picker/picker'
 import { Auth, DataStore } from 'aws-amplify'
 import { User } from '../models/'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
-import { GOOGLE_API } from '@env'
 import { useAppContext } from '../utils/AppProvider'
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ navigation }) => {
   const appContext = useAppContext()
   const [user, setUser] = useState(null)
-  const navigation = useNavigation()
   const [name, setName] = useState('')
   const [bio, setBio] = useState('')
 
@@ -48,7 +44,6 @@ const ProfileScreen = () => {
   }
 
   const isValid = () => {
-    // return name && bio && lat && long && radius
     return name && bio
   }
 
@@ -109,42 +104,6 @@ const ProfileScreen = () => {
           value={bio}
           onChangeText={setBio}
         />
-
-        {/* <SafeAreaView> */}
-        {/* <GooglePlacesAutocomplete
-          placeholder="Type a location"
-          fetchDetails={true}
-          onPress={(data, details = null) => {
-            // 'details' is provided when fetchDetails = true
-            // console.warn(data, details)
-            appContext.getCoords(details)
-          }}
-          query={{
-            key: GOOGLE_API,
-          }}
-          onFail={error => console.log(error)}
-          onNotFound={() => console.warn('no results')}
-          listEmptyComponent={() => (
-            <View style={{ flex: 1 }}>
-              <Text>No results were found</Text>
-            </View>
-          )}
-        /> */}
-        {/* </SafeAreaView> */}
-
-        {/* <View> */}
-        {/* <Text>Radius</Text>
-        <Picker
-          label="Radius"
-          selectedValue={appContext.radius}
-          onValueChange={itemValue => appContext.setRadius(itemValue)}>
-          <Picker.Item label="1 Mile" value={1} />
-          <Picker.Item label="2 Miles" value={2} />
-          <Picker.Item label="3 Miles" value={3} />
-          <Picker.Item label="4 Miles" value={4} />
-          <Picker.Item label="5 Miles" value={5} />
-        </Picker> */}
-        {/* </View> */}
 
         <Pressable onPress={save} style={styles.button}>
           <Text>Save</Text>
