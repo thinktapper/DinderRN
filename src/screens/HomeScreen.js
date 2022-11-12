@@ -23,56 +23,59 @@ import { User } from '../models'
 import { Vote, VoteType } from '../models'
 import { GOOGLE_API } from '@env'
 import Swiper from 'react-native-deck-swiper'
+import { useAppContext } from '../utils/AppProvider'
 
 const HomeScreen = ({ route }) => {
-  const { lat, long, radius } = route.params
+  const appContext = useAppContext()
+
+  // const { lat, long, radius } = route.params
   const [activeScreen, setActiveScreen] = useState('Home')
   const color = '#b5b5b5'
   const activeColor = '#F76C6B'
   const navigation = useNavigation()
   const { user, signOut } = Auth
-  const [places, setPlaces] = useState([])
+  // const [places, setPlaces] = useState([])
   const swipeRef = useRef(null)
 
-  const handleGetPlaces = useCallback(async () => {
-    const distance = radius * 1609.34
-    const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
+  // const handleGetPlaces = useCallback(async () => {
+  //   const distance = radius * 1609.34
+  //   const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
 
-    // fetch data from Google Maps API
-    try {
-      const res = await fetch(searchUrl)
-      const data = await res.json()
-      if (res.ok) {
-        let fetchedPlaces = []
-        for (let googlePlace of data.results) {
-          let place = {}
+  //   // fetch data from Google Maps API
+  //   try {
+  //     const res = await fetch(searchUrl)
+  //     const data = await res.json()
+  //     if (res.ok) {
+  //       let fetchedPlaces = []
+  //       for (let googlePlace of data.results) {
+  //         let place = {}
 
-          place.placeID = googlePlace.place_id
-          place.name = googlePlace.name
-          place.types = googlePlace.types
-          place.address =
-            googlePlace.formatted_address || 'Address not available'
-          place.open = googlePlace.opening_hours.open_now
-          place.price = googlePlace.price_level || 'Price level unavailable'
-          place.rating = googlePlace.rating || 'No ratings'
-          place.ratingsTotal = googlePlace.user_ratings_total || 'N/A'
-          place.photo = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${googlePlace.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`
+  //         place.placeID = googlePlace.place_id
+  //         place.name = googlePlace.name
+  //         place.types = googlePlace.types
+  //         place.address =
+  //           googlePlace.formatted_address || 'Address not available'
+  //         place.open = googlePlace.opening_hours.open_now
+  //         place.price = googlePlace.price_level || 'Price level unavailable'
+  //         place.rating = googlePlace.rating || 'No ratings'
+  //         place.ratingsTotal = googlePlace.user_ratings_total || 'N/A'
+  //         place.photo = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${googlePlace.photos[0].photo_reference}&sensor=false&maxheight=500&maxwidth=500&key=${GOOGLE_API}`
 
-          fetchedPlaces.push(place)
-        }
+  //         fetchedPlaces.push(place)
+  //       }
 
-        // Set fetchedPlaces array to state
-        // TODO: save places to DataStore
-        setPlaces(fetchedPlaces)
-      }
-    } catch (error) {
-      console.error(`Error fetching places from Google: ${error}`)
-    }
-  })
+  //       // Set fetchedPlaces array to state
+  //       // TODO: save places to DataStore
+  //       setPlaces(fetchedPlaces)
+  //     }
+  //   } catch (error) {
+  //     console.error(`Error fetching places from Google: ${error}`)
+  //   }
+  // })
 
-  useEffect(() => {
-    handleGetPlaces()
-  }, [])
+  // useEffect(() => {
+  //   handleGetPlaces()
+  // }, [])
 
   // console.log(places)
 
@@ -150,14 +153,17 @@ const HomeScreen = ({ route }) => {
 
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
-        {places.length ? (
+        <Text style={tw`text-2xl font-bold`}>
+          {appContext.feastName ? appContext.feastName : 'No Feast Context'}
+        </Text>
+        {appContext.places.length ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={places}
-            stackSize={places.length}
+            cards={appContext.places}
+            stackSize={appContext.places.length}
             cardIndex={0}
-            key={places.length}
+            key={appContext.places.length}
             animateCardOpacity
             verticalSwipe={false}
             overlayLabels={{
