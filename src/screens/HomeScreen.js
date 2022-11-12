@@ -33,8 +33,6 @@ const HomeScreen = ({ navigation }) => {
   const swipeRef = useRef(null)
   const places = appContext.places
 
-  // console.log(places)
-
   const swipeLeft = async cardIndex => {
     if (!places[cardIndex]) return
 
@@ -116,10 +114,10 @@ const HomeScreen = ({ navigation }) => {
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={places}
-            stackSize={places.length}
+            cards={appContext.places}
+            stackSize={appContext.places.length}
             cardIndex={0}
-            key={places.length}
+            key={appContext.places.length}
             animateCardOpacity
             verticalSwipe={false}
             overlayLabels={{
