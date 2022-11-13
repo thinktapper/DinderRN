@@ -4,25 +4,24 @@ import { width } from '../utils/ResponsiveScreen'
 
 const CardImageCarousel = ({
   images,
-  setCurrentImageIndex,
-  currentImageIndex,
+  setCurrentIndex,
+  currentIndex,
   wrapperPadding,
 }) => {
   const changeImageHandler = useCallback(
     ({ nativeEvent }) => {
       if (nativeEvent.pageX > (width - wrapperPadding * 2) / 2) {
-        if (currentImageIndex < images.length - 1) {
-          setCurrentImageIndex(prevIndex => prevIndex + 1)
+        if (currentIndex < images.length - 1) {
+          setCurrentIndex(prevIndex => prevIndex + 1)
         }
       } else {
-        if (currentImageIndex > 0) {
-          setCurrentImageIndex(prevIndex => prevIndex - 1)
+        if (currentIndex > 0) {
+          setCurrentIndex(prevIndex => prevIndex - 1)
         }
       }
     },
-    [currentImageIndex],
+    [currentIndex],
   )
-
   return (
     <TouchableOpacity
       style={styles.wrapper}
@@ -31,14 +30,13 @@ const CardImageCarousel = ({
       <Image
         resizeMode="cover"
         source={{
-          uri: images[currentImageIndex],
+          uri: images[currentIndex],
         }}
         style={styles.image}
       />
     </TouchableOpacity>
   )
 }
-
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,

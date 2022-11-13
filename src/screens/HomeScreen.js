@@ -27,6 +27,7 @@ import CardImageSteps from '../components/CardImageSteps'
 import CardImageCarousel from '../components/CardImageCarousel'
 import { StoryContainer } from 'react-native-stories-view'
 import { rs } from '../utils/ResponsiveScreen'
+import PlaceCard from '../components/PlaceCard'
 
 const HomeScreen = ({ navigation }) => {
   const appContext = useAppContext()
@@ -36,7 +37,8 @@ const HomeScreen = ({ navigation }) => {
   const { user, signOut } = Auth
   const swipeRef = useRef(null)
   const places = appContext.places
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  // const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const globalPadding = rs(12)
   const wrapperPadding = rs(12)
 
@@ -121,21 +123,37 @@ const HomeScreen = ({ navigation }) => {
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={appContext.places}
-            stackSize={appContext.places.length}
+            cards={places}
+            stackSize={places.length}
             cardIndex={0}
-            key={appContext.places.length}
+            key={places.length}
             animateCardOpacity
             animateOverlayLabelsOpacity
             swipeBackCard
             verticalSwipe={false}
+            backgroundColor={'#4FD0E9'}
+            onSwipedLeft={cardIndex => swipeLeft(cardIndex)}
+            onSwipedRight={cardIndex => swipeRight(cardIndex)}
+            // onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
+            renderCard={card => {
+              return (
+                <PlaceCard
+                  card={card}
+                  currentIndex={currentIndex}
+                  setCurrentIndex={setCurrentIndex}
+                  globalPadding={globalPadding}
+                  wrapperPadding={wrapperPadding}
+                />
+              )
+            }}
+            onTapCard={cardIndex => swipeLeft(cardIndex)}
             overlayLabels={{
               left: {
                 element: (
                   <Image
                     source={require('../../assets/images/nope.png')}
-                    width={50}
-                    height={50}
+                    width={100}
+                    height={100}
                   />
                 ),
                 title: 'NOPE',
@@ -150,8 +168,8 @@ const HomeScreen = ({ navigation }) => {
                 element: (
                   <Image
                     source={require('../../assets/images/yass.png')}
-                    width={50}
-                    height={50}
+                    width={100}
+                    height={100}
                   />
                 ),
                 title: 'LIKE',
@@ -162,108 +180,23 @@ const HomeScreen = ({ navigation }) => {
                 },
               },
             }}
-            backgroundColor={'#4FD0E9'}
-            onSwipedLeft={cardIndex => swipeLeft(cardIndex)}
-            onSwipedRight={cardIndex => swipeRight(cardIndex)}
-            onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
-            renderCard={card => {
-              return card ? (
-                <View
-                  key={card.id}
-                  style={tw`relative bg-white h-3/4 rounded-xl`}>
-                  {/* <Image
-                    source={{ uri: card.photos[0] }}
-                    style={tw`absolute top-0 h-full w-full rounded-xl`}
-                  /> */}
-                  <View style={tw`flex-1`}>
-                    {/* <View style={tw`absolute top-0 h-full w-full rounded-xl`}>
-                    <StoryContainer
-                      visible={true}
-                      enableProgress={true}
-                      images={card.photos}
-                      duration={20}
-                      onComplete={() => alert('onComplete')}
-                      containerStyle={{
-                        width: '100%',
-                        height: '100%',
-                      }}
-                    />
-                  </View> */}
-                    <CardImageSteps
-                      images={card.photos}
-                      currentImageIndex={currentImageIndex}
-                      globalPadding={globalPadding}
-                      wrapperPadding={wrapperPadding}
-                    />
-                    <CardImageCarousel
-                      images={card.photos}
-                      currentImageIndex={currentImageIndex}
-                      setCurrentImageIndex={setCurrentImageIndex}
-                      wrapperPadding={wrapperPadding}
-                    />
-                  </View>
-                  <View
-                    style={[
-                      tw`absolute bottom-0 bg-white w-full flex-row justify-center items-center h-20 px-4 py-2 rounded-b-xl`,
-                      styles.cardShadow,
-                      styles.truncate,
-                    ]}>
-                    <View style={tw`flex-1`}>
-                      <Text style={[tw`text-xl`, styles.truncate]}>
-                        {card.name}
-                      </Text>
-                      <Text style={tw`text-lg text-slate-500`}>
-                        {card.rating} ⭐️ ({card.ratingsTotal})
-                      </Text>
-                    </View>
-                    <Text style={tw`text-2xl font-semibold`}>{card.price}</Text>
-                  </View>
-                  {/* <View style={[tw`w-9/12`, styles.truncate]}> */}
-                  {/* <View>
-                      <Text style={[tw`text-xl font-bold`, styles.truncate]}>
-                        {card.name}
-                      </Text>
-                      <Text>
-                        {card.rating} ⭐️ ({card.ratingsTotal})
-                      </Text>
-                    </View>
-                    <Text style={tw`text-2xl font-semibold`}>{card.price}</Text>
-                  </View> */}
-                  {/* <View
-                    style={[
-                      styles.imageTextContainer,
-                      styles.cardShadow,
-                      styles.truncate,
-                    ]}>
-                    <View style={tw`flex-1`}>
-                      <Text style={styles.imageTextName}>{card.name}</Text>
-                      <Text style={styles.imageTextJob}>
-                        {card.rating} ⭐️ ({card.ratingsTotal})
-                      </Text>
-                    </View>
-                    <Text style={styles.imageTextAge}>{card.price}</Text>
-                  </View> */}
-                </View>
-              ) : (
-                <View
-                  style={[
-                    tw`relative bg-white h-3/4 rounded-xl justify-center items-center`,
-                    styles.cardShadow,
-                  ]}>
-                  <Text style={tw`font-bold pb-5`}>No more places</Text>
-                  <Image
-                    style={tw`h-20 w-full`}
-                    height={100}
-                    width={100}
-                    source={{ uri: 'https://links.papareact.com/6gb' }}
-                  />
-                </View>
-              )
-            }}
           />
         ) : (
-          <View>
-            <Text>Loading...</Text>
+          // <View>
+          //   <Text>Loading...</Text>
+          // </View>
+          <View
+            style={[
+              tw`relative bg-white h-3/4 rounded-xl justify-center items-center`,
+              styles.cardShadow,
+            ]}>
+            <Text style={tw`font-bold pb-5`}>No more places</Text>
+            <Image
+              style={tw`h-20 w-full`}
+              height={100}
+              width={100}
+              source={{ uri: 'https://links.papareact.com/6gb' }}
+            />
           </View>
         )}
       </View>

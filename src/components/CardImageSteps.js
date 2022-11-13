@@ -4,7 +4,7 @@ import { width, rs } from '../utils/ResponsiveScreen'
 
 const CardImageSteps = ({
   images,
-  currentImageIndex,
+  currentIndex,
   globalPadding,
   wrapperPadding,
 }) => {
@@ -28,8 +28,7 @@ const CardImageSteps = ({
             // eslint-disable-next-line react-native/no-inline-styles
             style={{
               ...styles.stepIndicator,
-              backgroundColor:
-                currentImageIndex === index ? '#EE61A1' : 'white',
+              backgroundColor: currentIndex === index ? '#EE61A1' : 'white',
               marginRight: Math.max(images.length - 1) === index ? 0 : rs(5),
             }}
           />
@@ -38,7 +37,6 @@ const CardImageSteps = ({
     </View>
   )
 }
-
 const createStyles = (widthCalc, globalPadding) =>
   StyleSheet.create({
     wrapper: {
