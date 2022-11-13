@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
 } from 'react-native'
+import Animated from 'react-native-reanimated'
 import tw from 'twrnc'
 import {
   AntDesign,
@@ -28,6 +29,7 @@ import CardImageCarousel from '../components/CardImageCarousel'
 import { StoryContainer } from 'react-native-stories-view'
 import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
+import MainCard from '../components/MainCard'
 
 const HomeScreen = ({ navigation }) => {
   const appContext = useAppContext()
@@ -37,7 +39,7 @@ const HomeScreen = ({ navigation }) => {
   const { user, signOut } = Auth
   const swipeRef = useRef(null)
   const places = appContext.places
-  const [currentIndex, setCurrentIndex] = useState(0)
+  // const [currentIndex, setCurrentIndex] = useState(0)
   // const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const globalPadding = rs(12)
   const wrapperPadding = rs(12)
@@ -136,17 +138,25 @@ const HomeScreen = ({ navigation }) => {
             onSwipedRight={cardIndex => swipeRight(cardIndex)}
             // onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
             renderCard={card => {
+              // return (
+              //   <Animated.View
+              //     style={[styles.cardContainer, styles.cardShadow]}>
+              //     <Animated.View style={styles.cardInner}>
+              //       <MainCard style={{ flex: 1 }} card={card} />
+              //     </Animated.View>
+              //   </Animated.View>
+              // )
               return (
                 <PlaceCard
                   card={card}
-                  currentIndex={currentIndex}
-                  setCurrentIndex={setCurrentIndex}
+                  // currentIndex={currentIndex}
+                  // setCurrentIndex={setCurrentIndex}
                   globalPadding={globalPadding}
                   wrapperPadding={wrapperPadding}
                 />
               )
             }}
-            onTapCard={cardIndex => swipeLeft(cardIndex)}
+            // onTapCard={cardIndex => swipeLeft(cardIndex)}
             overlayLabels={{
               left: {
                 element: (
@@ -268,6 +278,17 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+  },
+  cardContainer: {
+    flex: 1,
+    marginVertical: 5,
+    marginHorizontal: 10,
+    borderRadius: 15,
+  },
+  cardInner: {
+    ...StyleSheet.absoluteFillObject,
+    pointerEvents: 'auto',
+    flex: 1,
   },
 })
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import tw from 'twrnc'
 import CardImageSteps from '../components/CardImageSteps'
@@ -8,12 +8,11 @@ const PlaceCard = props => {
   const {
     card,
     swipeRef,
-    // currentIndex,
-    // setCurrentIndex,
+    currentIndex,
+    setCurrentIndex,
     globalPadding,
     wrapperPadding,
   } = props
-  const [currentIndex, setCurrentIndex] = useState(0)
 
   return (
     <View key={card.id} style={tw`relative bg-white h-3/4 rounded-xl`}>
@@ -26,6 +25,7 @@ const PlaceCard = props => {
       />
       <CardImageCarousel
         images={card.photos}
+        swipeRef={swipeRef}
         setCurrentIndex={setCurrentIndex}
         currentIndex={currentIndex}
         wrapperPadding={wrapperPadding}
