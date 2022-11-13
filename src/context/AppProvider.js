@@ -147,7 +147,7 @@ export const AppProvider = ({ children }) => {
     try {
       const newPlaces = await handleGetPlaces()
       setPlaces(newPlaces)
-      setAppData({ feastName: newFeastName, places: newPlaces })
+      await setAppData({ feastName: newFeastName, places: newPlaces })
     } catch (err) {
       console.log(`Error saving feast: ${err}`)
     }
@@ -162,7 +162,9 @@ export const AppProvider = ({ children }) => {
       }
     }
 
-    getDataFromStorage()
+    getDataFromStorage().then(() => {
+      console.log('Data retrieved from storage')
+    })
   }, [])
 
   return (

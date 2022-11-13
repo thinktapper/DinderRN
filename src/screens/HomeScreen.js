@@ -23,6 +23,10 @@ import { Vote, VoteType } from '../models'
 import { GOOGLE_API } from '@env'
 import Swiper from 'react-native-deck-swiper'
 import { useAppContext } from '../context/AppProvider'
+import CardImageSteps from '../components/CardImageSteps'
+import CardImageCarousel from '../components/CardImageCarousel'
+import { StoryContainer } from 'react-native-stories-view'
+import { rs } from '../utils/ResponsiveScreen'
 
 const HomeScreen = ({ navigation }) => {
   const appContext = useAppContext()
@@ -32,6 +36,9 @@ const HomeScreen = ({ navigation }) => {
   const { user, signOut } = Auth
   const swipeRef = useRef(null)
   const places = appContext.places
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const globalPadding = rs(12)
+  const wrapperPadding = rs(12)
 
   const swipeLeft = async cardIndex => {
     if (!places[cardIndex]) return
@@ -119,6 +126,8 @@ const HomeScreen = ({ navigation }) => {
             cardIndex={0}
             key={appContext.places.length}
             animateCardOpacity
+            animateOverlayLabelsOpacity
+            swipeBackCard
             verticalSwipe={false}
             overlayLabels={{
               left: {
@@ -156,15 +165,43 @@ const HomeScreen = ({ navigation }) => {
             backgroundColor={'#4FD0E9'}
             onSwipedLeft={cardIndex => swipeLeft(cardIndex)}
             onSwipedRight={cardIndex => swipeRight(cardIndex)}
+            onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
             renderCard={card => {
               return card ? (
                 <View
                   key={card.id}
                   style={tw`relative bg-white h-3/4 rounded-xl`}>
-                  <Image
-                    source={{ uri: card.photo }}
+                  {/* <Image
+                    source={{ uri: card.photos[0] }}
                     style={tw`absolute top-0 h-full w-full rounded-xl`}
-                  />
+                  /> */}
+                  <View style={tw`flex-1`}>
+                    {/* <View style={tw`absolute top-0 h-full w-full rounded-xl`}>
+                    <StoryContainer
+                      visible={true}
+                      enableProgress={true}
+                      images={card.photos}
+                      duration={20}
+                      onComplete={() => alert('onComplete')}
+                      containerStyle={{
+                        width: '100%',
+                        height: '100%',
+                      }}
+                    />
+                  </View> */}
+                    <CardImageSteps
+                      images={card.photos}
+                      currentImageIndex={currentImageIndex}
+                      globalPadding={globalPadding}
+                      wrapperPadding={wrapperPadding}
+                    />
+                    <CardImageCarousel
+                      images={card.photos}
+                      currentImageIndex={currentImageIndex}
+                      setCurrentImageIndex={setCurrentImageIndex}
+                      wrapperPadding={wrapperPadding}
+                    />
+                  </View>
                   <View
                     style={[
                       tw`absolute bottom-0 bg-white w-full flex-row justify-center items-center h-20 px-4 py-2 rounded-b-xl`,

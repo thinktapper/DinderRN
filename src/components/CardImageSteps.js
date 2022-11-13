@@ -28,7 +28,8 @@ const CardImageSteps = ({
             // eslint-disable-next-line react-native/no-inline-styles
             style={{
               ...styles.stepIndicator,
-              backgroundColor: currentIndex === index ? '#EE61A1' : 'white',
+              backgroundColor:
+                currentImageIndex === index ? '#EE61A1' : 'white',
               marginRight: Math.max(images.length - 1) === index ? 0 : rs(5),
             }}
           />

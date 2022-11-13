@@ -11,16 +11,16 @@ const CardImageCarousel = ({
   const changeImageHandler = useCallback(
     ({ nativeEvent }) => {
       if (nativeEvent.pageX > (width - wrapperPadding * 2) / 2) {
-        if (currentIndex < images.length - 1) {
-          setCurrentIndex(prevIndex => prevIndex + 1)
+        if (currentImageIndex < images.length - 1) {
+          setCurrentImageIndex(prevIndex => prevIndex + 1)
         }
       } else {
-        if (currentIndex > 0) {
-          setCurrentIndex(prevIndex => prevIndex - 1)
+        if (currentImageIndex > 0) {
+          setCurrentImageIndex(prevIndex => prevIndex - 1)
         }
       }
     },
-    [currentIndex],
+    [currentImageIndex],
   )
 
   return (
@@ -31,7 +31,7 @@ const CardImageCarousel = ({
       <Image
         resizeMode="cover"
         source={{
-          uri: images[currentIndex],
+          uri: images[currentImageIndex],
         }}
         style={styles.image}
       />
