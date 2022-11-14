@@ -4,7 +4,7 @@ import { width, rs } from '../utils/ResponsiveScreen'
 
 const CardImageSteps = ({
   images,
-  currentImageIndex,
+  currentIndex,
   globalPadding,
   wrapperPadding,
 }) => {
@@ -37,7 +37,6 @@ const CardImageSteps = ({
     </View>
   )
 }
-
 const createStyles = (widthCalc, globalPadding) =>
   StyleSheet.create({
     wrapper: {
