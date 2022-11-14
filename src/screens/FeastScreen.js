@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native'
+import tw from 'twrnc'
 import { Picker } from '@react-native-picker/picker'
 import { DataStore } from 'aws-amplify'
 import { Feast } from '../models'
@@ -21,39 +22,42 @@ import { useAppContext } from '../context/AppProvider'
 const FeastScreen = ({ navigation }) => {
   const appContext = useAppContext()
   const [newFeastName, setNewFeastName] = useState(appContext.feastName)
+  const [newFeastAddress, setNewFeastAddress] = useState(
+    appContext.feastAddress,
+  )
   const [newRadius, setNewRadius] = useState(appContext.radius)
-  // const [endsAt, setEndsAt] = useState(new Date())
+  const [endsAt, setEndsAt] = useState(new Date())
+
+  const autocompleteRef = useRef()
+
+  useEffect(() => {
+    // Set google places autocomplete address from context
+    if (appContext.feastAddress) {
+      autocompleteRef.current?.setAddressText(appContext.feastAddress)
+    }
+  }, [])
 
   const isValid = () => {
-    return name && endsAt && lat && long && distance && places
+    return newFeastName && endsAt && newRadius
   }
 
   const save = async () => {
-    // if (!isValid()) {
-    //   console.warn('Not valid')
-    //   return
-    // }
-    // create a new feast
-    // try {
-    //   const newFeast = new Feast({
-    //     name,
-    //     endsAt: endsAt.toISOString(),
-    //     lat,
-    //     long,
-    //     distance,
-    //     places,
-    //   })
-    //   await DataStore.save(newFeast)
+    if (!isValid()) {
+      console.warn('Not valid')
+      return
+    }
+    // Get new feast address from google places autocomplete
+    const address = await autocompleteRef.current?.getAddressText()
+    setNewFeastAddress(address)
 
-    //   Alert.alert('Feast saved successfully')
-    //   navigation.navigate('Home')
-    // } catch (error) {
-    //   console.warn(`Error saving feast: ${error}`)
-    // }
-
-    // Fetch new places
+    // Save feast to context + db and navigate to home
     try {
-      await appContext.handleSaveFeast({ newFeastName, newRadius })
+      await appContext.handleSaveFeast({
+        newFeastName,
+        newFeastAddress,
+        newRadius,
+        endsAt,
+      })
 
       Alert.alert('Feast info saved successfully')
 
@@ -67,29 +71,30 @@ const FeastScreen = ({ navigation }) => {
       <View style={styles.container}>
         {/* <ScrollView showsVerticalScrollIndicator={false}> */}
 
-        <Text style={styles.title}>Set your swipe session</Text>
+        <Text style={styles.title}>Create or update your Feast</Text>
 
         <TextInput
           style={styles.input}
           placeholder="Feast name..."
-          // placeholder={
-          //   appContext.feastName ? appContext.feastName : 'Feast name...'
-          // }
           value={newFeastName}
           onChangeText={setNewFeastName}
         />
       </View>
 
       <GooglePlacesAutocomplete
+        ref={autocompleteRef}
         placeholder="Type a location"
         fetchDetails={true}
+        minLength={2}
+        enablePoweredByContainer={false}
         onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
-          // console.warn(data, details)
           appContext.getCoords(details)
+          // setNewFeastAddress(autocompleteRef.current?.getAddressText())
         }}
         query={{
           key: GOOGLE_API,
+          language: 'en',
         }}
         onFail={error => console.log(error)}
         onNotFound={() => console.warn('no results')}
@@ -100,27 +105,36 @@ const FeastScreen = ({ navigation }) => {
         )}
       />
 
-      {/* <View style={styles.container}>
-        <Text>Date</Text>
+      <View style={[styles.container, tw`flex-1 justify-around`]}>
+        <Text style={tw`text-center text-xl font-semibold`}>End date</Text>
+        {/* <DateTimePicker value={endsAt} onChange={setEndsAt} /> */}
         <RNDateTimePicker
           // display="inline"
+          mode="date"
           value={endsAt}
+          minimumDate={new Date()}
+          style={tw`flex-1 w-full mt-2`}
           onChange={(e, selectedDate) => {
             setEndsAt(selectedDate)
           }}
-        /> */}
+        />
+      </View>
 
-      <Text>Radius</Text>
-      <Picker
-        label="Radius"
-        selectedValue={newRadius}
-        onValueChange={itemValue => setNewRadius(itemValue)}>
-        <Picker.Item label="1 Mile" value={1} />
-        <Picker.Item label="2 Miles" value={2} />
-        <Picker.Item label="3 Miles" value={3} />
-        <Picker.Item label="4 Miles" value={4} />
-        <Picker.Item label="5 Miles" value={5} />
-      </Picker>
+      <ScrollView style={styles.elementContainer}>
+        <Text>Radius</Text>
+        <View style={styles.container}>
+          <Picker
+            label="Radius"
+            selectedValue={newRadius}
+            onValueChange={itemValue => setNewRadius(itemValue)}>
+            <Picker.Item label="1 Mile" value={1} />
+            <Picker.Item label="2 Miles" value={2} />
+            <Picker.Item label="3 Miles" value={3} />
+            <Picker.Item label="4 Miles" value={4} />
+            <Picker.Item label="5 Miles" value={5} />
+          </Picker>
+        </View>
+      </ScrollView>
 
       <Pressable onPress={save} style={styles.button}>
         <Text>Save</Text>
@@ -155,6 +169,9 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 10,
+  },
+  elementContainer: {
+    marginVertical: 10,
   },
   button: {
     backgroundColor: '#F63A6E',

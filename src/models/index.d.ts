@@ -32,6 +32,7 @@ type EagerFeast = {
   readonly long: number;
   readonly radius: number;
   readonly userID: string;
+  readonly places?: (Place | null)[] | null;
   readonly updatedAt?: string | null;
 }
 
@@ -44,6 +45,7 @@ type LazyFeast = {
   readonly long: number;
   readonly radius: number;
   readonly userID: string;
+  readonly places: AsyncCollection<Place>;
   readonly updatedAt?: string | null;
 }
 
@@ -56,14 +58,15 @@ export declare const Feast: (new (init: ModelInit<Feast, FeastMetaData>) => Feas
 type EagerPlace = {
   readonly id: string;
   readonly placeID: string;
-  readonly name?: string | null;
-  readonly types?: (string | null)[] | null;
-  readonly address?: string | null;
-  readonly open?: boolean | null;
-  readonly price?: number | null;
-  readonly rating?: number | null;
-  readonly ratingsTotal?: number | null;
-  readonly photo?: string | null;
+  readonly name: string;
+  readonly price?: string | null;
+  readonly rating?: string | null;
+  readonly ratingsTotal?: string | null;
+  readonly stars?: string | null;
+  readonly photos?: (string | null)[] | null;
+  readonly description?: string | null;
+  readonly feastID: string;
+  readonly votes?: (Vote | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -71,14 +74,15 @@ type EagerPlace = {
 type LazyPlace = {
   readonly id: string;
   readonly placeID: string;
-  readonly name?: string | null;
-  readonly types?: (string | null)[] | null;
-  readonly address?: string | null;
-  readonly open?: boolean | null;
-  readonly price?: number | null;
-  readonly rating?: number | null;
-  readonly ratingsTotal?: number | null;
-  readonly photo?: string | null;
+  readonly name: string;
+  readonly price?: string | null;
+  readonly rating?: string | null;
+  readonly ratingsTotal?: string | null;
+  readonly stars?: string | null;
+  readonly photos?: (string | null)[] | null;
+  readonly description?: string | null;
+  readonly feastID: string;
+  readonly votes: AsyncCollection<Vote>;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -93,7 +97,7 @@ type EagerVote = {
   readonly id: string;
   readonly voteType: VoteType | keyof typeof VoteType;
   readonly userID: string;
-  readonly placeId: string;
+  readonly placeID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }
@@ -102,7 +106,7 @@ type LazyVote = {
   readonly id: string;
   readonly voteType: VoteType | keyof typeof VoteType;
   readonly userID: string;
-  readonly placeId: string;
+  readonly placeID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
 }

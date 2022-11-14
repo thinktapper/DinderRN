@@ -7,19 +7,21 @@ type Feast @model @auth(rules: [{allow: public}]) {
   long: Float!
   radius: Int!
   userID: ID! @index(name: "byUser")
+  places: [Place] @hasMany(indexName: "byFeast", fields: ["id"])
 }
 
 type Place @model @auth(rules: [{allow: public}]) {
   id: ID!
   placeID: String!
-  name: String
-  types: [String]
-  address: String
-  open: Boolean
-  price: Int
-  rating: Float
-  ratingsTotal: Int
-  photo: String
+  name: String!
+  price: String
+  rating: String
+  ratingsTotal: String
+  stars: String
+  photos: [String]
+  description: String
+  feastID: ID! @index(name: "byFeast")
+  votes: [Vote] @hasMany(indexName: "byPlace", fields: ["id"])
 }
 
 enum VoteType {
@@ -31,7 +33,7 @@ type Vote @model @auth(rules: [{allow: public}]) {
   id: ID!
   voteType: VoteType!
   userID: ID! @index(name: "byUser")
-  placeId: String!
+  placeID: ID! @index(name: "byPlace")
 }
 
 type User @model @auth(rules: [{allow: public}]) {

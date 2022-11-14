@@ -59,6 +59,20 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
+                "places": {
+                    "name": "places",
+                    "isArray": true,
+                    "type": {
+                        "model": "Place"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "feastID"
+                    }
+                },
                 "updatedAt": {
                     "name": "updatedAt",
                     "isArray": false,
@@ -123,58 +137,72 @@ export const schema = {
                     "name": "name",
                     "isArray": false,
                     "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "types": {
-                    "name": "types",
-                    "isArray": true,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": [],
-                    "isArrayNullable": true
-                },
-                "address": {
-                    "name": "address",
-                    "isArray": false,
-                    "type": "String",
-                    "isRequired": false,
-                    "attributes": []
-                },
-                "open": {
-                    "name": "open",
-                    "isArray": false,
-                    "type": "Boolean",
-                    "isRequired": false,
+                    "isRequired": true,
                     "attributes": []
                 },
                 "price": {
                     "name": "price",
                     "isArray": false,
-                    "type": "Int",
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
                 "rating": {
                     "name": "rating",
                     "isArray": false,
-                    "type": "Float",
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
                 "ratingsTotal": {
                     "name": "ratingsTotal",
                     "isArray": false,
-                    "type": "Int",
+                    "type": "String",
                     "isRequired": false,
                     "attributes": []
                 },
-                "photo": {
-                    "name": "photo",
+                "stars": {
+                    "name": "stars",
                     "isArray": false,
                     "type": "String",
                     "isRequired": false,
                     "attributes": []
+                },
+                "photos": {
+                    "name": "photos",
+                    "isArray": true,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true
+                },
+                "description": {
+                    "name": "description",
+                    "isArray": false,
+                    "type": "String",
+                    "isRequired": false,
+                    "attributes": []
+                },
+                "feastID": {
+                    "name": "feastID",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": true,
+                    "attributes": []
+                },
+                "votes": {
+                    "name": "votes",
+                    "isArray": true,
+                    "type": {
+                        "model": "Vote"
+                    },
+                    "isRequired": false,
+                    "attributes": [],
+                    "isArrayNullable": true,
+                    "association": {
+                        "connectionType": "HAS_MANY",
+                        "associatedWith": "placeID"
+                    }
                 },
                 "createdAt": {
                     "name": "createdAt",
@@ -199,6 +227,15 @@ export const schema = {
                 {
                     "type": "model",
                     "properties": {}
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byFeast",
+                        "fields": [
+                            "feastID"
+                        ]
+                    }
                 },
                 {
                     "type": "auth",
@@ -244,10 +281,10 @@ export const schema = {
                     "isRequired": true,
                     "attributes": []
                 },
-                "placeId": {
-                    "name": "placeId",
+                "placeID": {
+                    "name": "placeID",
                     "isArray": false,
-                    "type": "String",
+                    "type": "ID",
                     "isRequired": true,
                     "attributes": []
                 },
@@ -281,6 +318,15 @@ export const schema = {
                         "name": "byUser",
                         "fields": [
                             "userID"
+                        ]
+                    }
+                },
+                {
+                    "type": "key",
+                    "properties": {
+                        "name": "byPlace",
+                        "fields": [
+                            "placeID"
                         ]
                     }
                 },
@@ -451,5 +497,5 @@ export const schema = {
     },
     "nonModels": {},
     "codegenVersion": "3.3.1",
-    "version": "c547484fad15e73fc14c02880463aedf"
+    "version": "e85b18971b1f7a607604d350b25d02db"
 };

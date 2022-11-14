@@ -6,6 +6,8 @@ import React, {
   useEffect,
 } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { DataStore } from 'aws-amplify'
+import { Feast } from '../models'
 import { GOOGLE_API } from '@env'
 
 const storageKey = 'my-app-data'
@@ -35,10 +37,12 @@ const AppContext = createContext({})
 
 export const AppProvider = ({ children }) => {
   const [feastName, setFeastName] = useState('')
+  const [feastAddress, setFeastAddress] = useState('')
   const [lat, setLat] = useState(0)
   const [long, setLong] = useState(0)
   const [radius, setRadius] = useState(1)
   const [places, setPlaces] = useState([])
+  const [newEndsAt, setNewEndsAt] = useState('')
 
   const getCoords = details => {
     // console.warn(details)
@@ -140,18 +144,50 @@ export const AppProvider = ({ children }) => {
     }
   }, [])
 
-  const handleSaveFeast = useCallback(async ({ newFeastName, newRadius }) => {
-    setFeastName(newFeastName)
-    setRadius(newRadius)
-
+  const handleSaveDataStore = useCallback(async () => {
+    // create a new feast in DataStore
     try {
-      const newPlaces = await handleGetPlaces()
-      setPlaces(newPlaces)
-      await setAppData({ feastName: newFeastName, places: newPlaces })
+      const newFeast = new Feast({
+        name: feastName,
+        endsAt: newEndsAt,
+        lat,
+        long,
+        radius,
+      })
+      await DataStore.save(newFeast)
+      return newFeast
     } catch (err) {
-      console.log(`Error saving feast: ${err}`)
+      console.log(`Error saving new feast: ${err}`)
     }
   }, [])
+
+  const handleSaveFeast = useCallback(
+    async ({ newFeastName, newFeastAddress, newRadius, endsAt }) => {
+      setFeastName(newFeastName)
+      setFeastAddress(newFeastAddress)
+      setRadius(newRadius)
+      setNewEndsAt(endsAt.toISOString())
+
+      try {
+        const newPlaces = await handleGetPlaces()
+        setPlaces(newPlaces)
+
+        await setAppData({
+          feastName: newFeastName,
+          feastAddress: newFeastAddress,
+          places: newPlaces,
+          endsAt: newEndsAt,
+        })
+
+        // create a new feast in DataStore
+        const dbResult = await handleSaveDataStore()
+        console.log(`Saved new feast in db: ${dbResult}`)
+      } catch (err) {
+        console.log(`Error saving feast: ${err.message}`)
+      }
+    },
+    [],
+  )
 
   useEffect(() => {
     const getDataFromStorage = async () => {

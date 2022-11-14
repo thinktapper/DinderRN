@@ -94,8 +94,3 @@ const styles = StyleSheet.create({
 })
 
 export default PlaceCard
-
-// I also have a CardImageCarousel component that is used in the PlaceCard component.
-// I have been trying to figure out how to make the carousel work like in the Tinder card example.
-// I have also tried using the onTapCard prop, but that didn’t seem to work either.
-// Any help would be greatly appreciated!

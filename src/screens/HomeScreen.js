@@ -7,7 +7,7 @@ import {
   Image,
   StyleSheet,
 } from 'react-native'
-import Animated from 'react-native-reanimated'
+// import Animated from 'react-native-reanimated'
 import tw from 'twrnc'
 import {
   AntDesign,
@@ -21,15 +21,15 @@ import { Auth, DataStore } from 'aws-amplify'
 // import users from '../../assets/data/users'
 import { User } from '../models'
 import { Vote, VoteType } from '../models'
-import { GOOGLE_API } from '@env'
+// import { GOOGLE_API } from '@env'
 import Swiper from 'react-native-deck-swiper'
 import { useAppContext } from '../context/AppProvider'
-import CardImageSteps from '../components/CardImageSteps'
-import CardImageCarousel from '../components/CardImageCarousel'
-import { StoryContainer } from 'react-native-stories-view'
+// import CardImageSteps from '../components/CardImageSteps'
+// import CardImageCarousel from '../components/CardImageCarousel'
+// import { StoryContainer } from 'react-native-stories-view'
 import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
-import MainCard from '../components/MainCard'
+// import MainCard from '../components/MainCard'
 
 const HomeScreen = ({ navigation }) => {
   const appContext = useAppContext()
