@@ -6,9 +6,10 @@ import React, {
   useEffect,
 } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { DataStore } from 'aws-amplify'
-import { Feast } from '../models'
+import { Auth, DataStore } from 'aws-amplify'
+import { Feast, Place } from '../models'
 import { GOOGLE_API } from '@env'
+import cuid from 'cuid'
 
 const storageKey = 'my-app-data'
 
@@ -36,28 +37,32 @@ const getAppData = async () => {
 const AppContext = createContext({})
 
 export const AppProvider = ({ children }) => {
+  const [feast, setFeast] = useState(null)
   const [feastName, setFeastName] = useState('')
-  const [feastAddress, setFeastAddress] = useState('')
-  const [lat, setLat] = useState(0)
-  const [long, setLong] = useState(0)
+  const [feastAddress, setFeastAddress] = useState(null)
+  // const [lat, setLat] = useState(0)
+  // const [long, setLong] = useState(0)
+  const [coords, setCoords] = useState({ lat: 0, long: 0 })
   const [radius, setRadius] = useState(1)
   const [places, setPlaces] = useState([])
-  const [newEndsAt, setNewEndsAt] = useState('')
+  const [endsAt, setEndsAt] = useState(null)
 
-  const getCoords = details => {
-    // console.warn(details)
+  const getCoords = useCallback(details => {
     try {
-      setLat(details.geometry.location.lat)
-      setLong(details.geometry.location.lng)
-    } catch (error) {
-      console.warn(`Could not set coords: ${error}`)
+      // setLat(details.geometry.location.lat)
+      // setLong(details.geometry.location.lng)
+      setCoords({
+        lat: details.geometry.location.lat,
+        long: details.geometry.location.lng,
+      })
+      console.debug(`Coords set: ${coords.lat}, ${coords.long}`)
+    } catch (err) {
+      console.warn(`Could not set coords: ${err}`)
     }
-    // } finally {
-    //   console.warn(`Latitude set to: ${lat}, Longitude set to: ${long}`)
-    // }
-  }
+  }, [])
 
   const handleGetPlaces = useCallback(async () => {
+    const { lat, long } = coords
     const distance = radius * 1609.34
     const googlePlacesBaseUrl = 'https://maps.googleapis.com/maps/api/place'
     const searchUrl = `${googlePlacesBaseUrl}/textsearch/json?query=restaurants&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
@@ -74,13 +79,7 @@ export const AppProvider = ({ children }) => {
         let fetchedPlaces = []
         let arrPlaceDetails = []
 
-        // data.results.forEach(place => {
-        //   arrPlaceDetails.push(
-        //     fetch(
-        //       `${googlePlacesBaseUrl}/details/json?place_id=${result.place_id}&fields=${fields}&key=${GOOGLE_API}`,
-        //     ),
-        //   )
-        // })
+        // get place details for each place
         for (result of data.results) {
           arrPlaceDetails.push(
             fetch(
@@ -94,8 +93,6 @@ export const AppProvider = ({ children }) => {
         for (let pr of arrDetailsResults) {
           let data = await pr.json()
           let googlePlace = data.result
-
-          console.log(`googlePlace (stringified): ${googlePlace}`)
           let place = {}
           let gallery = await googlePlace.photos?.map(
             photo =>
@@ -121,7 +118,7 @@ export const AppProvider = ({ children }) => {
             }
           }
 
-          place.placeID = googlePlace.place_id
+          place.googleID = googlePlace.place_id
           place.name = googlePlace.name
           place.price = pl
           place.rating = googlePlace.rating || 'No ratings'
@@ -134,66 +131,108 @@ export const AppProvider = ({ children }) => {
         }
 
         // Set fetchedPlaces array to state
-        // TODO: save places to DataStore
-        console.log(fetchedPlaces)
+        // console.log(fetchedPlaces)
         // setPlaces(fetchedPlaces)
         return fetchedPlaces
       }
     } catch (error) {
       console.error(`Error fetching places from Google: ${error}`)
     }
-  }, [])
+  }, [setFeastName])
 
-  const handleSaveDataStore = useCallback(async () => {
-    // create a new feast in DataStore
+  // const handleSaveDataStore = async () => {
+  //   // create a new feast in DataStore
+  //   try {
+  //     const { lat, long } = coords
+  //     const user = await Auth.currentAuthenticatedUser()
+
+  //     const newFeast = await DataStore.save(
+  //       new Feast({
+  //         name: feastName,
+  //         endsAt: endsAt,
+  //         lat: lat,
+  //         long: long,
+  //         radius: radius,
+  //         userID: user.attributes.sub,
+  //         // organizer: user.attributes.id,
+  //       }),
+  //     )
+  //     console.log(`New feast created: ${{ newFeast }}`)
+  //     setFeast(newFeast)
+  //     // console.debug(`Feast set to: ${feast}`)
+
+  //     // // fetch places from Google
+  //     // const newPlaces = await handleGetPlaces()
+  //     // setPlaces(newPlaces)
+
+  //     // save places to DataStore
+  //     for (let place of places) {
+  //       await DataStore.save(
+  //         new Place({
+  //           googleID: place.googleID,
+  //           name: place.name,
+  //           price: place.price,
+  //           rating: place.rating.toString(),
+  //           ratingsTotal: place.ratingsTotal,
+  //           stars: place.stars,
+  //           photos: place.photos,
+  //           description: place.description,
+  //           feastID: newFeast.id,
+  //         }),
+  //       )
+  //     }
+  //     console.debug(`Places saved to DataStore`)
+
+  //     // save feast to AsyncStorage
+  //     await setAppData({
+  //       feastName: feastName,
+  //       feastAddress: feastAddress,
+  //       places: places,
+  //       endsAt: endsAt,
+  //     })
+
+  //     // return newFeast
+  //     return newFeast
+  //   } catch (err) {
+  //     console.log(`Error saving new feast: ${err.message}`)
+  //   }
+  // }
+
+  const handleSaveFeast = async ({
+    newFeastName,
+    newFeastAddress,
+    newRadius,
+    newEndsAt,
+  }) => {
     try {
-      const newFeast = new Feast({
-        name: feastName,
-        endsAt: newEndsAt,
-        lat,
-        long,
-        radius,
-      })
-      await DataStore.save(newFeast)
-      return newFeast
-    } catch (err) {
-      console.log(`Error saving new feast: ${err}`)
-    }
-  }, [])
-
-  const handleSaveFeast = useCallback(
-    async ({ newFeastName, newFeastAddress, newRadius, endsAt }) => {
       setFeastName(newFeastName)
       setFeastAddress(newFeastAddress)
       setRadius(newRadius)
-      setNewEndsAt(endsAt.toISOString())
+      setEndsAt(newEndsAt)
+      console.debug('New feast variables set in state')
 
-      try {
-        const newPlaces = await handleGetPlaces()
-        setPlaces(newPlaces)
+      // fetch places from Google
+      const newPlaces = await handleGetPlaces()
+      setPlaces(newPlaces)
+      console.debug('Places fetched from Google and set to state')
 
-        await setAppData({
-          feastName: newFeastName,
-          feastAddress: newFeastAddress,
-          places: newPlaces,
-          endsAt: newEndsAt,
-        })
-
-        // create a new feast in DataStore
-        const dbResult = await handleSaveDataStore()
-        console.log(`Saved new feast in db: ${dbResult}`)
-      } catch (err) {
-        console.log(`Error saving feast: ${err.message}`)
-      }
-    },
-    [],
-  )
+      // create a new feast in DataStore
+      // const DSResult = await handleSaveDataStore()
+      // if (DSResult) {
+      //   console.log(`New feast saved to DataStore: ${DSResult}`)
+      // }
+      return newPlaces
+    } catch (err) {
+      console.log(`Error saving feast: ${err.message}`)
+    }
+  }
 
   useEffect(() => {
     const getDataFromStorage = async () => {
       const data = await getAppData()
       if (data) {
         setFeastName(data.feastName)
+        setFeastAddress(data.feastAddress)
         setPlaces(data.places)
       }
     }
@@ -206,14 +245,17 @@ export const AppProvider = ({ children }) => {
   return (
     <AppContext.Provider
       value={{
+        feast,
         feastName,
-        lat,
-        long,
+        feastAddress,
+        coords,
+        endsAt,
         radius,
         places,
         getCoords,
-        handleGetPlaces,
+        // handleGetPlaces,
         handleSaveFeast,
+        // handleSaveDataStore,
       }}>
       {children}
     </AppContext.Provider>

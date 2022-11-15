@@ -11,8 +11,8 @@ import {
 } from 'react-native'
 import tw from 'twrnc'
 import { Picker } from '@react-native-picker/picker'
-import { DataStore } from 'aws-amplify'
-import { Feast } from '../models'
+import { Auth, DataStore } from 'aws-amplify'
+import { Feast, Place, FeastUser } from '../models'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
@@ -21,24 +21,104 @@ import { useAppContext } from '../context/AppProvider'
 
 const FeastScreen = ({ navigation }) => {
   const appContext = useAppContext()
-  const [newFeastName, setNewFeastName] = useState(appContext.feastName)
-  const [newFeastAddress, setNewFeastAddress] = useState(
-    appContext.feastAddress,
-  )
-  const [newRadius, setNewRadius] = useState(appContext.radius)
-  const [endsAt, setEndsAt] = useState(new Date())
+  const [newFeastName, setNewFeastName] = useState('')
+  const [newFeastAddress, setNewFeastAddress] = useState('')
+  const [newRadius, setNewRadius] = useState(1)
+  const [newEndsAt, setNewEndsAt] = useState(new Date())
+  const feastAddress = appContext.feastAddress
+  const feastName = appContext.feastName
+  const radius = appContext.radius
+  const date = appContext.endsAt
+  const { lat, long } = appContext.coords
 
   const autocompleteRef = useRef()
 
+  // const handleFeastNameChange = text => {
+  //   setNewFeastName(text)
+  // }
+
+  // const handleFeastAddressChange = text => {
+  //   setNewFeastAddress(text)
+  // }
+
+  // const handleRadiusChange = text => {
+  //   setNewRadius(text)
+  // }
+
+  // const handleEndsAtChange = text => {
+  //   setNewEndsAt(text)
+  // }
+
+  // create a new feast in DataStore
+  const createDataStoreFeast = async () => {
+    try {
+      const user = await Auth.currentAuthenticatedUser({ bypassCache: true })
+
+      const newFeast = await DataStore.save(
+        new Feast({
+          name: appContext.feastName,
+          endsAt: appContext.date,
+          lat: appContext.coords.lat,
+          long: appContext.coords.long,
+          radius: appContext.radius,
+          organizerID: user.attributes.sub,
+          // organizer: user.attributes.id,
+        }),
+      )
+      if (newFeast) {
+        Object.entries(newFeast).forEach(([key, value]) =>
+          console.log(`${key}: ${value}`),
+        )
+      }
+      // console.debug(`New feast created: ${result}`)
+      // setFeast(newFeast)
+      // console.debug(`Feast set to: ${feast}`)
+
+      // // fetch places from Google
+      // const newPlaces = await handleGetPlaces()
+      // setPlaces(newPlaces)
+
+      // save places to DataStore
+      for (let place of appContext.places) {
+        await DataStore.save(
+          new Place({
+            googleID: place.googleID,
+            name: place.name,
+            price: place.price,
+            rating: place.rating.toString(),
+            ratingsTotal: place.ratingsTotal,
+            stars: place.stars,
+            photos: [...place.photos],
+            description: place.description,
+            feastID: newFeast.id,
+          }),
+        )
+      }
+      console.debug(`Places saved to DataStore`)
+
+      // save feast to AsyncStorage
+      // await setAppData({
+      //   feastName: feastName,
+      //   feastAddress: feastAddress,
+      //   places: places,
+      //   endsAt: endsAt,
+      // })
+
+      // return newFeast
+    } catch (err) {
+      console.log(`Error saving new feast to db: ${err.message}`)
+    }
+  }
+
   useEffect(() => {
     // Set google places autocomplete address from context
-    if (appContext.feastAddress) {
-      autocompleteRef.current?.setAddressText(appContext.feastAddress)
+    if (feastAddress) {
+      autocompleteRef.current?.setAddressText(feastAddress)
     }
   }, [])
 
   const isValid = () => {
-    return newFeastName && endsAt && newRadius
+    return newFeastName && newEndsAt && newRadius
   }
 
   const save = async () => {
@@ -47,17 +127,24 @@ const FeastScreen = ({ navigation }) => {
       return
     }
     // Get new feast address from google places autocomplete
-    const address = await autocompleteRef.current?.getAddressText()
-    setNewFeastAddress(address)
+    // const address = await autocompleteRef.current?.getAddressText()
+    // setNewFeastAddress(address)
 
     // Save feast to context + db and navigate to home
     try {
-      await appContext.handleSaveFeast({
+      const localSave = await appContext.handleSaveFeast({
         newFeastName,
         newFeastAddress,
         newRadius,
-        endsAt,
+        newEndsAt,
       })
+      if (localSave) {
+        // const result = await appContext.handleSaveDataStore()
+        // if (result) {
+        //   console.log('Saved feast to db:', result)
+        // }
+        const dbSave = await createDataStoreFeast()
+      }
 
       Alert.alert('Feast info saved successfully')
 
@@ -90,6 +177,7 @@ const FeastScreen = ({ navigation }) => {
         onPress={(data, details = null) => {
           // 'details' is provided when fetchDetails = true
           appContext.getCoords(details)
+          setNewFeastAddress(details.formatted_address)
           // setNewFeastAddress(autocompleteRef.current?.getAddressText())
         }}
         query={{
@@ -111,11 +199,11 @@ const FeastScreen = ({ navigation }) => {
         <RNDateTimePicker
           // display="inline"
           mode="date"
-          value={endsAt}
+          value={newEndsAt}
           minimumDate={new Date()}
           style={tw`flex-1 w-full mt-2`}
           onChange={(e, selectedDate) => {
-            setEndsAt(selectedDate)
+            setNewEndsAt(selectedDate)
           }}
         />
       </View>
