@@ -9,7 +9,7 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "lint": "eslint .",
-    "format": "prettier --write \"**/*.{js,json,md,ts,tsx,jsx,css}\""
+    "format": "prettier --write \"**/*.{js,json,jsx,css}\""
   },
   "dependencies": {
     "@expo/webpack-config": "^0.17.0",
