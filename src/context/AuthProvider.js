@@ -6,6 +6,8 @@ import { Alert } from 'react-native'
 // import { me, login, signup } from '../utils/auth'
 import * as SecureStore from 'expo-secure-store'
 import axios from 'axios'
+import { useQuery, useMutation } from 'react-query'
+import { getMe } from '../utils/authApi'
 
 const SECURE_AUTH_STORAGE_KEY = 'WetSpot'
 
@@ -13,8 +15,40 @@ const AuthContext = createContext({})
 
 export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({})
-  const [isLoading, setIsLoading] = useState(false)
+  // const [isLoading, setIsLoading] = useState(false)
   const [splashLoading, setSplashLoading] = useState(false)
+
+  const query = useQuery(['authUser'], () => getMe(), {
+    enables: !!userInfo.accessToken,
+    select: (data) => data.data.user,
+    onSuccess: (data) => {
+      setUserInfo(data)
+    },
+  })
+
+  const {
+    mutate: loginUser,
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+  } = useMutation((userData) => loginUser(userData), {
+    onSuccess: () => {
+      query.refetch()
+    },
+  })
+
+  const { isSuccess, isLoading, refetch, isError, error, data } = useQuery(
+    ['authUser'],
+    getMe,
+    {
+      enabled: false,
+      select: (data) => {},
+      retry: 1,
+      onSuccess: (data) => {},
+      onError: (error) => {},
+    },
+  )
 
   const signup = (username, email, password) => {
     setIsLoading(true)
