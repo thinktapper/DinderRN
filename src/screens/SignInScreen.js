@@ -11,13 +11,12 @@ import tw from 'twrnc'
 import Logo from '../../assets/images/dinder-double_flame-black.png'
 import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
-import { useNavigation } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form'
-import { Auth } from 'aws-amplify'
+import { useAuthContext } from '../context/AuthProvider'
 
-const SignInScreen = () => {
+const SignInScreen = ({ navigation }) => {
+  const authContext = useAuthContext()
   const { height } = useWindowDimensions()
-  const navigation = useNavigation()
   const [loading, setLoading] = useState(false)
 
   const {
@@ -26,30 +25,28 @@ const SignInScreen = () => {
     formState: { errors },
   } = useForm()
 
-  const onSignInPressed = async data => {
+  const onSignInPressed = async (data) => {
     if (loading) {
       return
     }
-
     setLoading(true)
     try {
-      const response = await Auth.signIn(data.username, data.password)
-      console.log(response)
+      const result = await authContext.login(data.username, data.password)
+      if (result.ok) {
+        authContext.setUser(result)
+      }
     } catch (error) {
       Alert.alert('Oops!', error.message)
     }
     setLoading(false)
+    navigation.navigate('Home')
   }
 
   const onSignUpPressed = () => {
-    // console.warn('Sign Up Pressed')
-
     navigation.navigate('SignUp')
   }
 
   const onForgotPasswordPressed = () => {
-    // console.warn('Forgot Password Pressed')
-
     navigation.navigate('ForgotPassword')
   }
 

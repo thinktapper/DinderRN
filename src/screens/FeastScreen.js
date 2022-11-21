@@ -11,8 +11,6 @@ import {
 } from 'react-native'
 import tw from 'twrnc'
 import { Picker } from '@react-native-picker/picker'
-import { Auth, DataStore } from 'aws-amplify'
-import { Feast, Place, FeastUser } from '../models'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
@@ -184,7 +182,7 @@ const FeastScreen = ({ navigation }) => {
           key: GOOGLE_API,
           language: 'en',
         }}
-        onFail={error => console.log(error)}
+        onFail={(error) => console.log(error)}
         onNotFound={() => console.warn('no results')}
         listEmptyComponent={() => (
           <View style={{ flex: 1 }}>
@@ -214,7 +212,7 @@ const FeastScreen = ({ navigation }) => {
           <Picker
             label="Radius"
             selectedValue={newRadius}
-            onValueChange={itemValue => setNewRadius(itemValue)}>
+            onValueChange={(itemValue) => setNewRadius(itemValue)}>
             <Picker.Item label="1 Mile" value={1} />
             <Picker.Item label="2 Miles" value={2} />
             <Picker.Item label="3 Miles" value={3} />

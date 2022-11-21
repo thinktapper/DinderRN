@@ -9,39 +9,39 @@ import {
   TextInput,
   Alert,
 } from 'react-native'
-import { Auth, DataStore } from 'aws-amplify'
-import { User } from '../models/'
-import { useAppContext } from '../context/AppProvider'
+// import { useAppContext } from '../context/AppProvider'
+import { useAuthContext } from '../context/AuthProvider'
 
 const ProfileScreen = ({ navigation }) => {
-  const appContext = useAppContext()
+  // const appContext = useAppContext()
+  const authContext = useAuthContext()
   const [user, setUser] = useState(null)
   const [name, setName] = useState('')
   const [bio, setBio] = useState('')
 
-  useEffect(() => {
-    const getCurrentUser = async () => {
-      const authUser = await Auth.currentAuthenticatedUser()
+  // useEffect(() => {
+  //   const getCurrentUser = async () => {
+  //     const authUser = await Auth.currentAuthenticatedUser()
 
-      const dbUsers = await DataStore.query(User, u =>
-        u.sub('eq', authUser.attributes.sub),
-      )
-      if (dbUsers.length < 0) {
-        return
-      }
-      const dbUser = dbUsers[0]
-      setUser(dbUser)
+  //     const dbUsers = await DataStore.query(User, u =>
+  //       u.sub('eq', authUser.attributes.sub),
+  //     )
+  //     if (dbUsers.length < 0) {
+  //       return
+  //     }
+  //     const dbUser = dbUsers[0]
+  //     setUser(dbUser)
 
-      setName(dbUser.name)
-      setBio(dbUser.bio)
-    }
-    getCurrentUser()
-  }, [])
+  //     setName(dbUser.name)
+  //     setBio(dbUser.bio)
+  //   }
+  //   getCurrentUser()
+  // }, [])
 
-  const signOut = async () => {
-    await DataStore.clear()
-    Auth.signOut()
-  }
+  // const signOut = async () => {
+  //   await DataStore.clear()
+  //   Auth.signOut()
+  // }
 
   const isValid = () => {
     return name && bio
@@ -53,35 +53,35 @@ const ProfileScreen = ({ navigation }) => {
       return
     }
 
-    if (user) {
-      const updatedUser = User.copyOf(user, updated => {
-        updated.name = name
-        updated.bio = bio
-        updated.lat = appContext.lat
-        updated.long = appContext.long
-        updated.radius = appContext.radius
-        // updated.places = places
-      })
+    // if (user) {
+    //   const updatedUser = User.copyOf(user, (updated) => {
+    //     updated.name = name
+    //     updated.bio = bio
+    //     updated.lat = appContext.lat
+    //     updated.long = appContext.long
+    //     updated.radius = appContext.radius
+    //     // updated.places = places
+    //   })
 
-      await DataStore.save(updatedUser)
-    } else {
-      // create a new user
-      const authUser = await Auth.currentAuthenticatedUser()
+    //   await DataStore.save(updatedUser)
+    // } else {
+    //   // create a new user
+    //   const authUser = await Auth.currentAuthenticatedUser()
 
-      const newUser = new User({
-        sub: authUser.attributes.sub,
-        name,
-        bio,
-        image: 'https://ptpimg.me/ud7dea.png',
-        lat: appContext.lat,
-        long: appContext.long,
-        radius: appContext.radius,
-      })
-      await DataStore.save(newUser)
-    }
+    //   const newUser = new User({
+    //     sub: authUser.attributes.sub,
+    //     name,
+    //     bio,
+    //     image: 'https://ptpimg.me/ud7dea.png',
+    //     lat: appContext.lat,
+    //     long: appContext.long,
+    //     radius: appContext.radius,
+    //   })
+    //   await DataStore.save(newUser)
+    // }
 
-    Alert.alert('User saved successfully')
-    navigation.navigate('Home')
+    // Alert.alert('User saved successfully')
+    // navigation.navigate('Home')
   }
 
   return (

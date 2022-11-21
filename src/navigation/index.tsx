@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, ActivityIndicator } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { Auth, Hub } from 'aws-amplify'
+import { useAuthContext } from '../context/AuthProvider'
 
 import SignInScreen from '../screens/SignInScreen'
 import SignUpScreen from '../screens/SignUpScreen'
@@ -16,46 +16,21 @@ import ProfileScreen from '../screens/ProfileScreen'
 const Stack = createNativeStackNavigator()
 
 const Navigation = () => {
-  // TODO: Move auth state to context
-  const [user, setUser] = useState(undefined)
+  const authContext = useAuthContext()
+  // const [userInfo, setUserInfo] = useState({})
 
-  // Check user authentication status
-  const checkUser = async () => {
-    try {
-      const authUser = await Auth.currentAuthenticatedUser({
-        bypassCache: true,
-      })
-      setUser(authUser)
-    } catch (error) {
-      setUser(null)
-    }
-  }
-  useEffect(() => {
-    checkUser()
-  }, [])
-
-  useEffect(() => {
-    const listener = data => {
-      if (data.payload.event === 'signIn' || data.payload.event === 'signOut') {
-        checkUser()
-      }
-    }
-    Hub.listen('auth', listener)
-    return () => Hub.remove('auth', listener)
-  }, [])
-
-  if (user === undefined) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator />
-      </View>
-    )
-  }
+  // useEffect(() => {
+  //   async function getUser() {
+  //     const result = await authContext.me()
+  //     authContext.setUser(result)
+  //   }
+  //   getUser()
+  // }, [])
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {user ? (
+        {authContext.user ? (
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Feast" component={FeastScreen} />

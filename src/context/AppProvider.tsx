@@ -6,14 +6,11 @@ import React, {
   useEffect,
 } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Auth, DataStore } from 'aws-amplify'
-import { Feast, Place } from '../models'
 import { GOOGLE_API } from '@env'
-import cuid from 'cuid'
 
-const storageKey = 'my-app-data'
+const storageKey = 'app-data'
 
-const setAppData = async newData => {
+const setAppData = async (newData) => {
   try {
     await AsyncStorage.setItem(storageKey, JSON.stringify(newData))
   } catch (err) {
@@ -42,27 +39,27 @@ export const AppProvider = ({ children }) => {
   const [feastAddress, setFeastAddress] = useState(null)
   // const [lat, setLat] = useState(0)
   // const [long, setLong] = useState(0)
-  const [coords, setCoords] = useState({ lat: 0, long: 0 })
+  const [location, setLocation] = useState({ lat: 0, long: 0 })
   const [radius, setRadius] = useState(1)
   const [places, setPlaces] = useState([])
   const [endsAt, setEndsAt] = useState(null)
 
-  const getCoords = useCallback(details => {
+  const getCoords = (details) => {
     try {
       // setLat(details.geometry.location.lat)
       // setLong(details.geometry.location.lng)
-      setCoords({
+      setLocation({
         lat: details.geometry.location.lat,
         long: details.geometry.location.lng,
       })
-      console.debug(`Coords set: ${coords.lat}, ${coords.long}`)
+      console.debug(`Coords set: ${location.lat}, ${location.long}`)
     } catch (err) {
       console.warn(`Could not set coords: ${err}`)
     }
-  }, [])
+  }
 
   const handleGetPlaces = useCallback(async () => {
-    const { lat, long } = coords
+    const { lat, long } = location
     const distance = radius * 1609.34
     const googlePlacesBaseUrl = 'https://maps.googleapis.com/maps/api/place'
     const searchUrl = `${googlePlacesBaseUrl}/textsearch/json?query=restaurants&locationbias=circle%3A${distance}%40${lat}%2C${long}&key=${GOOGLE_API}`
@@ -80,7 +77,7 @@ export const AppProvider = ({ children }) => {
         let arrPlaceDetails = []
 
         // get place details for each place
-        for (result of data.results) {
+        for (let result of data.results) {
           arrPlaceDetails.push(
             fetch(
               `${googlePlacesBaseUrl}/details/json?place_id=${result.place_id}&fields=${fields}&key=${GOOGLE_API}`,
@@ -95,7 +92,7 @@ export const AppProvider = ({ children }) => {
           let googlePlace = data.result
           let place = {}
           let gallery = await googlePlace.photos?.map(
-            photo =>
+            (photo) =>
               `${googlePlacesBaseUrl}/photo?maxwidth=600&photoreference=${photo.photo_reference}&key=${GOOGLE_API}`,
           )
           let summary = googlePlace.editorial_summary
@@ -138,7 +135,7 @@ export const AppProvider = ({ children }) => {
     } catch (error) {
       console.error(`Error fetching places from Google: ${error}`)
     }
-  }, [setFeastName])
+  }, [location, radius])
 
   // const handleSaveDataStore = async () => {
   //   // create a new feast in DataStore
@@ -248,7 +245,7 @@ export const AppProvider = ({ children }) => {
         feast,
         feastName,
         feastAddress,
-        coords,
+        location,
         endsAt,
         radius,
         places,
