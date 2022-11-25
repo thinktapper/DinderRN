@@ -11,14 +11,16 @@ import tw from 'twrnc'
 import Logo from '../../assets/images/dinder-double_flame-black.png'
 import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
-import { useNavigation } from '@react-navigation/native'
 import { useForm, Controller } from 'react-hook-form'
-import { Auth } from 'aws-amplify'
+import { useAuthContext } from '../context/AuthProvider'
 
-const SignInScreen = () => {
+const SignInScreen = ({ navigation }) => {
+  const authContext = useAuthContext()
   const { height } = useWindowDimensions()
-  const navigation = useNavigation()
   const [loading, setLoading] = useState(false)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
 
   const {
     control,
@@ -26,30 +28,25 @@ const SignInScreen = () => {
     formState: { errors },
   } = useForm()
 
-  const onSignInPressed = async data => {
+  const onSignInPressed = async (data) => {
     if (loading) {
       return
     }
-
     setLoading(true)
     try {
-      const response = await Auth.signIn(data.username, data.password)
-      console.log(response)
+      authContext.login(data.username, data.password)
     } catch (error) {
       Alert.alert('Oops!', error.message)
     }
     setLoading(false)
+    // navigation.navigate('Home')
   }
 
   const onSignUpPressed = () => {
-    // console.warn('Sign Up Pressed')
-
     navigation.navigate('SignUp')
   }
 
   const onForgotPasswordPressed = () => {
-    // console.warn('Forgot Password Pressed')
-
     navigation.navigate('ForgotPassword')
   }
 
@@ -65,6 +62,7 @@ const SignInScreen = () => {
         <CustomInput
           name="username"
           placeholder="username"
+          capitalize="none"
           control={control}
           rules={{ required: 'Username is required' }}
         />

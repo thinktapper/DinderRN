@@ -7,7 +7,7 @@ import {
   Image,
   StyleSheet,
 } from 'react-native'
-import Animated from 'react-native-reanimated'
+// import Animated from 'react-native-reanimated'
 import tw from 'twrnc'
 import {
   AntDesign,
@@ -17,26 +17,17 @@ import {
   Fontisto,
   MaterialCommunityIcons,
 } from '@expo/vector-icons'
-import { Auth, DataStore } from 'aws-amplify'
 // import users from '../../assets/data/users'
-import { User } from '../models'
-import { Vote, VoteType } from '../models'
-import { GOOGLE_API } from '@env'
 import Swiper from 'react-native-deck-swiper'
 import { useAppContext } from '../context/AppProvider'
-import CardImageSteps from '../components/CardImageSteps'
-import CardImageCarousel from '../components/CardImageCarousel'
-import { StoryContainer } from 'react-native-stories-view'
 import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
-import MainCard from '../components/MainCard'
 
 const HomeScreen = ({ navigation }) => {
   const appContext = useAppContext()
   const [activeScreen, setActiveScreen] = useState('Home')
   const color = '#b5b5b5'
   const activeColor = '#F76C6B'
-  const { user, signOut } = Auth
   const swipeRef = useRef(null)
   const places = appContext.places
   // const [currentIndex, setCurrentIndex] = useState(0)
@@ -44,7 +35,7 @@ const HomeScreen = ({ navigation }) => {
   const globalPadding = rs(12)
   const wrapperPadding = rs(12)
 
-  const swipeLeft = async cardIndex => {
+  const swipeLeft = async (cardIndex) => {
     if (!places[cardIndex]) return
 
     const placeSwiped = places[cardIndex]
@@ -64,7 +55,7 @@ const HomeScreen = ({ navigation }) => {
     console.warn('swiped NAH on: ', places[cardIndex].name)
   }
 
-  const swipeRight = async cardIndex => {
+  const swipeRight = async (cardIndex) => {
     console.warn('swipe YASS on: ', places[cardIndex].name)
   }
 
@@ -73,18 +64,11 @@ const HomeScreen = ({ navigation }) => {
       {/* Header */}
       <View style={tw`flex-row justify-around w-full p-2.5`}>
         <TouchableOpacity onPress={() => setActiveScreen('Home')}>
-          {user.image ? (
-            <Image
-              source={{ uri: user.image }}
-              style={tw`h-10 w-10 rounded-full`}
-            />
-          ) : (
-            <Fontisto
-              name="tinder"
-              size={30}
-              color={activeScreen === 'Home' ? activeColor : color}
-            />
-          )}
+          <Fontisto
+            name="tinder"
+            size={30}
+            color={activeScreen === 'Home' ? activeColor : color}
+          />
         </TouchableOpacity>
         <MaterialCommunityIcons
           name="star-four-points"
@@ -134,10 +118,10 @@ const HomeScreen = ({ navigation }) => {
             swipeBackCard
             verticalSwipe={false}
             backgroundColor={'#4FD0E9'}
-            onSwipedLeft={cardIndex => swipeLeft(cardIndex)}
-            onSwipedRight={cardIndex => swipeRight(cardIndex)}
+            onSwipedLeft={(cardIndex) => swipeLeft(cardIndex)}
+            onSwipedRight={(cardIndex) => swipeRight(cardIndex)}
             // onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
-            renderCard={card => {
+            renderCard={(card) => {
               // return (
               //   <Animated.View
               //     style={[styles.cardContainer, styles.cardShadow]}>

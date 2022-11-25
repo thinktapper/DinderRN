@@ -1,111 +1,149 @@
-import React, {
-  createContext,
-  useContext,
-  useCallback,
-  useState,
-  useEffect,
-} from 'react'
-import { Auth, Hub, DataStore } from 'aws-amplify'
-import { User } from '../models/'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import React, { createContext, useContext, useState, useEffect } from 'react'
+// import { get, post, createUrl, isStoredJwt, setStoredJwt } from '../utils/http'
+// import { supabase } from '../utils/supabase'
+// import { Session } from '@supabase/supabase-js'
 import { Alert } from 'react-native'
+// import { me, login, signup } from '../utils/auth'
+import * as SecureStore from 'expo-secure-store'
+import axios from 'axios'
+import { useQuery, useMutation } from 'react-query'
+import { getMe } from '../utils/authApi'
+
+const SECURE_AUTH_STORAGE_KEY = 'WetSpot'
 
 const AuthContext = createContext({})
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [userLoading, setUserLoading] = useState(true)
+  const [userInfo, setUserInfo] = useState({})
+  // const [isLoading, setIsLoading] = useState(false)
+  const [splashLoading, setSplashLoading] = useState(false)
 
-  useEffect(() => {
-    // Create listener
-    const listener = Hub.listen('datastore', async hubData => {
-      const { event, data } = hubData.payload
-      if (event === 'modelSynced' && data?.model?.name === 'User') {
-        console.log('User Model has finished syncing')
-        setUserLoading(false)
-      }
-    })
+  const query = useQuery(['authUser'], () => getMe(), {
+    enables: !!userInfo.accessToken,
+    select: (data) => data.data.user,
+    onSuccess: (data) => {
+      setUserInfo(data)
+    },
+  })
 
-    return () => listener()
-  }, [])
+  const {
+    mutate: loginUser,
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+  } = useMutation((userData) => loginUser(userData), {
+    onSuccess: () => {
+      query.refetch()
+    },
+  })
 
-  // useEffect(() => {
-  //   const getCurrentUser = async () => {
-  //     const authUser = await Auth.currentAuthenticatedUser()
+  const { isSuccess, isLoading, refetch, isError, error, data } = useQuery(
+    ['authUser'],
+    getMe,
+    {
+      enabled: false,
+      select: (data) => {},
+      retry: 1,
+      onSuccess: (data) => {},
+      onError: (error) => {},
+    },
+  )
 
-  //     const dbUsers = await DataStore.query(User, u =>
-  //       u.sub('eq', authUser.attributes.sub),
-  //     )
-
-  //     if (!dbUsers || dbUsers.length === 0) {
-  //       console.warn('This is a new user')
-  //       return
-  //     }
-  //     const dbUser = dbUsers[0]
-  //     setUser(dbUser)
-  //     // setName(dbUser.name)
-  //     // setBio(dbUser.bio)
-  //   }
-  //   getCurrentUser()
-  // }, [])
-
-  const handleSignIn = useCallback(async data => {
-    // if (userLoading) {
-    //   return
-    // }
-
-    setUserLoading(true)
-    try {
-      const response = await Auth.signIn(data.username, data.password)
-      // console.log(response)
-      return response
-    } catch (error) {
-      Alert.alert('Oops!', error.message)
-    }
-    setUserLoading(false)
-  }, [])
-
-  const handleSignOut = async () => {
-    await DataStore.clear()
-    Auth.signOut()
-      .then(() => {
-        setUser(null)
-        Alert.alert('Signed Out')
+  const signup = (username, email, password) => {
+    setIsLoading(true)
+    axios
+      .post('http://localhost:3000/signup', {
+        username,
+        email,
+        password,
       })
-      .catch(err => console.log('Error signing out: ', err))
+      .then((response) => {
+        if (response.type === 'success') {
+          let userInfo = response.data
+          setUserInfo(userInfo)
+          const auth = JSON.stringify(userInfo)
+          SecureStore.setItemAsync(SECURE_AUTH_STORAGE_KEY, auth)
+          setIsLoading(false)
+          console.log(userInfo)
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+        setIsLoading(false)
+      })
   }
 
-  // Check user authentication status
-  // const checkUser = useCallback(async () => {
-  //   try {
-  //     const authUser = await Auth.currentAuthenticatedUser({
-  //       bypassCache: true,
-  //     })
-  //     if (authUser) {
-  //       setUser(authUser)
-  //     }
-  //   } catch (error) {
-  //     setUser(null)
-  //   }
-  // }, [])
+  const login = (username, password) => {
+    setIsLoading(true)
+    axios
+      .post('http://localhost:3000/login', {
+        username,
+        password,
+      })
+      .then((response) => {
+        if (response.type === 'success') {
+          let userInfo = response.data
+          console.log(userInfo)
+          setUserInfo(userInfo)
+          const auth = JSON.stringify(userInfo)
+          SecureStore.setItemAsync(SECURE_AUTH_STORAGE_KEY, auth)
+          setIsLoading(false)
+        }
+      })
+      .catch((error) => {
+        console.log(`login error: ${error}`)
+        setIsLoading(false)
+      })
+  }
 
-  // useEffect(() => {
-  //   checkUser()
-  // }, [])
+  const logout = () => {
+    setIsLoading(true)
+    axios
+      .post(
+        'http://localhost:3000/logout',
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        },
+      )
+      .then((response) => {
+        console.log('logout response: ', response)
+        SecureStore.deleteItemAsync(SECURE_AUTH_STORAGE_KEY)
+        setUserInfo({})
+        setIsLoading(false)
+      })
+      .catch((error) => {
+        console.log(`logout error: ${error}`)
+        setIsLoading(false)
+      })
+  }
 
-  // useEffect(() => {
-  //   const listener = data => {
-  //     if (data.payload.event === 'signIn' || data.payload.event === 'signOut') {
-  //       checkUser()
-  //     }
-  //   }
-  //   Hub.listen('auth', listener)
-  //   return () => Hub.remove('auth', listener)
-  // }, [])
+  const isLoggedIn = async () => {
+    try {
+      setSplashLoading(true)
+      let userInfo = await SecureStore.getItemAsync(SECURE_AUTH_STORAGE_KEY)
+      userInfo = JSON.parse(userInfo)
+      if (userInfo) {
+        setUserInfo(userInfo)
+      }
+      setSplashLoading(false)
+    } catch (err) {
+      setSplashLoading(false)
+      console.log(`isLoggedIn error: ${err}`)
+    }
+  }
+
+  useEffect(() => {
+    isLoggedIn()
+  }, [])
 
   return (
     <AuthContext.Provider
-      value={{ user, userLoading, handleSignIn, handleSignOut }}>
+      // eslint-disable-next-line prettier/prettier
+      value={{ isLoading, userInfo, splashLoading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   )

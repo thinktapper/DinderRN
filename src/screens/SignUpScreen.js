@@ -3,31 +3,36 @@ import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native'
 import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
 // import SocialSignInButtons from '../components/SocialSignInButtons'
-import { useNavigation } from '@react-navigation/core'
 import { useForm } from 'react-hook-form'
-import { Auth } from 'aws-amplify'
+import { useAuthContext } from '../context/AuthProvider'
 
 const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 
-const SignUpScreen = () => {
+const SignUpScreen = ({ navigation }) => {
+  const authContext = useAuthContext()
+  const [loading, setLoading] = React.useState(false)
   const { control, handleSubmit, watch } = useForm()
   const pwd = watch('password')
-  const navigation = useNavigation()
 
-  const onRegisterPressed = async data => {
-    const { username, password, email, name } = data
+  const onRegisterPressed = async (data) => {
+    if (loading) {
+      return
+    }
+    const { password, username, email } = data
+    // const username = data.username.toLowerCase()
+
+    setLoading(true)
     try {
-      await Auth.signUp({
-        username,
-        password,
-        attributes: { email, name, preferred_username: username },
-      })
-
-      navigation.navigate('ConfirmEmail', { username })
+      authContext.signup(username, email, password)
+      // authContext.setUser(result)
+      // authContext.setUser(result)
     } catch (e) {
       Alert.alert('Oops', e.message)
     }
+    setLoading(false)
+    navigation.navigate('SignIn')
+    // navigation.navigate('Home')
   }
 
   const onSignInPress = () => {
@@ -39,7 +44,7 @@ const SignUpScreen = () => {
       <View style={styles.root}>
         <Text style={styles.title}>Create an account</Text>
 
-        <CustomInput
+        {/* <CustomInput
           name="name"
           control={control}
           placeholder="Name"
@@ -54,12 +59,14 @@ const SignUpScreen = () => {
               message: 'Name should be max 24 characters long',
             },
           }}
-        />
+        /> */}
 
         <CustomInput
           name="username"
           control={control}
           placeholder="Username"
+          autoCompleteType="username"
+          capitalize="none"
           rules={{
             required: 'Username is required',
             minLength: {
@@ -76,6 +83,8 @@ const SignUpScreen = () => {
           name="email"
           control={control}
           placeholder="Email"
+          autoCompleteType="email"
+          capitalize="none"
           rules={{
             required: 'Email is required',
             pattern: { value: EMAIL_REGEX, message: 'Email is invalid' },
@@ -86,6 +95,7 @@ const SignUpScreen = () => {
           control={control}
           placeholder="Password"
           secureTextEntry
+          autoCompleteType="password"
           rules={{
             required: 'Password is required',
             minLength: {
@@ -100,7 +110,7 @@ const SignUpScreen = () => {
           placeholder="Repeat Password"
           secureTextEntry
           rules={{
-            validate: value => value === pwd || 'Password do not match',
+            validate: (value) => value === pwd || 'Password do not match',
           }}
         />
 
