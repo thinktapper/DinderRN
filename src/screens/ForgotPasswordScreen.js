@@ -5,15 +5,14 @@ import CustomButton from '../components/CustomButton'
 import SocialSignInButtons from '../components/SocialSignInButtons'
 import { useNavigation } from '@react-navigation/core'
 import { useForm } from 'react-hook-form'
-import { Auth } from 'aws-amplify'
 
 const ForgotPasswordScreen = () => {
   const { control, handleSubmit } = useForm()
   const navigation = useNavigation()
 
-  const onSendPressed = async data => {
+  const onSendPressed = async (data) => {
     try {
-      await Auth.forgotPassword(data.username)
+      // await Auth.forgotPassword(data.username)
       navigation.navigate('NewPassword')
     } catch (e) {
       Alert.alert('Oops', e.message)

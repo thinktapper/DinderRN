@@ -12,11 +12,11 @@ import { AuthProvider } from './src/context/AuthProvider'
 const App = () => {
   return (
     // <SafeAreaView style={tw`flex-1 bg-slate-200`}>
-    <AppProvider>
-      <AuthProvider>
-        <Navigation />
-      </AuthProvider>
-    </AppProvider>
+    // <AppProvider>
+    <AuthProvider>
+      <Navigation />
+    </AuthProvider>
+    // {/* </AppProvider> */}
     // </SafeAreaView>
   )
 }

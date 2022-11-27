@@ -19,22 +19,20 @@ const SignUpScreen = ({ navigation }) => {
     if (loading) {
       return
     }
-    const { password, email } = data
-    const username = data.username.toLowerCase()
+    const { password, username, email } = data
+    // const username = data.username.toLowerCase()
 
     setLoading(true)
     try {
-      const result = await authContext.signup(username, password, email)
+      authContext.signup(username, email, password)
       // authContext.setUser(result)
-      if (result.ok) {
-        Alert.alert('Success!', 'You have successfully signed up!')
-        navigation.navigate('SignIn')
-      }
+      // authContext.setUser(result)
     } catch (e) {
       Alert.alert('Oops', e.message)
     }
     setLoading(false)
     navigation.navigate('SignIn')
+    // navigation.navigate('Home')
   }
 
   const onSignInPress = () => {
@@ -67,6 +65,8 @@ const SignUpScreen = ({ navigation }) => {
           name="username"
           control={control}
           placeholder="Username"
+          autoCompleteType="username"
+          capitalize="none"
           rules={{
             required: 'Username is required',
             minLength: {
@@ -83,6 +83,8 @@ const SignUpScreen = ({ navigation }) => {
           name="email"
           control={control}
           placeholder="Email"
+          autoCompleteType="email"
+          capitalize="none"
           rules={{
             required: 'Email is required',
             pattern: { value: EMAIL_REGEX, message: 'Email is invalid' },
@@ -93,6 +95,7 @@ const SignUpScreen = ({ navigation }) => {
           control={control}
           placeholder="Password"
           secureTextEntry
+          autoCompleteType="password"
           rules={{
             required: 'Password is required',
             minLength: {

@@ -6,7 +6,6 @@ import SocialSignInButtons from '../components/SocialSignInButtons'
 import { useNavigation } from '@react-navigation/core'
 import { useForm } from 'react-hook-form'
 import { useRoute } from '@react-navigation/native'
-import { Auth } from 'aws-amplify'
 
 const ConfirmEmailScreen = () => {
   const route = useRoute()
@@ -18,9 +17,9 @@ const ConfirmEmailScreen = () => {
 
   const navigation = useNavigation()
 
-  const onConfirmPressed = async data => {
+  const onConfirmPressed = async (data) => {
     try {
-      await Auth.confirmSignUp(data.username, data.code)
+      // await Auth.confirmSignUp(data.username, data.code)
       navigation.navigate('SignIn')
     } catch (e) {
       Alert.alert('Oops', e.message)
@@ -33,7 +32,7 @@ const ConfirmEmailScreen = () => {
 
   const onResendPress = async () => {
     try {
-      await Auth.resendSignUp(username)
+      // await Auth.resendSignUp(username)
       Alert.alert('Success', 'Code was resent to your email')
     } catch (e) {
       Alert.alert('Oops', e.message)

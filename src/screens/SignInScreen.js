@@ -18,6 +18,9 @@ const SignInScreen = ({ navigation }) => {
   const authContext = useAuthContext()
   const { height } = useWindowDimensions()
   const [loading, setLoading] = useState(false)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
 
   const {
     control,
@@ -31,15 +34,12 @@ const SignInScreen = ({ navigation }) => {
     }
     setLoading(true)
     try {
-      const result = await authContext.login(data.username, data.password)
-      if (result.ok) {
-        authContext.setUser(result)
-      }
+      authContext.login(data.username, data.password)
     } catch (error) {
       Alert.alert('Oops!', error.message)
     }
     setLoading(false)
-    navigation.navigate('Home')
+    // navigation.navigate('Home')
   }
 
   const onSignUpPressed = () => {
@@ -62,6 +62,7 @@ const SignInScreen = ({ navigation }) => {
         <CustomInput
           name="username"
           placeholder="username"
+          capitalize="none"
           control={control}
           rules={{ required: 'Username is required' }}
         />

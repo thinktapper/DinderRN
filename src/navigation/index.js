@@ -17,6 +17,7 @@ const Stack = createNativeStackNavigator()
 
 const Navigation = () => {
   const authContext = useAuthContext()
+  const { userInfo, isLoading } = authContext
   // const [userInfo, setUserInfo] = useState({})
 
   // useEffect(() => {
@@ -30,7 +31,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {authContext.user ? (
+        {userInfo ? (
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Feast" component={FeastScreen} />
