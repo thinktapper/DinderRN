@@ -1,124 +1,35 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-// import { get, post, createUrl, isStoredJwt, setStoredJwt } from '../utils/http'
-// import { supabase } from '../utils/supabase'
-// import { Session } from '@supabase/supabase-js'
 import { Alert } from 'react-native'
 // import { me, login, signup } from '../utils/auth'
 import * as SecureStore from 'expo-secure-store'
-import axios from 'axios'
-import { useQuery, useMutation } from 'react-query'
-import { getMe } from '../utils/authApi'
+// import axios from 'axios'
+// import { useQuery, useMutation } from 'react-query'
+// import { getMe } from '../utils/authApi'
+import { SECURE_SECRET } from '@env'
 
-const SECURE_AUTH_STORAGE_KEY = 'WetSpot'
+const SECURE_AUTH_STORAGE_KEY = SECURE_SECRET
 
 const AuthContext = createContext({})
 
 export const AuthProvider = ({ children }) => {
-  const [userInfo, setUserInfo] = useState({})
+  const [userInfo, setUserInfo] = useState(null)
   // const [isLoading, setIsLoading] = useState(false)
   const [splashLoading, setSplashLoading] = useState(false)
 
-  const query = useQuery(['authUser'], () => getMe(), {
-    enables: !!userInfo.accessToken,
-    select: (data) => data.data.user,
-    onSuccess: (data) => {
-      setUserInfo(data)
-    },
-  })
-
-  const {
-    mutate: loginUser,
-    isLoading,
-    isError,
-    error,
-    isSuccess,
-  } = useMutation((userData) => loginUser(userData), {
-    onSuccess: () => {
-      query.refetch()
-    },
-  })
-
-  const { isSuccess, isLoading, refetch, isError, error, data } = useQuery(
-    ['authUser'],
-    getMe,
-    {
-      enabled: false,
-      select: (data) => {},
-      retry: 1,
-      onSuccess: (data) => {},
-      onError: (error) => {},
-    },
-  )
-
-  const signup = (username, email, password) => {
-    setIsLoading(true)
-    axios
-      .post('http://localhost:3000/signup', {
-        username,
-        email,
-        password,
-      })
-      .then((response) => {
-        if (response.type === 'success') {
-          let userInfo = response.data
-          setUserInfo(userInfo)
-          const auth = JSON.stringify(userInfo)
-          SecureStore.setItemAsync(SECURE_AUTH_STORAGE_KEY, auth)
-          setIsLoading(false)
-          console.log(userInfo)
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-        setIsLoading(false)
-      })
+  async function getStoredUser() {
+    const storedUser = await SecureStore.getItemAsync(SECURE_AUTH_STORAGE_KEY)
+    return storedUser ? JSON.parse(storedUser) : null
   }
 
-  const login = (username, password) => {
-    setIsLoading(true)
-    axios
-      .post('http://localhost:3000/login', {
-        username,
-        password,
-      })
-      .then((response) => {
-        if (response.type === 'success') {
-          let userInfo = response.data
-          console.log(userInfo)
-          setUserInfo(userInfo)
-          const auth = JSON.stringify(userInfo)
-          SecureStore.setItemAsync(SECURE_AUTH_STORAGE_KEY, auth)
-          setIsLoading(false)
-        }
-      })
-      .catch((error) => {
-        console.log(`login error: ${error}`)
-        setIsLoading(false)
-      })
+  async function setStoredUser(user) {
+    await SecureStore.setItemAsync(
+      SECURE_AUTH_STORAGE_KEY,
+      JSON.stringify(user),
+    )
   }
 
-  const logout = () => {
-    setIsLoading(true)
-    axios
-      .post(
-        'http://localhost:3000/logout',
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${userInfo.token}`,
-          },
-        },
-      )
-      .then((response) => {
-        console.log('logout response: ', response)
-        SecureStore.deleteItemAsync(SECURE_AUTH_STORAGE_KEY)
-        setUserInfo({})
-        setIsLoading(false)
-      })
-      .catch((error) => {
-        console.log(`logout error: ${error}`)
-        setIsLoading(false)
-      })
+  async function clearStoredUser() {
+    await SecureStore.deleteItemAsync(SECURE_AUTH_STORAGE_KEY)
   }
 
   const isLoggedIn = async () => {
@@ -143,7 +54,15 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       // eslint-disable-next-line prettier/prettier
-      value={{ isLoading, userInfo, splashLoading, login, signup, logout }}>
+      value={{
+        userInfo,
+        splashLoading,
+        isLoggedIn,
+        getStoredUser,
+        setStoredUser,
+        clearStoredUser,
+        // eslint-disable-next-line prettier/prettier
+      }}>
       {children}
     </AuthContext.Provider>
   )
