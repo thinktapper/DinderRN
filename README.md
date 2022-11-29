@@ -11,7 +11,9 @@
 <br />
 <div align="center">
 
-![Simulator Screen Recording - iPhone 14 - 2022-11-05 at 18 37 37](https://user-images.githubusercontent.com/10656909/200642329-f89bc4ff-69f1-4749-ab1d-9b479be1b35d.gif)
+![Simulator Screen Recording - iPhone 14 - 2022-11-13 at 15 26 22](https://user-images.githubusercontent.com/10656909/204616384-599bf5b7-ea55-493a-83a4-2d53e11d67c0.gif)
+
+<!-- ![Simulator Screen Recording - iPhone 14 - 2022-11-05 at 18 37 37](https://user-images.githubusercontent.com/10656909/200642329-f89bc4ff-69f1-4749-ab1d-9b479be1b35d.gif) -->
 
 </div>
 
