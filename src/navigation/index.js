@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { View, ActivityIndicator } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { useAuthContext } from '../context/AuthProvider'
+// import { useAuthContext } from '../context/AuthProvider'
+import { useUser } from '../hooks/user/useUser'
 
 import SignInScreen from '../screens/SignInScreen'
 import SignUpScreen from '../screens/SignUpScreen'
@@ -16,9 +17,10 @@ import ProfileScreen from '../screens/ProfileScreen'
 const Stack = createNativeStackNavigator()
 
 const Navigation = () => {
-  const authContext = useAuthContext()
-  const { userInfo, isLoading } = authContext
+  // const authContext = useAuthContext()
+  // const { userInfo, isLoading } = authContext
   // const [userInfo, setUserInfo] = useState({})
+  const { user } = useUser()
 
   // useEffect(() => {
   //   async function getUser() {
@@ -31,7 +33,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {userInfo ? (
+        {user ? (
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Feast" component={FeastScreen} />

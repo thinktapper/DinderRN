@@ -1,7 +1,11 @@
+/* eslint-disable prettier/prettier */
 // import 'react-native-gesture-handler'
 import React from 'react'
 import 'react-native-url-polyfill/auto'
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 // import { StatusBar } from 'expo-status-bar'
 // import { SafeAreaView } from 'react-native'
 // import tw from 'twrnc'
@@ -22,15 +26,21 @@ const queryClient = new QueryClient({
   },
 })
 
+const asyncPersister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+})
+
 const App = () => {
   return (
     // <SafeAreaView style={tw`flex-1 bg-slate-200`}>
     // <AppProvider>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Navigation />
-      </AuthProvider>
-    </QueryClientProvider>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: asyncPersister }}>
+      {/* <AuthProvider> */}
+      <Navigation />
+      {/* </AuthProvider> */}
+    </PersistQueryClientProvider>
     // {/* </AppProvider> */}
     // </SafeAreaView>
   )

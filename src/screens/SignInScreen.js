@@ -12,15 +12,24 @@ import Logo from '../../assets/images/dinder-double_flame-black.png'
 import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
 import { useForm, Controller } from 'react-hook-form'
-import { useAuthContext } from '../context/AuthProvider'
+
+import { useAuth } from '../hooks/useAuth'
+import { useUser } from '../hooks/user/useUser'
+// import { useAuthContext } from '../context/AuthProvider'
 
 const SignInScreen = ({ navigation }) => {
-  const authContext = useAuthContext()
+  // const authContext = useAuthContext()
   const { height } = useWindowDimensions()
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const auth = useAuth()
+  const { user } = useUser()
   const [confirm, setConfirm] = useState('')
+
+  // if (user) {
+  //   navigation.navigate('Home')
+  // }
 
   const {
     control,
@@ -34,7 +43,7 @@ const SignInScreen = ({ navigation }) => {
     }
     setLoading(true)
     try {
-      authContext.login(data.username, data.password)
+      auth.login(data.username, data.password)
     } catch (error) {
       Alert.alert('Oops!', error.message)
     }

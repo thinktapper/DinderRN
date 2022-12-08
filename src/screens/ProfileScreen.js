@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import {
@@ -9,15 +10,24 @@ import {
   TextInput,
   Alert,
 } from 'react-native'
+import { useAuth } from '../hooks/useAuth'
+import { useUser } from '../hooks/user/useUser'
 // import { useAppContext } from '../context/AppProvider'
-import { useAuthContext } from '../context/AuthProvider'
+// import { useAuthContext } from '../context/AuthProvider'
 
 const ProfileScreen = ({ navigation }) => {
   // const appContext = useAppContext()
-  const authContext = useAuthContext()
-  const [user, setUser] = useState(null)
+  // const authContext = useAuthContext()
+  // const [user, setUser] = useState(null)
   const [name, setName] = useState('')
   const [bio, setBio] = useState('')
+
+  const auth = useAuth()
+  const { user } = useUser()
+
+  if (!user) {
+    navigation.navigate('SignIn')
+  }
 
   // useEffect(() => {
   //   const getCurrentUser = async () => {
@@ -115,7 +125,7 @@ const ProfileScreen = ({ navigation }) => {
           <Text>Cancel</Text>
         </Pressable>
 
-        <Pressable onPress={() => signOut()} style={styles.button}>
+        <Pressable onPress={() => auth.logout()} style={styles.button}>
           <Text>Sign out</Text>
         </Pressable>
       </View>

@@ -4,16 +4,24 @@ import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
 // import SocialSignInButtons from '../components/SocialSignInButtons'
 import { useForm } from 'react-hook-form'
-import { useAuthContext } from '../context/AuthProvider'
+import { useAuth } from '../hooks/useAuth'
+import { useUser } from '../hooks/user/useUser'
+// import { useAuthContext } from '../context/AuthProvider'
 
 const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 
 const SignUpScreen = ({ navigation }) => {
-  const authContext = useAuthContext()
+  // const authContext = useAuthContext()
   const [loading, setLoading] = React.useState(false)
   const { control, handleSubmit, watch } = useForm()
   const pwd = watch('password')
+  const auth = useAuth()
+  const { user } = useUser()
+
+  // if (user) {
+  //   navigation.navigate('Home')
+  // }
 
   const onRegisterPressed = async (data) => {
     if (loading) {
@@ -24,14 +32,12 @@ const SignUpScreen = ({ navigation }) => {
 
     setLoading(true)
     try {
-      authContext.signup(username, email, password)
-      // authContext.setUser(result)
-      // authContext.setUser(result)
+      auth.signup(email, username, password)
     } catch (e) {
       Alert.alert('Oops', e.message)
     }
     setLoading(false)
-    navigation.navigate('SignIn')
+    // navigation.navigate('SignIn')
     // navigation.navigate('Home')
   }
 
