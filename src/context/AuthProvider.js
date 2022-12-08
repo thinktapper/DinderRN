@@ -105,6 +105,26 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  async function updateUser(newUserData) {
+    try {
+      const { data, status } = await request({
+        url: '/api/user/update',
+        method: 'put',
+        data: {
+          ...newUserData,
+        },
+      })
+      if (status === 'success' && 'user' in data && 'token' in data.user) {
+        console.debug(`User ${data.user.username} updated`)
+      }
+      setUser(data.user)
+      // update stored user data
+      await setStoredUser(data.user)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   async function logout() {
     // setIsSignOut(true)
     setUser(null)
@@ -138,6 +158,7 @@ export const AuthProvider = ({ children }) => {
     () => ({
       user,
       login,
+      updateUser,
       signup,
       logout,
       splashLoading,
@@ -145,7 +166,7 @@ export const AuthProvider = ({ children }) => {
       setIsSignOut,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [login, signup, logout],
+    [login, updateUser, signup, logout],
   )
 
   return (

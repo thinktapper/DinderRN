@@ -12,7 +12,8 @@ import ConfirmEmailScreen from '../screens/ConfirmEmailScreen'
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen'
 import NewPasswordScreen from '../screens/NewPasswordScreen'
 import HomeScreen from '../screens/HomeScreen'
-import FeastScreen from '../screens/FeastScreen'
+import FeastScreen from '../screens/NewFeastScreen'
+import NewFeastScreen from '../screens/NewFeastScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 
 const Stack = createNativeStackNavigator()
@@ -55,7 +56,8 @@ const Navigation = () => {
         ) : (
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Feast" component={FeastScreen} />
+            <Stack.Screen name="Feasts" component={FeastScreen} />
+            <Stack.Screen name="NewFeast" component={NewFeastScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
           </>
         )}

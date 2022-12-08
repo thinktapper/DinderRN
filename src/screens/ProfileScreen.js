@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react'
-import { useNavigation } from '@react-navigation/native'
 import {
   View,
   Text,
@@ -10,17 +9,22 @@ import {
   TextInput,
   Alert,
 } from 'react-native'
-import { useAuth } from '../hooks/useAuth'
-import { useUser } from '../hooks/user/useUser'
-// import { useAppContext } from '../context/AppProvider'
+import tw from 'twrnc'
+import { FormInput } from '../components/FormInput'
+import { useForm } from 'react-hook-form'
+import { EMAIL_REGEX } from '../lib/constants'
+// import { useAuth } from '../hooks/useAuth'
+// import { useUser } from '../hooks/user/useUser'
 import { useAuthContext } from '../context/AuthProvider'
+import { request } from '../utils/authApi'
 
 const ProfileScreen = ({ navigation }) => {
   const authContext = useAuthContext()
-  const { user, logout, isSignOut, setIsSignOut } = authContext
-  // const [user, setUser] = useState(null)
-  const [name, setName] = useState('')
-  const [bio, setBio] = useState('')
+  const { user, updateUser, logout, setIsSignOut } = authContext
+  const { control, handleSubmit } = useForm()
+
+  const [username, setUserame] = useState(user?.username)
+  const [email, setEmail] = useState(user?.email)
 
   // const auth = useAuth()
   // const { user } = useUser()
@@ -35,71 +39,75 @@ const ProfileScreen = ({ navigation }) => {
     await logout()
   }
 
-  const isValid = () => {
-    return name && bio
-  }
+  // const isValid = () => {
+  //   return name && bio
+  // }
 
-  const save = async () => {
-    if (!isValid()) {
-      console.warn('Not valid')
-      return
+  // const save = async () => {
+  //   if (!isValid()) {
+  //     console.warn('Not valid')
+  //     return
+  //   }
+  // }
+
+  const handleUpdateUser = async (data) => {
+    try {
+      await updateUser(data)
+      Alert.alert('Success', 'Your profile has been updated')
+    } catch (err) {
+      console.error(err)
     }
-
-    // if (user) {
-    //   const updatedUser = User.copyOf(user, (updated) => {
-    //     updated.name = name
-    //     updated.bio = bio
-    //     updated.lat = appContext.lat
-    //     updated.long = appContext.long
-    //     updated.radius = appContext.radius
-    //     // updated.places = places
-    //   })
-
-    //   await DataStore.save(updatedUser)
-    // } else {
-    //   // create a new user
-    //   const authUser = await Auth.currentAuthenticatedUser()
-
-    //   const newUser = new User({
-    //     sub: authUser.attributes.sub,
-    //     name,
-    //     bio,
-    //     image: 'https://ptpimg.me/ud7dea.png',
-    //     lat: appContext.lat,
-    //     long: appContext.long,
-    //     radius: appContext.radius,
-    //   })
-    //   await DataStore.save(newUser)
-    // }
-
-    // Alert.alert('User saved successfully')
-    // navigation.navigate('Home')
   }
 
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.container}>
-        <Text style={styles.title}>Set your swipe session</Text>
+        <Text style={styles.title}>Your information</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Name..."
-          value={name}
-          onChangeText={setName}
+        <form onSubmit={handleSubmit(handleUpdateUser)}>
+        <FormInput
+          name="username"
+          value={username}
+          control={control}
+          onChangeText={setUserame}
+          // placeholder="Username"
+          autoCompleteType="username"
+          capitalize="none"
+          rules={{
+            required: 'Username is required',
+            minLength: {
+              value: 3,
+              message: 'Username should be at least 3 characters long',
+            },
+            maxLength: {
+              value: 24,
+              message: 'Username should be max 24 characters long',
+            },
+          }}
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="bio..."
-          multiline
-          numberOfLines={3}
-          value={bio}
-          onChangeText={setBio}
+        <FormInput
+          name="email"
+          control={control}
+          value={email}
+          onChangeText={setEmail}
+          // placeholder="Email"
+          autoCompleteType="email"
+          capitalize="none"
+          rules={{
+            required: 'Email is required',
+            pattern: { value: EMAIL_REGEX, message: 'Email is invalid' },
+          }}
         />
 
-        <Pressable onPress={save} style={styles.button}>
+        <Pressable
+        type='submit'
+          // onPress={handleSubmit(handleUpdateUser)}
+          style={styles.button}>
           <Text>Save</Text>
         </Pressable>
+        </form>
+
 
         <Pressable
           onPress={() => navigation.navigate('Home')}

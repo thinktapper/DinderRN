@@ -39,19 +39,6 @@ const HomeScreen = ({ navigation }) => {
     if (!places[cardIndex]) return
 
     const placeSwiped = places[cardIndex]
-    // try {
-    //   await DataStore.save(
-    //     new Vote({
-    //       voteType: VoteType.NEGATIVE,
-    //       placeID: placeSwiped.id,
-    //       userID: user.attributes.id,
-    //     }),
-    //   )
-    // } catch (error) {
-    //   console.log(`Error saving nope vote: ${error}`)
-    // } finally {
-    //   console.warn('swiped NAH on: ', places[cardIndex].name)
-    // }
     console.warn('swiped NAH on: ', places[cardIndex].name)
   }
 
@@ -63,27 +50,37 @@ const HomeScreen = ({ navigation }) => {
     <SafeAreaView style={tw`flex-1`}>
       {/* Header */}
       <View style={tw`flex-row justify-around w-full p-2.5`}>
-        <TouchableOpacity onPress={() => setActiveScreen('Home')}>
+        <TouchableOpacity
+          onPress={() => {
+            setActiveScreen('Home')
+            navigation.navigate('Home')
+          }}>
           <Fontisto
             name="tinder"
             size={30}
             color={activeScreen === 'Home' ? activeColor : color}
           />
         </TouchableOpacity>
-        <MaterialCommunityIcons
-          name="star-four-points"
-          size={30}
-          color={color}
-        />
         <TouchableOpacity
           onPress={() => {
-            setActiveScreen('Chat')
-            navigation.navigate('Feast')
+            setActiveScreen('Feasts')
+            navigation.navigate('Feasts')
+          }}>
+          <MaterialCommunityIcons
+            name="star-four-points"
+            size={30}
+            color={activeScreen === 'Feasts' ? activeColor : color}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            setActiveScreen('NewFeast')
+            navigation.navigate('NewFeast')
           }}>
           <Ionicons
             name="ios-chatbubbles"
             size={30}
-            color={activeScreen === 'Chat' ? activeColor : color}
+            color={activeScreen === 'NewFeast' ? activeColor : color}
           />
         </TouchableOpacity>
         <TouchableOpacity
