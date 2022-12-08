@@ -17,7 +17,7 @@ import { useAuthContext } from '../context/AuthProvider'
 
 const ProfileScreen = ({ navigation }) => {
   const authContext = useAuthContext()
-  const { user } = authContext
+  const { user, logout, isSignOut, setIsSignOut } = authContext
   // const [user, setUser] = useState(null)
   const [name, setName] = useState('')
   const [bio, setBio] = useState('')
@@ -30,29 +30,10 @@ const ProfileScreen = ({ navigation }) => {
     navigation.navigate('SignIn')
   }
 
-  // useEffect(() => {
-  //   const getCurrentUser = async () => {
-  //     const authUser = await Auth.currentAuthenticatedUser()
-
-  //     const dbUsers = await DataStore.query(User, u =>
-  //       u.sub('eq', authUser.attributes.sub),
-  //     )
-  //     if (dbUsers.length < 0) {
-  //       return
-  //     }
-  //     const dbUser = dbUsers[0]
-  //     setUser(dbUser)
-
-  //     setName(dbUser.name)
-  //     setBio(dbUser.bio)
-  //   }
-  //   getCurrentUser()
-  // }, [])
-
-  // const signOut = async () => {
-  //   await DataStore.clear()
-  //   Auth.signOut()
-  // }
+  const handleSignOut = async () => {
+    setIsSignOut(true)
+    await logout()
+  }
 
   const isValid = () => {
     return name && bio
@@ -126,11 +107,7 @@ const ProfileScreen = ({ navigation }) => {
           <Text>Cancel</Text>
         </Pressable>
 
-        <Pressable
-          onPress={() =>
-            authContext.logout().then(navigation.navigate('SignIn'))
-          }
-          style={styles.button}>
+        <Pressable onPress={() => authContext.logout()} style={styles.button}>
           <Text>Sign out</Text>
         </Pressable>
       </View>

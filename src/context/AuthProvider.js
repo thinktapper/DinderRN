@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+} from 'react'
 import { Alert } from 'react-native'
 // import { me, login, signup } from '../utils/auth'
 import * as SecureStore from 'expo-secure-store'
@@ -15,6 +21,7 @@ const AuthContext = createContext({})
 export const AuthProvider = ({ children }) => {
   // const [userInfo, setUserInfo] = useState(null)
   const [user, setUser] = useState(null)
+  const [isSignOut, setIsSignOut] = useState(false)
   // const [isLoading, setIsLoading] = useState(false)
   const [splashLoading, setSplashLoading] = useState(false)
 
@@ -36,6 +43,7 @@ export const AuthProvider = ({ children }) => {
 
   async function login(username, password) {
     // authServerCall('/login', username, password)
+    setSplashLoading(true)
     try {
       const { data, status } = await request({
         url: '/login',
@@ -46,22 +54,27 @@ export const AuthProvider = ({ children }) => {
         },
       })
 
-      if (status === 400) {
-        console.warn('Error: ', data.message)
-        return
-      }
+      // if (status === 400) {
+      //   console.warn('Error: ', data.message)
+      //   return
+      // }
       if ('user' in data && 'token' in data.user) {
+        setIsSignOut(false)
         console.debug(`User ${data.user.username} logged in`)
       }
 
       // update stored user data
       await setStoredUser(data.user)
       setUser(data.user)
+      setSplashLoading(false)
     } catch (err) {
       console.error(err)
+      setSplashLoading(false)
     }
   }
+
   async function signup(email, username, password) {
+    setSplashLoading(true)
     try {
       const { data, status } = await request({
         url: '/signup',
@@ -73,23 +86,28 @@ export const AuthProvider = ({ children }) => {
         },
       })
 
-      if (status === 400) {
-        console.warn('Error: ', data.message)
-        return
-      }
+      // if (status === 400) {
+      //   console.warn('Error: ', data.message)
+      //   return
+      // }
       if ('user' in data && 'token' in data.user) {
+        setIsSignOut(false)
         console.debug(`User ${data.user.username} signed up`)
       }
 
       setUser(data.user)
       // update stored user data
       await setStoredUser(data.user)
+      setSplashLoading(false)
     } catch (err) {
       console.error(err)
+      setSplashLoading(false)
     }
   }
 
   async function logout() {
+    // setIsSignOut(true)
+    setUser(null)
     // remove stored user data
     // clearUser()
     await clearStoredUser()
@@ -103,6 +121,7 @@ export const AuthProvider = ({ children }) => {
       userInfo = JSON.parse(userInfo)
       if (userInfo) {
         setUser(userInfo)
+        setIsSignOut(false)
       }
       setSplashLoading(false)
     } catch (err) {
@@ -115,19 +134,22 @@ export const AuthProvider = ({ children }) => {
     isLoggedIn()
   }, [])
 
+  const authContext = useMemo(
+    () => ({
+      user,
+      login,
+      signup,
+      logout,
+      splashLoading,
+      isSignOut,
+      setIsSignOut,
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [login, signup, logout],
+  )
+
   return (
-    <AuthContext.Provider
-      // eslint-disable-next-line prettier/prettier
-      value={{
-        user,
-        splashLoading,
-        login,
-        signup,
-        logout,
-        // eslint-disable-next-line prettier/prettier
-      }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={authContext}>{children}</AuthContext.Provider>
   )
 }
 

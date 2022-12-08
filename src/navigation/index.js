@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, ActivityIndicator } from 'react-native'
+import { LoadingIndicator } from '../components/LoadingIndicator'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { useAuthContext } from '../context/AuthProvider'
@@ -18,7 +19,7 @@ const Stack = createNativeStackNavigator()
 
 const Navigation = () => {
   const authContext = useAuthContext()
-  const { user } = authContext
+  const { user, splashLoading, isSignOut } = authContext
   // const { userInfo, isLoading } = authContext
   // const [userInfo, setUserInfo] = useState({})
   // const { user } = useUser()
@@ -27,18 +28,22 @@ const Navigation = () => {
   //   useUser()
   // }, [])
 
+  if (splashLoading) {
+    return <LoadingIndicator />
+  }
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {user ? (
+        {user == null ? (
           <>
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Feast" component={FeastScreen} />
-            <Stack.Screen name="Profile" component={ProfileScreen} />
-          </>
-        ) : (
-          <>
-            <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen
+              name="SignIn"
+              component={SignInScreen}
+              options={{
+                animationTypeForReplace: isSignOut ? 'pop' : 'push',
+              }}
+            />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="ConfirmEmail" component={ConfirmEmailScreen} />
             <Stack.Screen
@@ -46,6 +51,12 @@ const Navigation = () => {
               component={ForgotPasswordScreen}
             />
             <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
+          </>
+        ) : (
+          <>
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Feast" component={FeastScreen} />
+            <Stack.Screen name="Profile" component={ProfileScreen} />
           </>
         )}
       </Stack.Navigator>

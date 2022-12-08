@@ -32,7 +32,7 @@ const asyncPersister = createAsyncStoragePersister({
   storage: AsyncStorage,
 })
 
-const App = () => {
+const App = ({ navigation }) => {
   return (
     // <SafeAreaView style={tw`flex-1 bg-slate-200`}>
 
