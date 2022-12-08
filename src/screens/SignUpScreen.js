@@ -6,18 +6,18 @@ import CustomButton from '../components/CustomButton'
 import { useForm } from 'react-hook-form'
 import { useAuth } from '../hooks/useAuth'
 import { useUser } from '../hooks/user/useUser'
-// import { useAuthContext } from '../context/AuthProvider'
+import { useAuthContext } from '../context/AuthProvider'
 
 const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
 
 const SignUpScreen = ({ navigation }) => {
-  // const authContext = useAuthContext()
+  const authContext = useAuthContext()
   const [loading, setLoading] = React.useState(false)
   const { control, handleSubmit, watch } = useForm()
   const pwd = watch('password')
-  const auth = useAuth()
-  const { user } = useUser()
+  // const auth = useAuth()
+  // const { user } = useUser()
 
   // if (user) {
   //   navigation.navigate('Home')
@@ -32,7 +32,8 @@ const SignUpScreen = ({ navigation }) => {
 
     setLoading(true)
     try {
-      auth.signup(email, username, password)
+      // auth.signup(email, username, password)
+      authContext.signup(email, username, password)
     } catch (e) {
       Alert.alert('Oops', e.message)
     }

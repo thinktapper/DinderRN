@@ -1,7 +1,20 @@
-// import axios from 'axios'
-// import { API_URL } from '@env'
+import axios from 'axios'
+import { API_URL } from '@env'
 // import { SECURE_SECRET } from '@env'
 // import * as SecureStore from 'expo-secure-store'
+
+const client = axios.create({
+  baseURL: API_URL,
+  withCredentials: true,
+})
+
+export const request = ({ ...options }) => {
+  client.defaults.headers.common.Authorization = `Bearer ${options.token}`
+  const onSuccess = (response) => response
+  const onError = (error) => error
+
+  return client(options).then(onSuccess).catch(onError)
+}
 
 // export const authApi = axios.create({
 //   baseURL: API_URL,

@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { View, ActivityIndicator } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-// import { useAuthContext } from '../context/AuthProvider'
-import { useUser } from '../hooks/user/useUser'
+import { useAuthContext } from '../context/AuthProvider'
+// import { useUser } from '../hooks/user/useUser'
 
 import SignInScreen from '../screens/SignInScreen'
 import SignUpScreen from '../screens/SignUpScreen'
@@ -17,17 +17,14 @@ import ProfileScreen from '../screens/ProfileScreen'
 const Stack = createNativeStackNavigator()
 
 const Navigation = () => {
-  // const authContext = useAuthContext()
+  const authContext = useAuthContext()
+  const { user } = authContext
   // const { userInfo, isLoading } = authContext
   // const [userInfo, setUserInfo] = useState({})
-  const { user } = useUser()
+  // const { user } = useUser()
 
   // useEffect(() => {
-  //   async function getUser() {
-  //     const result = await authContext.me()
-  //     authContext.setUser(result)
-  //   }
-  //   getUser()
+  //   useUser()
   // }, [])
 
   return (

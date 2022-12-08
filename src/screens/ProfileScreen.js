@@ -13,17 +13,18 @@ import {
 import { useAuth } from '../hooks/useAuth'
 import { useUser } from '../hooks/user/useUser'
 // import { useAppContext } from '../context/AppProvider'
-// import { useAuthContext } from '../context/AuthProvider'
+import { useAuthContext } from '../context/AuthProvider'
 
 const ProfileScreen = ({ navigation }) => {
-  // const appContext = useAppContext()
-  // const authContext = useAuthContext()
+  const authContext = useAuthContext()
+  const { user } = authContext
   // const [user, setUser] = useState(null)
   const [name, setName] = useState('')
   const [bio, setBio] = useState('')
 
-  const auth = useAuth()
-  const { user } = useUser()
+  // const auth = useAuth()
+  // const { user } = useUser()
+  // const { logout } = useAuth()
 
   if (!user) {
     navigation.navigate('SignIn')
@@ -125,7 +126,11 @@ const ProfileScreen = ({ navigation }) => {
           <Text>Cancel</Text>
         </Pressable>
 
-        <Pressable onPress={() => auth.logout()} style={styles.button}>
+        <Pressable
+          onPress={() =>
+            authContext.logout().then(navigation.navigate('SignIn'))
+          }
+          style={styles.button}>
           <Text>Sign out</Text>
         </Pressable>
       </View>

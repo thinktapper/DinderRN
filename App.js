@@ -21,7 +21,9 @@ const queryClient = new QueryClient({
       refetchOnMount: false,
       refetchOnReconnect: false,
       retry: 1,
-      staleTime: 1000 * 60 * 60 * 24,
+      // staleTime: 1000 * 60 * 60 * 24,
+      staleTime: 600000,
+      cacheTime: 900000,
     },
   },
 })
@@ -33,15 +35,16 @@ const asyncPersister = createAsyncStoragePersister({
 const App = () => {
   return (
     // <SafeAreaView style={tw`flex-1 bg-slate-200`}>
-    // <AppProvider>
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister: asyncPersister }}>
-      {/* <AuthProvider> */}
-      <Navigation />
-      {/* </AuthProvider> */}
-    </PersistQueryClientProvider>
-    // {/* </AppProvider> */}
+
+    // <PersistQueryClientProvider
+    //   client={queryClient}
+    //   persistOptions={{ persister: asyncPersister }}>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <Navigation />
+      </QueryClientProvider>
+    </AuthProvider>
+    // </PersistQueryClientProvider>
     // </SafeAreaView>
   )
 }
