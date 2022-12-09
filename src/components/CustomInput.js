@@ -15,7 +15,7 @@ const CustomInput = ({
       name={name}
       rules={rules}
       render={({
-        field: { value, onChange, onBlur },
+        field: { value, onChange, onBlur, placeholder, secureTextEntry, ref },
         fieldState: { error },
       }) => (
         <>
@@ -26,6 +26,7 @@ const CustomInput = ({
             ]}>
             <TextInput
               value={value}
+              ref={ref}
               onChangeText={onChange}
               onBlur={onBlur}
               placeholder={placeholder}

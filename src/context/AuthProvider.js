@@ -9,6 +9,7 @@ import { Alert } from 'react-native'
 // import { me, login, signup } from '../utils/auth'
 import * as SecureStore from 'expo-secure-store'
 import { request } from '../utils/authApi'
+import jsonpatch from 'fast-json-patch'
 // import axios from 'axios'
 // import { useQuery, useMutation } from 'react-query'
 // import { getMe } from '../utils/authApi'
@@ -106,22 +107,34 @@ export const AuthProvider = ({ children }) => {
   }
 
   async function updateUser(newUserData) {
+    // get original user data
+    // const originalUserData = await getStoredUser()
+    // if (!newUserData || !originalUserData) return null
     try {
-      const { data, status } = await request({
+      // create a patch for the differences between the original and new user data
+      // const patch = jsonpatch.compare(originalUserData, newUserData)
+
+      // send patched data to server
+      const { data } = await request({
         url: '/api/user/update',
         method: 'put',
         data: {
-          ...newUserData,
+          newUserData,
         },
       })
-      if (status === 'success' && 'user' in data && 'token' in data.user) {
+      if ('user' in data && 'token' in data.user) {
         console.debug(`User ${data.user.username} updated`)
+        setUser(data.user)
+        // update stored user data
+        await setStoredUser(data.user)
+        // } else {
+        //   console.error(
+        //     `Unable to update user -> status: ${status}, data: ${{ ...data }}`,
+        //   )
       }
-      setUser(data.user)
-      // update stored user data
-      await setStoredUser(data.user)
+      // return data.user
     } catch (err) {
-      console.error(err)
+      console.error(`Unable to update user -> ${err}`)
     }
   }
 

@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   Text,
@@ -10,21 +10,24 @@ import {
   Alert,
 } from 'react-native'
 import tw from 'twrnc'
-import { FormInput } from '../components/FormInput'
+import FormInput from '../components/FormInput'
 import { useForm } from 'react-hook-form'
+// import { Formik, Field } from 'formik'
+import * as Yup from 'yup'
 import { EMAIL_REGEX } from '../lib/constants'
 // import { useAuth } from '../hooks/useAuth'
 // import { useUser } from '../hooks/user/useUser'
 import { useAuthContext } from '../context/AuthProvider'
 import { request } from '../utils/authApi'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const ProfileScreen = ({ navigation }) => {
   const authContext = useAuthContext()
   const { user, updateUser, logout, setIsSignOut } = authContext
-  const { control, handleSubmit } = useForm()
-
-  const [username, setUserame] = useState(user?.username)
-  const [email, setEmail] = useState(user?.email)
+  const { handleSubmit, register, setValue, errors } = useForm()
+  const inputRef = useRef([])
+  // const [username, setUserame] = useState(user?.username)
+  // const [email, setEmail] = useState(user?.email)
 
   // const auth = useAuth()
   // const { user } = useUser()
@@ -50,64 +53,91 @@ const ProfileScreen = ({ navigation }) => {
   //   }
   // }
 
+  const updateUserSchema = Yup.object().shape({
+    username: Yup.string()
+      .min(3, 'Username should be at least 3 characters long')
+      .max(24, 'Username should be max 24 characters long'),
+    email: Yup.string().matches(EMAIL_REGEX, 'Invalid email'),
+  })
+
   const handleUpdateUser = async (data) => {
+    // console.warn('data', data)
+
+    // await updateUser(data)
+
+    // if (result && result.user !== null) {
+    //   Alert.alert('Success', 'Your profile has been updated')
+    // }
     try {
       await updateUser(data)
-      Alert.alert('Success', 'Your profile has been updated')
+      // if ('user' in result && result.user !== null) {
+      //   Alert.alert('Success', 'Your profile has been updated')
+      // }
     } catch (err) {
       console.error(err)
     }
   }
 
   return (
-    <SafeAreaView style={styles.root}>
+    // <SafeAreaView style={styles.root}>
+    <KeyboardAwareScrollView style={styles.root}>
+      <Text style={styles.title}>Your information</Text>
       <View style={styles.container}>
-        <Text style={styles.title}>Your information</Text>
-
-        <form onSubmit={handleSubmit(handleUpdateUser)}>
         <FormInput
           name="username"
-          value={username}
-          control={control}
-          onChangeText={setUserame}
-          // placeholder="Username"
-          autoCompleteType="username"
-          capitalize="none"
-          rules={{
-            required: 'Username is required',
-            minLength: {
-              value: 3,
-              message: 'Username should be at least 3 characters long',
-            },
-            maxLength: {
-              value: 24,
-              message: 'Username should be max 24 characters long',
-            },
+          label="Username"
+          placeholder={user?.username ?? 'Username'}
+          register={'username'}
+          ref={(ref) => {
+            inputRef.current = ref
           }}
+          onChangeText={(value) => setValue('username', value)}
+          errors={errors}
         />
 
         <FormInput
           name="email"
-          control={control}
-          value={email}
-          onChangeText={setEmail}
-          // placeholder="Email"
-          autoCompleteType="email"
-          capitalize="none"
-          rules={{
-            required: 'Email is required',
-            pattern: { value: EMAIL_REGEX, message: 'Email is invalid' },
+          label="Email address"
+          placeholder={user?.email ?? 'tim@apple.com'}
+          register={'email'}
+          ref={(ref) => {
+            inputRef.current = ref
           }}
+          onChangeText={(value) => setValue('email', value)}
+          errors={errors}
         />
 
         <Pressable
-        type='submit'
-          // onPress={handleSubmit(handleUpdateUser)}
+          onPress={handleSubmit(handleUpdateUser)}
           style={styles.button}>
           <Text>Save</Text>
         </Pressable>
-        </form>
 
+        {/* <Formik
+          initialValues={{ username: user.username, email: user.email }}
+          validationSchema={updateUserSchema}
+          onSubmit={(values) => handleUpdateUser(values)}>
+          {({ handleSubmit, isValid, values }) => (
+            <>
+              <Field
+                component={FormInput}
+                name="username"
+                placeholder={user.username}
+              />
+
+              <Field
+                component={FormInput}
+                name="email"
+                placeholder={user.email}
+                keyboardType="email-address"
+              />
+
+              <Pressable onPress={handleSubmit} style={styles.button}>
+                <Text>Save</Text>
+              </Pressable>
+            </>
+          )}
+        </Formik> */}
 
         <Pressable
           onPress={() => navigation.navigate('Home')}
@@ -119,7 +149,7 @@ const ProfileScreen = ({ navigation }) => {
           <Text>Sign out</Text>
         </Pressable>
       </View>
-    </SafeAreaView>
+    </KeyboardAwareScrollView>
   )
 }
 
