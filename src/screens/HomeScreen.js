@@ -19,7 +19,6 @@ import {
 } from '@expo/vector-icons'
 // import users from '../../assets/data/users'
 import Swiper from 'react-native-deck-swiper'
-import { useAppContext } from '../context/AppProvider'
 import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
 

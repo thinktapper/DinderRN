@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
@@ -15,31 +14,40 @@ import { useForm } from 'react-hook-form'
 // import { Formik, Field } from 'formik'
 import * as Yup from 'yup'
 import { EMAIL_REGEX } from '../lib/constants'
-// import { useAuth } from '../hooks/useAuth'
-// import { useUser } from '../hooks/user/useUser'
-import { useAuthContext } from '../context/AuthProvider'
-import { request } from '../utils/authApi'
+import { useAuthContext } from '../context'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { useMutation } from '@tanstack/react-query'
+import { logout } from '../utils/authApi'
 
 const ProfileScreen = ({ navigation }) => {
   const authContext = useAuthContext()
-  const { user, updateUser, logout, setIsSignOut } = authContext
+  // const { user, updateUser, logout, setIsSignOut } = authContext
+  const user = authContext.state.authUser
   const { handleSubmit, register, setValue, errors } = useForm()
   const inputRef = useRef([])
-  // const [username, setUserame] = useState(user?.username)
-  // const [email, setEmail] = useState(user?.email)
-
-  // const auth = useAuth()
-  // const { user } = useUser()
-  // const { logout } = useAuth()
 
   if (!user) {
     navigation.navigate('SignIn')
   }
 
-  const handleSignOut = async () => {
-    setIsSignOut(true)
-    await logout()
+  const { mutate: logoutUser, isLoading } = useMutation(
+    async () => await logout(),
+    {
+      onSuccess: (data) => {
+        navigation.navigate('SignIn')
+      },
+      onError: (error) => {
+        if (Array.isArray(error.response.data.error)) {
+          error.data.error.forEach((el) => console.warn(el.message))
+        } else {
+          console.warn(error.response.data.message)
+        }
+      },
+    },
+  )
+
+  const onLogoutHandler = async () => {
+    logoutUser()
   }
 
   // const isValid = () => {
@@ -61,7 +69,7 @@ const ProfileScreen = ({ navigation }) => {
   })
 
   const handleUpdateUser = async (data) => {
-    // console.warn('data', data)
+    console.warn('data', data)
 
     // await updateUser(data)
 
@@ -69,9 +77,9 @@ const ProfileScreen = ({ navigation }) => {
     //   Alert.alert('Success', 'Your profile has been updated')
     // }
     try {
-      await updateUser(data)
+      // await updateUser(data)
       // if ('user' in result && result.user !== null) {
-      //   Alert.alert('Success', 'Your profile has been updated')
+      Alert.alert('Success', 'Your profile has been updated')
       // }
     } catch (err) {
       console.error(err)
@@ -145,7 +153,7 @@ const ProfileScreen = ({ navigation }) => {
           <Text>Cancel</Text>
         </Pressable>
 
-        <Pressable onPress={() => authContext.logout()} style={styles.button}>
+        <Pressable onPress={onLogoutHandler} style={styles.button}>
           <Text>Sign out</Text>
         </Pressable>
       </View>

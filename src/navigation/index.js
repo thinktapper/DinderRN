@@ -3,8 +3,7 @@ import { View, ActivityIndicator } from 'react-native'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { useAuthContext } from '../context/AuthProvider'
-// import { useUser } from '../hooks/user/useUser'
+import { useAuthContext } from '../context'
 
 import SignInScreen from '../screens/SignInScreen'
 import SignUpScreen from '../screens/SignUpScreen'
@@ -12,26 +11,40 @@ import ConfirmEmailScreen from '../screens/ConfirmEmailScreen'
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen'
 import NewPasswordScreen from '../screens/NewPasswordScreen'
 import HomeScreen from '../screens/HomeScreen'
-import FeastScreen from '../screens/NewFeastScreen'
+import FeastScreen from '../screens/FeastScreen'
 import NewFeastScreen from '../screens/NewFeastScreen'
 import ProfileScreen from '../screens/ProfileScreen'
+import { useQuery } from '@tanstack/react-query'
+import { getMe } from '../utils/authApi'
 
 const Stack = createNativeStackNavigator()
 
 const Navigation = () => {
   const authContext = useAuthContext()
-  const { user, splashLoading, isSignOut } = authContext
-  // const { userInfo, isLoading } = authContext
-  // const [userInfo, setUserInfo] = useState({})
-  // const { user } = useUser()
+  // const { user, splashLoading, isSignOut } = authContext
+  // const user = authContext.state.user
 
-  // useEffect(() => {
-  //   useUser()
-  // }, [])
+  const {
+    isLoading,
+    isFetching,
+    data: user,
+  } = useQuery(['authUser'], () => getMe(), {
+    // enabled: !!user,
+    retry: 1,
+    select: (data) => data.data.user,
+    onSuccess: (data) => {
+      authContext.dispatch({ type: 'SET_USER', payload: data })
+    },
+  })
 
-  if (splashLoading) {
+  const loading = isLoading || isFetching
+
+  if (loading) {
     return <LoadingIndicator />
   }
+  // if (query.isLoading && user.token) {
+  //   return <LoadingIndicator />
+  // }
 
   return (
     <NavigationContainer>
@@ -42,7 +55,8 @@ const Navigation = () => {
               name="SignIn"
               component={SignInScreen}
               options={{
-                animationTypeForReplace: isSignOut ? 'pop' : 'push',
+                animationTypeForReplace: 'pop',
+                // animationTypeForReplace: isSignOut ? 'pop' : 'push',
               }}
             />
             <Stack.Screen name="SignUp" component={SignUpScreen} />

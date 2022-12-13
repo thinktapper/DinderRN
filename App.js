@@ -11,8 +11,7 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 // import tw from 'twrnc'
 import Navigation from './src/navigation'
 
-import { AppProvider } from './src/context/AppProvider'
-import { AuthProvider } from './src/context/AuthProvider'
+import { AuthContextProvider } from './src/context'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,11 +38,11 @@ const App = ({ navigation }) => {
     // <PersistQueryClientProvider
     //   client={queryClient}
     //   persistOptions={{ persister: asyncPersister }}>
-    <AuthProvider>
+    <AuthContextProvider>
       <QueryClientProvider client={queryClient}>
         <Navigation />
       </QueryClientProvider>
-    </AuthProvider>
+    </AuthContextProvider>
     // </PersistQueryClientProvider>
     // </SafeAreaView>
   )

@@ -4,9 +4,7 @@ import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
 // import SocialSignInButtons from '../components/SocialSignInButtons'
 import { useForm } from 'react-hook-form'
-import { useAuth } from '../hooks/useAuth'
-import { useUser } from '../hooks/user/useUser'
-import { useAuthContext } from '../context/AuthProvider'
+import { useAuthContext } from '../context'
 
 const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
@@ -16,8 +14,6 @@ const SignUpScreen = ({ navigation }) => {
   const [loading, setLoading] = React.useState(false)
   const { control, handleSubmit, watch } = useForm()
   const pwd = watch('password')
-  // const auth = useAuth()
-  // const { user } = useUser()
 
   // if (user) {
   //   navigation.navigate('Home')

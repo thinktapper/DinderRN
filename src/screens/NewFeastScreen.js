@@ -11,11 +11,11 @@ import {
 } from 'react-native'
 import tw from 'twrnc'
 import { Picker } from '@react-native-picker/picker'
-import DateTimePicker from '@react-native-community/datetimepicker'
+// import DateTimePicker from '@react-native-community/datetimepicker'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
-import { useAppContext } from '../context/AppProvider'
+import { useAppContext } from '../context'
 
 const FeastScreen = ({ navigation }) => {
   const appContext = useAppContext()

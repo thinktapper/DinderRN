@@ -1,25 +1,71 @@
 import React, { forwardRef, useRef } from 'react'
 import { Ionicons } from '@expo/vector-icons'
-// import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { TextInput, Text, View } from 'react-native'
 import { InputOutline, InputStandard } from 'react-native-input-outline'
 import tw from 'twrnc'
 
-import { FieldError } from 'react-hook-form'
-
-const FormInput = forwardRef((props, ref) => {
-  const { label, error, ...inputProps } = props
+const FormInput = ({
+  name,
+  // label,
+  placeholder,
+  value,
+  secureTextEntry,
+  ...otherProps
+}) => {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext()
 
   return (
-    <View style={tw`w-full mt-8 mb-2`}>
-      {label && <Text style={tw`text-gray-500 text-sm`}>{label}</Text>}
-      <InputOutline ref={ref} autoCapitalize="none" {...inputProps} />
-      <Text style={tw`text-rose-500 items-stretch`}>
-        {error && error.message}
-      </Text>
-    </View>
+    <Controller
+      control={control}
+      defaultValue=""
+      name={name}
+      render={({ value, onChange, onBlur, ref }) => (
+        <View style={tw`w-full mt-8 mb-2`}>
+          {/* <Text style={tw`text-gray-500 text-sm`}>{label}</Text> */}
+          <InputOutline
+            // {...field}
+            value={value}
+            ref={ref}
+            onChangeText={(val) => onChange(val)}
+            onBlur={onBlur}
+            placeholder={placeholder}
+            autoCapitalize="none"
+            style={tw`w-full rounded-xl`}
+            activeColor={'#00897B'}
+            inactiveColor={tw`bg-gray-200`}
+            errorColor={tw`bg-rose-500`}
+            secureTextEntry={secureTextEntry}
+            error={!!errors[name]}
+            {...otherProps}
+          />
+          {errors[name] && (
+            <Text style={tw`text-rose-500 items-stretch`}>
+              {errors[name] ? errors[name].message : ''}
+            </Text>
+          )}
+        </View>
+      )}
+    />
   )
-})
+}
+
+// const FormInput = forwardRef((props, ref) => {
+//   const { label, error, ...inputProps } = props
+
+//   return (
+//     <View style={tw`w-full mt-8 mb-2`}>
+//       {label && <Text style={tw`text-gray-500 text-sm`}>{label}</Text>}
+//       <InputOutline ref={ref} autoCapitalize="none" {...inputProps} />
+//       <Text style={tw`text-rose-500 items-stretch`}>
+//         {error && error.message}
+//       </Text>
+//     </View>
+//   )
+// })
 
 // const Input = <TextInput style={tw`bg-white p-2 rounded-b-md`} />
 

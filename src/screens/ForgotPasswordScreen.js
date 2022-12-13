@@ -3,12 +3,10 @@ import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native'
 import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
 import SocialSignInButtons from '../components/SocialSignInButtons'
-import { useNavigation } from '@react-navigation/core'
 import { useForm } from 'react-hook-form'
 
-const ForgotPasswordScreen = () => {
+const ForgotPasswordScreen = ({ navigation }) => {
   const { control, handleSubmit } = useForm()
-  const navigation = useNavigation()
 
   const onSendPressed = async (data) => {
     try {
