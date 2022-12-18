@@ -21,6 +21,7 @@ import {
 import Swiper from 'react-native-deck-swiper'
 import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
+import { useAppContext } from '../context/AppProvider'
 
 const HomeScreen = ({ navigation }) => {
   const appContext = useAppContext()

@@ -8,58 +8,41 @@ import {
   TextInput,
   Alert,
 } from 'react-native'
+import {
+  VStack,
+  Input,
+  Button,
+  FormControl,
+  NativeBaseProvider,
+  Center,
+} from 'native-base'
 import tw from 'twrnc'
 import FormInput from '../components/FormInput'
-import { useForm } from 'react-hook-form'
-// import { Formik, Field } from 'formik'
+// import { useForm } from 'react-hook-form'
+import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { EMAIL_REGEX } from '../lib/constants'
-import { useAuthContext } from '../context'
+import { useAuthContext } from '../context/AuthProvider'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import { useMutation } from '@tanstack/react-query'
-import { logout } from '../utils/authApi'
+// import { useMutation } from '@tanstack/react-query'
+// import { logout } from '../utils/useApi'
 
 const ProfileScreen = ({ navigation }) => {
   const authContext = useAuthContext()
+  const [loading, setLoading] = useState(false)
   // const { user, updateUser, logout, setIsSignOut } = authContext
-  const user = authContext.state.authUser
-  const { handleSubmit, register, setValue, errors } = useForm()
-  const inputRef = useRef([])
-
-  if (!user) {
-    navigation.navigate('SignIn')
-  }
-
-  const { mutate: logoutUser, isLoading } = useMutation(
-    async () => await logout(),
-    {
-      onSuccess: (data) => {
-        navigation.navigate('SignIn')
-      },
-      onError: (error) => {
-        if (Array.isArray(error.response.data.error)) {
-          error.data.error.forEach((el) => console.warn(el.message))
-        } else {
-          console.warn(error.response.data.message)
-        }
-      },
-    },
-  )
 
   const onLogoutHandler = async () => {
-    logoutUser()
+    // console.log(authContext.user)
+    setLoading(true)
+    try {
+      await authContext.logout()
+    } catch (error) {
+      console.warn(`Error logging out: ${error}`)
+    }
+    setLoading(false)
+    Alert.alert('successfully logged out!')
   }
-
-  // const isValid = () => {
-  //   return name && bio
-  // }
-
-  // const save = async () => {
-  //   if (!isValid()) {
-  //     console.warn('Not valid')
-  //     return
-  //   }
-  // }
 
   const updateUserSchema = Yup.object().shape({
     username: Yup.string()
@@ -68,96 +51,95 @@ const ProfileScreen = ({ navigation }) => {
     email: Yup.string().matches(EMAIL_REGEX, 'Invalid email'),
   })
 
-  const handleUpdateUser = async (data) => {
-    console.warn('data', data)
-
-    // await updateUser(data)
-
-    // if (result && result.user !== null) {
-    //   Alert.alert('Success', 'Your profile has been updated')
-    // }
+  const handleUpdateUser = async (values) => {
+    // console.warn('data', values)
+    setLoading(true)
     try {
-      // await updateUser(data)
-      // if ('user' in result && result.user !== null) {
-      Alert.alert('Success', 'Your profile has been updated')
-      // }
+      const response = await authContext.updateUser(values)
+      if (response.data.success) {
+        Alert.alert('Success', 'Your profile has been updated')
+        setLoading(false)
+        navigation.navigate('Home')
+      }
     } catch (err) {
       console.error(err)
+      setLoading(false)
     }
   }
 
   return (
-    // <SafeAreaView style={styles.root}>
-    <KeyboardAwareScrollView style={styles.root}>
-      <Text style={styles.title}>Your information</Text>
-      <View style={styles.container}>
-        <FormInput
-          name="username"
-          label="Username"
-          placeholder={user?.username ?? 'Username'}
-          register={'username'}
-          ref={(ref) => {
-            inputRef.current = ref
+    <SafeAreaView style={styles.root}>
+      {/* <KeyboardAwareScrollView style={tw`items-center p-5`}> */}
+      <View style={tw`items-center p-5`}>
+        <Text style={styles.title}>Your information</Text>
+
+        <Formik
+          initialValues={{
+            username: authContext.user.username,
+            email: authContext.user.email,
           }}
-          onChangeText={(value) => setValue('username', value)}
-          errors={errors}
-        />
-
-        <FormInput
-          name="email"
-          label="Email address"
-          placeholder={user?.email ?? 'tim@apple.com'}
-          register={'email'}
-          ref={(ref) => {
-            inputRef.current = ref
-          }}
-          onChangeText={(value) => setValue('email', value)}
-          errors={errors}
-        />
-
-        <Pressable
-          onPress={handleSubmit(handleUpdateUser)}
-          style={styles.button}>
-          <Text>Save</Text>
-        </Pressable>
-
-        {/* <Formik
-          initialValues={{ username: user.username, email: user.email }}
           validationSchema={updateUserSchema}
-          onSubmit={(values) => handleUpdateUser(values)}>
-          {({ handleSubmit, isValid, values }) => (
-            <>
-              <Field
-                component={FormInput}
-                name="username"
-                placeholder={user.username}
-              />
+          onSubmit={handleUpdateUser}>
+          {({
+            handleSubmit,
+            handleChange,
+            handleBlur,
+            values,
+            touched,
+            errors,
+          }) => (
+            <VStack width="80%" space={4}>
+              <FormControl isInvalid={'username' in errors && touched.username}>
+                <FormControl.Label>Username</FormControl.Label>
+                <Input
+                  autoCapitalize="none"
+                  onBlur={handleBlur('username')}
+                  placeholder="Username"
+                  onChangeText={handleChange('username')}
+                  value={values.username}
+                  error={errors.username}
+                  touched={touched.username}
+                />
+                <FormControl.ErrorMessage>
+                  {errors.username}
+                </FormControl.ErrorMessage>
+              </FormControl>
 
-              <Field
-                component={FormInput}
-                name="email"
-                placeholder={user.email}
-                keyboardType="email-address"
-              />
+              <FormControl isInvalid={'email' in errors && touched.email}>
+                <FormControl.Label>Email</FormControl.Label>
+                <Input
+                  autoCapitalize="none"
+                  onBlur={handleBlur('email')}
+                  placeholder="tim@apple.com"
+                  onChangeText={handleChange('email')}
+                  value={values.email}
+                  error={errors.email}
+                  touched={touched.email}
+                />
+                <FormControl.ErrorMessage>
+                  {errors.email}
+                </FormControl.ErrorMessage>
+              </FormControl>
 
               <Pressable onPress={handleSubmit} style={styles.button}>
-                <Text>Save</Text>
+                <Text>{loading ? 'Loading...' : 'Save'}</Text>
               </Pressable>
-            </>
+
+              <Pressable
+                onPress={() => navigation.navigate('Home')}
+                style={styles.button}>
+                <Text>Cancel</Text>
+              </Pressable>
+
+              <Pressable onPress={onLogoutHandler} style={styles.button}>
+                <Text>Sign out</Text>
+              </Pressable>
+            </VStack>
           )}
-        </Formik> */}
-
-        <Pressable
-          onPress={() => navigation.navigate('Home')}
-          style={styles.button}>
-          <Text>Cancel</Text>
-        </Pressable>
-
-        <Pressable onPress={onLogoutHandler} style={styles.button}>
-          <Text>Sign out</Text>
-        </Pressable>
+        </Formik>
       </View>
-    </KeyboardAwareScrollView>
+      {/* </KeyboardAwareScrollView> */}
+    </SafeAreaView>
   )
 }
 

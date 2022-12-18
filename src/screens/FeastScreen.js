@@ -16,7 +16,7 @@ const FeastScreen = ({ navigation }) => {
     <SafeAreaView style={styles.root}>
       {/* <View style={styles.container}> */}
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>Your Feast</Text>
+        <Text style={styles.title}>Your Feasts</Text>
       </ScrollView>
 
       <Pressable

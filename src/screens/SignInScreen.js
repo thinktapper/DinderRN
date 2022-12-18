@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react'
 import {
   View,
   Text,
@@ -6,88 +7,115 @@ import {
   ScrollView,
   Alert,
 } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import {
+  VStack,
+  Input,
+  Button,
+  FormControl,
+  NativeBaseProvider,
+  Center,
+} from 'native-base'
 import tw from 'twrnc'
 import Logo from '../../assets/images/dinder-double_flame-black.png'
-import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
-import { useForm, Controller, FormProvider } from 'react-hook-form'
+import { Formik } from 'formik'
 import * as Yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
+import { useAuthContext } from '../context/AuthProvider'
+// import { useMutation, useQuery } from '@tanstack/react-query'
+// import { useUser } from '../hooks/user/useUser'
+// import { login } from '../utils/authApi'
+// import { getMe } from '../utils/useApi'
+// import { useAuth } from '../hooks/useAuth'
+// import { setStoredUser } from '../lib/user-storage'
+// import FormInput from '../components/FormInput'
 
-import { useAuthContext } from '../context'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import { getMe, login } from '../utils/authApi'
-import FormInput from '../components/FormInput'
+const loginSchema = Yup.object().shape({
+  username: Yup.string().required('Username is required'),
+  password: Yup.string().required('Password is required'),
+})
 
-const loginSchema = Yup.object()
-  .shape({
-    username: Yup.string().required('Username is required'),
-    password: Yup.string().required('Password is required'),
-  })
-  .required()
+const validate = (values) => {
+  const errors = {}
+
+  if (!values.unsername) {
+    errors.username = 'Required'
+  }
+  if (!values.password) {
+    errors.password = 'Required'
+  }
+
+  return errors
+}
 
 const SignInScreen = ({ navigation }) => {
   const authContext = useAuthContext()
+  // const auth = useAuth()
   const { height } = useWindowDimensions()
-  // const [loading, setLoading] = useState(false)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
-
-  const methods = useForm({
-    resolver: yupResolver(loginSchema),
-  })
+  const [loading, setLoading] = useState(false)
+  // const { updateUser } = useUser()
+  // const [username, setUsername] = useState('')
+  // const [password, setPassword] = useState('')
+  // const [confirm, setConfirm] = useState('')
 
   // Get current logged-in user
-  const query = useQuery(['authUser'], getMe, {
-    enabled: false,
-    select: (data) => data.data.user,
-    retry: 1,
-    onSuccess: (data) => {
-      authContext.dispatch({ type: 'SET_USER', payload: data })
-    },
-  })
+  // const query = useQuery(['authUser'], getMe, {
+  //   enabled: false,
+  //   select: (data) => data.user,
+  //   retry: 1,
+  //   onSuccess: (data) => {
+  //     authContext.dispatch({ type: 'SET_USER', payload: data })
+  //   },
+  // })
 
   // Login Mutation
-  const { mutate: loginUser, isLoading } = useMutation(
-    (userData) => login(userData),
-    {
-      onSuccess: () => {
-        query.refetch()
-        Alert.alert('You successfully logged in')
-        // navigation.navigate('Home')
-      },
-      onError: (error) => {
-        if (Array.isArray(error.response.data.error)) {
-          error.data.error.forEach((el) => console.warn(el.message))
-        } else {
-          console.warn(error.response.data.message)
-        }
-      },
-    },
-  )
+  // const { mutate: loginUser, isLoading } = useMutation(
+  //   (userData) => login(userData),
+  //   {
+  //     onSuccess: (response) => {
+  //       if ('user' in response && 'token' in response.user) {
+  //         console.debug(`User ${response.user.username} logged in`)
+  //         Alert.alert('You successfully logged in')
+  //       }
+
+  //       // update stored user data
+  //       authContext.dispatch({ type: 'SET_USER', payload: response.user })
+  //       // query.refetch()
+  //       // navigation.navigate('Home')
+  //     },
+  //     onError: (error) => {
+  //       if (Array.isArray(error.response.data.error)) {
+  //         error.data.error.forEach((el) => console.warn(el.message))
+  //       } else {
+  //         console.warn(error.response.data.message)
+  //       }
+  //     },
+  //   },
+  // )
 
   // if (user) {
   //   navigation.navigate('Home')
   // }
 
-  const {
-    control,
-    reset,
-    handleSubmit,
-    formState: { isSubmitSuccessful },
-  } = methods
-
-  const onSubmitHandler = (values) => {
-    loginUser(values)
-  }
-
-  useEffect(() => {
-    if (isSubmitSuccessful) {
-      reset()
+  const onSubmit = async (values) => {
+    console.log('submitting with', values)
+    // loginUser(values)
+    setLoading(true)
+    try {
+      authContext.login(values)
+      // const response = await login(values)
+      // if ('user' in response && 'token' in response.user) {
+      //   console.debug(`User ${response.user.username} logged in`)
+      //   // update stored user data
+      //   authContext.dispatch({ type: 'SET_USER', payload: response.user })
+      //   setStoredUser(response.user)
+      //   Alert.alert('You successfully logged in')
+      // }
+    } catch (error) {
+      console.log('Error', error)
+      setLoading(false)
     }
-  }, [isSubmitSuccessful])
+    setLoading(false)
+  }
 
   // const onSignInPressed = async (data) => {
   //   if (loading) {
@@ -121,21 +149,63 @@ const SignInScreen = ({ navigation }) => {
           resizeMode="contain"
         />
 
-        <FormProvider {...methods}>
-          <FormInput name="username" placeholder="Username" value={username} />
-          <FormInput
-            name="password"
-            placeholder="Password"
-            value={password}
-            type="password"
-            secureTextEntry
-          />
+        <Formik
+          initialValues={{
+            username: '',
+            password: '',
+          }}
+          onSubmit={onSubmit}
+          validationSchema={loginSchema}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            isValid,
+            values,
+            touched,
+            errors,
+          }) => (
+            <VStack width="80%" space={4}>
+              <FormControl isInvalid={'username' in errors && touched.username}>
+                <FormControl.Label>Username</FormControl.Label>
+                <Input
+                  autoCapitalize="none"
+                  onBlur={handleBlur('username')}
+                  placeholder="Username"
+                  onChangeText={handleChange('username')}
+                  value={values.username}
+                  error={errors.username}
+                  touched={touched.username}
+                />
+                <FormControl.ErrorMessage>
+                  {errors.username}
+                </FormControl.ErrorMessage>
+              </FormControl>
 
-          <CustomButton
-            text={isLoading ? 'Loading...' : 'Sign In'}
-            onPress={handleSubmit(onSubmitHandler)}
-          />
-        </FormProvider>
+              <FormControl isInvalid={'password' in errors && touched.password}>
+                <FormControl.Label>Password</FormControl.Label>
+                <Input
+                  autoCapitalize="none"
+                  type="password"
+                  onBlur={handleBlur('password')}
+                  placeholder="Enter password"
+                  onChangeText={handleChange('password')}
+                  value={values.password}
+                  error={errors.password}
+                  touched={touched.password}
+                />
+                <FormControl.ErrorMessage>
+                  {errors.password}
+                </FormControl.ErrorMessage>
+              </FormControl>
+
+              <CustomButton
+                text={loading ? 'Loading...' : 'Sign In'}
+                onPress={handleSubmit}
+              />
+            </VStack>
+          )}
+        </Formik>
 
         {/* <CustomInput
           name="username"

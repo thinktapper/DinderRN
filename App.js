@@ -10,8 +10,10 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 // import { SafeAreaView } from 'react-native'
 // import tw from 'twrnc'
 import Navigation from './src/navigation'
-
-import { AuthContextProvider } from './src/context'
+import { AppProvider } from './src/context/AppProvider'
+import { AuthProvider } from './src/context/AuthProvider'
+import { NativeBaseProvider } from 'native-base'
+// import { AuthContextProvider } from './src/context'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,11 +40,15 @@ const App = ({ navigation }) => {
     // <PersistQueryClientProvider
     //   client={queryClient}
     //   persistOptions={{ persister: asyncPersister }}>
-    <AuthContextProvider>
-      <QueryClientProvider client={queryClient}>
-        <Navigation />
-      </QueryClientProvider>
-    </AuthContextProvider>
+    <AuthProvider>
+      <AppProvider>
+        <QueryClientProvider client={queryClient}>
+          <NativeBaseProvider>
+            <Navigation />
+          </NativeBaseProvider>
+        </QueryClientProvider>
+      </AppProvider>
+    </AuthProvider>
     // </PersistQueryClientProvider>
     // </SafeAreaView>
   )

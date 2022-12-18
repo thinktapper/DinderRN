@@ -9,25 +9,60 @@ import {
   Alert,
   ScrollView,
 } from 'react-native'
+import {
+  VStack,
+  Input,
+  Button,
+  FormControl,
+  NativeBaseProvider,
+  Center,
+} from 'native-base'
+import { Formik } from 'formik'
+import * as Yup from 'yup'
 import tw from 'twrnc'
 import { Picker } from '@react-native-picker/picker'
 // import DateTimePicker from '@react-native-community/datetimepicker'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
-import { useAppContext } from '../context'
+// import { useAppContext } from '../context'
+import axios from 'axios'
+import { useAuthContext } from '../context/AuthProvider'
+import {
+  KeyboardAwareSectionList,
+  KeyboardAwareScrollView,
+} from 'react-native-keyboard-aware-scroll-view'
+
+const feastSchema = Yup.object().shape({
+  name: Yup.string().required('Feast name required'),
+  startDate: Yup.date(),
+  endDate: Yup.date(),
+  radius: Yup.number()
+    .min(1, ({ min }) => `Radius must be at least ${min} mile`)
+    .max(5, ({ max }) => `Radius cannot be more than ${max} miles`)
+    .required('Radius is required'),
+  location: Yup.object()
+    .shape({
+      lat: Yup.number(),
+      long: Yup.number(),
+    })
+    .required('Location JSON object is required'),
+})
 
 const FeastScreen = ({ navigation }) => {
-  const appContext = useAppContext()
-  const [newFeastName, setNewFeastName] = useState('')
-  const [newFeastAddress, setNewFeastAddress] = useState('')
-  const [newRadius, setNewRadius] = useState(1)
-  const [newEndsAt, setNewEndsAt] = useState(new Date())
-  const feastAddress = appContext.feastAddress
-  const feastName = appContext.feastName
-  const radius = appContext.radius
-  const date = appContext.endsAt
-  const { lat, long } = appContext.coords
+  // const appContext = useAppContext()
+  const authContext = useAuthContext()
+  const [feastName, setFeastName] = useState('')
+  const [feastAddress, setFeastAddress] = useState(null)
+  const [location, setLocation] = useState({ lat: 0, long: 0 })
+  const [radius, setRadius] = useState(1)
+  const [endsAt, setEndsAt] = useState(new Date())
+  // const [newEndsAt, setNewEndsAt] = useState(new Date())
+  // const feastAddress = appContext.feastAddress
+  // const feastName = appContext.feastName
+  // const radius = appContext.radius
+  // const date = appContext.endsAt
+  // const { lat, long } = appContext.coords
 
   const autocompleteRef = useRef()
 
@@ -48,33 +83,28 @@ const FeastScreen = ({ navigation }) => {
   // }
 
   const isValid = () => {
-    return newFeastName && newEndsAt && newRadius
+    return feastName && endsAt && radius && location
   }
 
   const save = async () => {
-    if (!isValid()) {
-      console.warn('Not valid')
-      return
+    if (!isValid) {
+      return Alert.alert('Not valid')
     }
-    // Get new feast address from google places autocomplete
-    // const address = await autocompleteRef.current?.getAddressText()
-    // setNewFeastAddress(address)
 
-    // Save feast to context + db and navigate to home
+    const values = {
+      name: feastName,
+      location: JSON.stringify(location),
+      endsAt: endsAt,
+      radius: radius,
+    }
+
     try {
-      const localSave = await appContext.handleSaveFeast({
-        newFeastName,
-        newFeastAddress,
-        newRadius,
-        newEndsAt,
+      const response = await axios({
+        url: 'http://localhost:3000/api/feast',
+        method: 'post',
+        headers: { authorization: `Bearer ${authContext.user.token}` },
+        data: { ...values },
       })
-      if (localSave) {
-        // const result = await appContext.handleSaveDataStore()
-        // if (result) {
-        //   console.log('Saved feast to db:', result)
-        // }
-        const dbSave = await createDataStoreFeast()
-      }
 
       Alert.alert('Feast info saved successfully')
 
@@ -93,35 +123,41 @@ const FeastScreen = ({ navigation }) => {
         <TextInput
           style={styles.input}
           placeholder="Feast name..."
-          value={newFeastName}
-          onChangeText={setNewFeastName}
+          value={feastName}
+          onChangeText={setFeastName}
         />
       </View>
 
-      <GooglePlacesAutocomplete
-        ref={autocompleteRef}
-        placeholder="Type a location"
-        fetchDetails={true}
-        minLength={2}
-        enablePoweredByContainer={false}
-        onPress={(data, details = null) => {
-          // 'details' is provided when fetchDetails = true
-          appContext.getCoords(details)
-          setNewFeastAddress(details.formatted_address)
-          // setNewFeastAddress(autocompleteRef.current?.getAddressText())
-        }}
-        query={{
-          key: GOOGLE_API,
-          language: 'en',
-        }}
-        onFail={(error) => console.log(error)}
-        onNotFound={() => console.warn('no results')}
-        listEmptyComponent={() => (
-          <View style={{ flex: 1 }}>
-            <Text>No results were found</Text>
-          </View>
-        )}
-      />
+      <View style={tw`flex-1 pt-4`}>
+        <GooglePlacesAutocomplete
+          // ref={autocompleteRef}
+          placeholder="Type a location"
+          fetchDetails={true}
+          minLength={2}
+          enablePoweredByContainer={false}
+          onPress={(data, details = null) => {
+            // 'details' is provided when fetchDetails = true
+            setLocation({
+              lat: details.geometry.location.lat,
+              long: details.geometry.location.lng,
+            })
+            // appContext.getCoords(details)
+            // setNewFeastAddress(details.formatted_address)
+            // setNewFeastAddress(autocompleteRef.current?.getAddressText())
+          }}
+          query={{
+            key: GOOGLE_API,
+            language: 'en',
+          }}
+          onFail={(error) => console.log(error)}
+          onNotFound={() => console.warn('no results')}
+          listEmptyComponent={() => (
+            <View style={{ flex: 1 }}>
+              <Text>No results were found</Text>
+            </View>
+          )}
+        />
+      </View>
 
       <View style={[styles.container, tw`flex-1 justify-around`]}>
         <Text style={tw`text-center text-xl font-semibold`}>End date</Text>
@@ -129,11 +165,11 @@ const FeastScreen = ({ navigation }) => {
         <RNDateTimePicker
           // display="inline"
           mode="date"
-          value={newEndsAt}
+          value={endsAt}
           minimumDate={new Date()}
           style={tw`flex-1 w-full mt-2`}
           onChange={(e, selectedDate) => {
-            setNewEndsAt(selectedDate)
+            setEndsAt(selectedDate)
           }}
         />
       </View>
@@ -143,8 +179,8 @@ const FeastScreen = ({ navigation }) => {
         <View style={styles.container}>
           <Picker
             label="Radius"
-            selectedValue={newRadius}
-            onValueChange={(itemValue) => setNewRadius(itemValue)}>
+            selectedValue={radius}
+            onValueChange={(itemValue) => setRadius(itemValue)}>
             <Picker.Item label="1 Mile" value={1} />
             <Picker.Item label="2 Miles" value={2} />
             <Picker.Item label="3 Miles" value={3} />
