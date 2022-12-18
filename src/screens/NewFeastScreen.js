@@ -22,6 +22,8 @@ import * as Yup from 'yup'
 import tw from 'twrnc'
 import { Picker } from '@react-native-picker/picker'
 // import DateTimePicker from '@react-native-community/datetimepicker'
+import SearchBarWithAutocomplete from '../components/SearchBarAutocomplete'
+import { useDebounce } from '../utils/useDebounce'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
@@ -53,10 +55,13 @@ const FeastScreen = ({ navigation }) => {
   // const appContext = useAppContext()
   const authContext = useAuthContext()
   const [feastName, setFeastName] = useState('')
-  const [feastAddress, setFeastAddress] = useState(null)
+  // const [feastAddress, setFeastAddress] = useState(null)
   const [location, setLocation] = useState({ lat: 0, long: 0 })
   const [radius, setRadius] = useState(1)
   const [endsAt, setEndsAt] = useState(new Date())
+  const [search, setSearch] = useState({ term: '', fetchPredictions: false })
+  const [predictions, setPredictions] = useState([])
+  const [showPredictions, setShowPredictions] = useState(true)
   // const [newEndsAt, setNewEndsAt] = useState(new Date())
   // const feastAddress = appContext.feastAddress
   // const feastName = appContext.feastName
@@ -64,7 +69,56 @@ const FeastScreen = ({ navigation }) => {
   // const date = appContext.endsAt
   // const { lat, long } = appContext.coords
 
-  const autocompleteRef = useRef()
+  const GOOGLE_PACES_API_BASE_URL = 'https://maps.googleapis.com/maps/api/place'
+
+  const onChangeSearch = async () => {
+    if (search.term.trim() === '') return
+    if (!search.fetchPredictions) return
+    const apiUrl = `${GOOGLE_PACES_API_BASE_URL}/autocomplete/json?key=${GOOGLE_API}&input=${search.term}`
+    try {
+      const result = await axios.request({
+        method: 'get',
+        url: apiUrl,
+      })
+      console.log(JSON.stringify(result))
+      if (result) {
+        const {
+          data: { predictions },
+        } = result
+        setPredictions(predictions)
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  useDebounce(onChangeSearch, 1000, [search.term])
+
+  const onPredictionTapped = async (placeId, description) => {
+    const apiUrl = `${GOOGLE_PACES_API_BASE_URL}/details/json?key=${GOOGLE_API}&place_id=${placeId}`
+    try {
+      const result = await axios.request({
+        method: 'post',
+        url: apiUrl,
+      })
+      if (result) {
+        const {
+          data: {
+            result: {
+              geometry: { location },
+            },
+          },
+        } = result
+        const { lat, lng } = location
+        setShowPredictions(false)
+        setLocation({ lat: lat, long: lng })
+        setSearch({ term: description })
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  // const autocompleteRef = useRef()
 
   // const handleFeastNameChange = text => {
   //   setNewFeastName(text)
@@ -88,13 +142,14 @@ const FeastScreen = ({ navigation }) => {
 
   const save = async () => {
     if (!isValid) {
-      return Alert.alert('Not valid')
+      console.debug('Not valid')
+      return
     }
 
     const values = {
       name: feastName,
-      location: JSON.stringify(location),
-      endsAt: endsAt,
+      location: location,
+      endsAt: endsAt.toUTCString,
       radius: radius,
     }
 
@@ -105,6 +160,7 @@ const FeastScreen = ({ navigation }) => {
         headers: { authorization: `Bearer ${authContext.user.token}` },
         data: { ...values },
       })
+      // console.log(JSON.stringify(response))
 
       Alert.alert('Feast info saved successfully')
 
@@ -118,44 +174,55 @@ const FeastScreen = ({ navigation }) => {
       <View style={styles.container}>
         {/* <ScrollView showsVerticalScrollIndicator={false}> */}
 
-        <Text style={styles.title}>Create or update your Feast</Text>
+        <Text style={styles.title}>Set your swipe session</Text>
 
         <TextInput
           style={styles.input}
           placeholder="Feast name..."
+          // placeholder={
+          //   appContext.feastName ? appContext.feastName : 'Feast name...'
+          // }
           value={feastName}
           onChangeText={setFeastName}
         />
       </View>
 
-      <View style={tw`flex-1 pt-4`}>
+      {/* <View style={tw`flex-1`}>
         <GooglePlacesAutocomplete
-          // ref={autocompleteRef}
           placeholder="Type a location"
           fetchDetails={true}
-          minLength={2}
-          enablePoweredByContainer={false}
           onPress={(data, details = null) => {
             // 'details' is provided when fetchDetails = true
+            console.warn(data, details)
+            // appContext.getCoords(details)
             setLocation({
               lat: details.geometry.location.lat,
               long: details.geometry.location.lng,
             })
-            // appContext.getCoords(details)
-            // setNewFeastAddress(details.formatted_address)
-            // setNewFeastAddress(autocompleteRef.current?.getAddressText())
           }}
           query={{
             key: GOOGLE_API,
-            language: 'en',
           }}
-          onFail={(error) => console.log(error)}
+          onFail={(error) => console.warn(error)}
           onNotFound={() => console.warn('no results')}
+          listViewDisplayed="auto"
           listEmptyComponent={() => (
             <View style={{ flex: 1 }}>
               <Text>No results were found</Text>
             </View>
           )}
+        />
+      </View> */}
+
+      <View style={styles.body}>
+        <SearchBarWithAutocomplete
+          value={search.term}
+          onChangeText={(text) => {
+            setSearch({ term: text, fetchPredictions: true })
+          }}
+          showPredictions={showPredictions}
+          predictions={predictions}
+          onPredictionTapped={onPredictionTapped}
         />
       </View>
 
@@ -205,6 +272,12 @@ const FeastScreen = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  body: {
+    paddingHorizontal: 20,
+  },
   root: {
     width: '100%',
     flex: 1,
@@ -221,9 +294,9 @@ const styles = StyleSheet.create({
     color: 'gray',
     marginVertical: 10,
   },
-  container: {
-    padding: 10,
-  },
+  // container: {
+  //   padding: 10,
+  // },
   elementContainer: {
     marginVertical: 10,
   },

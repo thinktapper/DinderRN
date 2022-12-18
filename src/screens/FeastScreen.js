@@ -10,13 +10,22 @@ import {
   ScrollView,
 } from 'react-native'
 import tw from 'twrnc'
+import { useUserFeasts } from '../hooks/useFeasts'
+import Feast from '../components/Feast'
 
 const FeastScreen = ({ navigation }) => {
+  const feasts = useUserFeasts()
+
   return (
     <SafeAreaView style={styles.root}>
       {/* <View style={styles.container}> */}
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Your Feasts</Text>
+        <View>
+          {feasts?.map((feastData) => (
+            <Feast key={feastData.id} feastData={feastData} />
+          ))}
+        </View>
       </ScrollView>
 
       <Pressable

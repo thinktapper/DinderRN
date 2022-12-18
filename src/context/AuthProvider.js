@@ -44,14 +44,19 @@ export const AuthProvider = ({ children }) => {
     await SecureStore.deleteItemAsync(SECURE_SECRET)
   }
 
-  function authRequest({ ...options }) {
+  async function authRequest({ ...options }) {
     authClient.defaults.headers.common['authorization'] = `Bearer ${user.token}`
-    const onSuccess = (response) => response
-    const onError = (error) => {
+    // const onSuccess = (response) => response
+    // const onError = (error) => {
+    //   return error
+    // }
+
+    try {
+      const response = await authClient(options)
+      return response
+    } catch (error) {
       return error
     }
-
-    return authClient(options).then(onSuccess).catch(onError)
   }
 
   async function login(values) {

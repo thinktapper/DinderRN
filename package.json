@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "lint": "eslint .",
-    "format": "prettier --write \"**/*.{js,json,jsx,css}\""
+    "format": "prettier --write \"**/*.{js,json,jsx,css}\"",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@expo/webpack-config": "^0.17.0",
@@ -31,6 +32,8 @@
     "fast-json-patch": "^3.1.1",
     "formik": "^2.2.9",
     "native-base": "^3.4.25",
+    "patch-package": "^6.5.0",
+    "postinstall-postinstall": "^2.1.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-hook-form": "^7.38.0",
@@ -42,7 +45,7 @@
     "react-native-elements": "^3.4.2",
     "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "~2.5.0",
-    "react-native-google-places-autocomplete": "^2.5.0",
+    "react-native-google-places-autocomplete": "^2.5.1",
     "react-native-input-outline": "^1.5.2",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-reanimated": "~2.9.1",
