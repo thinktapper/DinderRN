@@ -30,14 +30,14 @@ import { queryKeys } from '../lib/constants'
 
 const HomeScreen = ({ route, navigation }) => {
   // const feastId = route.params?.feast
-  const appContext = useAppContext()
+  const ctx = useAppContext()
   const authContext = useAuthContext()
   const [activeScreen, setActiveScreen] = useState('Home')
   const color = '#b5b5b5'
   const activeColor = '#F76C6B'
   const swipeRef = useRef(null)
   // const [feast, setFeast] = useState({})
-  const feastDetails = useFeastDetails(route.params.feast)
+  const feastDetails = useFeastDetails(ctx.feast)
   const places = feastDetails?.places
   // const [places, setPlaces] = useState([])
   // const [currentIndex, setCurrentIndex] = useState(0)
@@ -112,7 +112,7 @@ const HomeScreen = ({ route, navigation }) => {
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
-          {feastDetails ? feastDetails.name : 'No Feast Context'}
+          {ctx.feast ? ctx.feast.name : 'No Feast Context'}
         </Text>
         {places ? (
           <Swiper
@@ -131,14 +131,6 @@ const HomeScreen = ({ route, navigation }) => {
             onSwipedRight={(cardIndex) => swipeRight(cardIndex)}
             // onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
             renderCard={(card) => {
-              // return (
-              //   <Animated.View
-              //     style={[styles.cardContainer, styles.cardShadow]}>
-              //     <Animated.View style={styles.cardInner}>
-              //       <MainCard style={{ flex: 1 }} card={card} />
-              //     </Animated.View>
-              //   </Animated.View>
-              // )
               return (
                 <PlaceCard
                   card={card}

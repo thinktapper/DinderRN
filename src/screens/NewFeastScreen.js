@@ -27,8 +27,8 @@ import { useDebounce } from '../utils/useDebounce'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
-// import { useAppContext } from '../context'
 import axios from 'axios'
+import { useAppContext } from '../context/AppProvider'
 import { useAuthContext } from '../context/AuthProvider'
 import {
   KeyboardAwareSectionList,
@@ -52,7 +52,7 @@ const feastSchema = Yup.object().shape({
 })
 
 const FeastScreen = ({ navigation }) => {
-  // const appContext = useAppContext()
+  const ctx = useAppContext()
   const authContext = useAuthContext()
   const [feastName, setFeastName] = useState('')
   // const [feastAddress, setFeastAddress] = useState(null)
@@ -159,8 +159,8 @@ const FeastScreen = ({ navigation }) => {
         headers: { authorization: `Bearer ${authContext.user.token}` },
         data: { ...values },
       })
-      console.log(JSON.stringify(response))
-
+      // console.log(JSON.stringify(response))
+      ctx.setFeast(response.data.feast)
       Alert.alert('Feast info saved successfully')
 
       navigation.navigate('Home')
@@ -186,7 +186,7 @@ const FeastScreen = ({ navigation }) => {
         />
       </View>
 
-      {/* <View style={tw`flex-1`}>
+      <View style={tw`flex-1`}>
         <GooglePlacesAutocomplete
           placeholder="Type a location"
           fetchDetails={true}
@@ -211,9 +211,9 @@ const FeastScreen = ({ navigation }) => {
             </View>
           )}
         />
-      </View> */}
+      </View>
 
-      <View style={styles.body}>
+      {/* <View style={styles.elementContainer}>
         <SearchBarWithAutocomplete
           value={search.term}
           onChangeText={(text) => {
@@ -223,7 +223,7 @@ const FeastScreen = ({ navigation }) => {
           predictions={predictions}
           onPredictionTapped={onPredictionTapped}
         />
-      </View>
+      </View> */}
 
       <View style={[styles.container, tw`flex-1 justify-around`]}>
         <Text style={tw`text-center text-xl font-semibold`}>End date</Text>
@@ -297,7 +297,11 @@ const styles = StyleSheet.create({
   //   padding: 10,
   // },
   elementContainer: {
-    marginVertical: 10,
+    // marginVertical: 10,
+    flex: 1,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
   },
   button: {
     backgroundColor: '#F63A6E',

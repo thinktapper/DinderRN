@@ -16,12 +16,15 @@ import Feast from '../components/Feast'
 import { ListItem } from '../components/ListItem'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { Divider } from 'native-base'
+import { useAppContext } from '../context/AppProvider'
 
 const FeastScreen = ({ navigation }) => {
+  const ctx = useAppContext()
   const { feasts, isLoading, error } = useUserFeasts()
 
   const onListItemPress = useCallback(
     (feast) => {
+      ctx.setFeast(feast)
       navigation.navigate('Home', {
         feast,
       })
@@ -43,11 +46,18 @@ const FeastScreen = ({ navigation }) => {
     <SafeAreaView style={styles.root}>
       <View style={styles.container}>
         <Text style={styles.title}>Your Feasts</Text>
-        {/* <View>
-          {feasts?.map((feastData) => (
-            <Feast key={feastData.id} feastData={feastData} />
-          ))}
-        </View> */}
+
+        <Pressable
+          onPress={() => navigation.navigate('NewFeast')}
+          style={styles.button}>
+          <Text>Create new</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => navigation.navigate('Home')}
+          style={styles.button}>
+          <Text>Cancel</Text>
+        </Pressable>
 
         <FlatList
           data={feasts}
