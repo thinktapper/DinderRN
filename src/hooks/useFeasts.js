@@ -18,13 +18,17 @@ async function getOrganizedFeasts(user) {
 export function useUserFeasts() {
   const { user } = useAuthContext()
 
-  const fallback = []
-  const { data: userFeasts = fallback } = useQuery(
+  // const fallback = []
+  const {
+    data: feasts,
+    isLoading,
+    error,
+  } = useQuery(
     [queryKeys.feasts, queryKeys.user, user?.id],
     () => getOrganizedFeasts(user),
     { enabled: !!user },
   )
-  return userFeasts
+  return { feasts, isLoading, error }
 }
 
 // export function usePrefetchFeasts() {

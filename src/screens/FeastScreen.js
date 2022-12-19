@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import {
   View,
   Text,
@@ -8,38 +8,66 @@ import {
   TextInput,
   Alert,
   ScrollView,
+  FlatList,
 } from 'react-native'
 import tw from 'twrnc'
 import { useUserFeasts } from '../hooks/useFeasts'
 import Feast from '../components/Feast'
+import { ListItem } from '../components/ListItem'
+import { LoadingIndicator } from '../components/LoadingIndicator'
+import { Divider } from 'native-base'
 
 const FeastScreen = ({ navigation }) => {
-  const feasts = useUserFeasts()
+  const { feasts, isLoading, error } = useUserFeasts()
+
+  const onListItemPress = useCallback(
+    (feast) => {
+      navigation.navigate('Home', {
+        feast,
+      })
+    },
+    [navigation],
+  )
+
+  const renderItem = useCallback(
+    ({ item }) => {
+      return <ListItem item={item} onPress={onListItemPress} />
+    },
+    [onListItemPress],
+  )
+
+  if (isLoading) return <LoadingIndicator />
+  if (error) return console.log(error)
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* <View style={styles.container}> */}
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.container}>
         <Text style={styles.title}>Your Feasts</Text>
-        <View>
+        {/* <View>
           {feasts?.map((feastData) => (
             <Feast key={feastData.id} feastData={feastData} />
           ))}
-        </View>
-      </ScrollView>
+        </View> */}
 
-      <Pressable
-        onPress={() => navigation.navigate('NewFeast')}
-        style={styles.button}>
-        <Text>Create new feast</Text>
-      </Pressable>
+        <FlatList
+          data={feasts}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          ItemSeparatorComponent={() => <Divider />}
+        />
 
-      <Pressable
-        onPress={() => navigation.navigate('Home')}
-        style={styles.button}>
-        <Text>Cancel</Text>
-      </Pressable>
-      {/* </View> */}
+        <Pressable
+          onPress={() => navigation.navigate('NewFeast')}
+          style={styles.button}>
+          <Text>Create new feast</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => navigation.navigate('Home')}
+          style={styles.button}>
+          <Text>Cancel</Text>
+        </Pressable>
+      </View>
     </SafeAreaView>
   )
 }
