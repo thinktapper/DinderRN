@@ -15,9 +15,9 @@ import HomeScreen from '../screens/HomeScreen'
 import FeastScreen from '../screens/FeastScreen'
 import NewFeastScreen from '../screens/NewFeastScreen'
 import ProfileScreen from '../screens/ProfileScreen'
-import { useQuery } from '@tanstack/react-query'
-import { getMe } from '../utils/authApi'
-import { useUser } from '../hooks/user/useUser'
+// import { useQuery } from '@tanstack/react-query'
+// import { getMe } from '../utils/authApi'
+// import { useUser } from '../hooks/user/useUser'
 
 const Stack = createNativeStackNavigator()
 
