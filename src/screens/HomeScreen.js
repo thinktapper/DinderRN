@@ -22,18 +22,44 @@ import Swiper from 'react-native-deck-swiper'
 import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
 import { useAppContext } from '../context/AppProvider'
+import { useAuthContext } from '../context/AuthProvider'
+import axios from 'axios'
+import { useQuery } from '@tanstack/react-query'
+import { queryKeys } from '../lib/constants'
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ route, navigation }) => {
+  const feastId = route.params?.feast
   const appContext = useAppContext()
+  const authContext = useAuthContext()
   const [activeScreen, setActiveScreen] = useState('Home')
   const color = '#b5b5b5'
   const activeColor = '#F76C6B'
   const swipeRef = useRef(null)
-  const places = appContext.places
+  const [feast, setFeast] = useState({})
+  // const places = getFeastPlaces()
+  const [places, setPlaces] = useState([])
   // const [currentIndex, setCurrentIndex] = useState(0)
   // const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const globalPadding = rs(12)
   const wrapperPadding = rs(12)
+
+  async function getFeastPlaces() {
+    const { data } = await axios({
+      url: `http://localhost:3000/api/feast/${feastId}`,
+      method: 'get',
+      headers: { authorization: `Bearer ${authContext.user.token}` },
+    })
+    if (data.success) {
+      setPlaces(data.feast.places)
+    }
+    return data.feast.places
+  }
+
+  useEffect(() => {
+    getFeastPlaces()
+  }, [feastId])
+
+  // const placesQuery = useQuery([queryKeys.places], getFeastPlaces)
 
   const swipeLeft = async (cardIndex) => {
     if (!places[cardIndex]) return

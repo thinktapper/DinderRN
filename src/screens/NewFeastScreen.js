@@ -80,7 +80,6 @@ const FeastScreen = ({ navigation }) => {
         method: 'get',
         url: apiUrl,
       })
-      console.log(JSON.stringify(result))
       if (result) {
         const {
           data: { predictions },
@@ -160,7 +159,7 @@ const FeastScreen = ({ navigation }) => {
         headers: { authorization: `Bearer ${authContext.user.token}` },
         data: { ...values },
       })
-      // console.log(JSON.stringify(response))
+      console.log(JSON.stringify(response))
 
       Alert.alert('Feast info saved successfully')
 
