@@ -24,7 +24,7 @@ const FeastScreen = ({ navigation }) => {
 
   const onListItemPress = useCallback(
     (feast) => {
-      ctx.setFeast(feast)
+      // ctx.handleChangeFeast(feast)
       navigation.navigate('Home', {
         feast,
       })

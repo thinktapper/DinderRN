@@ -210,6 +210,47 @@ const FeastScreen = ({ navigation }) => {
               <Text>No results were found</Text>
             </View>
           )}
+          styles={{
+            container: {
+              flex: 1,
+            },
+            textInputContainer: {
+              flexDirection: 'row',
+            },
+            textInput: {
+              backgroundColor: '#e13959',
+              color: '#212121',
+              height: 44,
+              borderRadius: 20,
+              paddingVertical: 16,
+              paddingHorizontal: 16,
+              fontSize: 16,
+              flex: 1,
+            },
+            listView: {
+              backgroundColor: '#cfcfcf',
+              borderBottomLeftRadius: 10,
+              borderBottomRightRadius: 10,
+            },
+            row: {
+              backgroundColor: '#e13959',
+              padding: 13,
+              height: 44,
+              flexDirection: 'row',
+              borderBottomColor: 'black',
+              borderBottomWidth: 1,
+            },
+            separator: {
+              height: 0.5,
+              backgroundColor: '#c8c7cc',
+            },
+            description: {},
+            loader: {
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              height: 20,
+            },
+          }}
         />
       </View>
 

@@ -4,7 +4,7 @@ import { useAuthContext } from '../context/AuthProvider'
 import { queryKeys } from '../lib/constants'
 import axios from 'axios'
 
-async function getFeastDetails(feast, user) {
+export default async function getFeastPlaces(feast, user) {
   if (!feast || !user) return null
 
   const { data } = await axios({
@@ -13,20 +13,27 @@ async function getFeastDetails(feast, user) {
     headers: { authorization: `Bearer ${user.token}` },
   })
 
+  // return data.success ? data.feast : null
   return data.feast
 }
 
-export function useFeastDetails(feast) {
+export function useFeastPlaces(feast) {
   const { user } = useAuthContext()
+  // const id = feast?.id
 
-  // const fallback = {}
-  const { data: feastDetails } = useQuery(
-    [queryKeys.places, feast.id],
-    () => getFeastDetails(feast, user),
+  const fallback = {
+    feast: {
+      id: '',
+      places: [],
+    },
+  }
+  const { data: feastPlaces = fallback } = useQuery(
+    [queryKeys.places, feast?.id],
+    () => getFeastPlaces(feast, user),
     {
       enabled: !!user,
     },
   )
 
-  return feastDetails
+  return feastPlaces
 }

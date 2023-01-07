@@ -23,29 +23,40 @@ import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
 import { useAppContext } from '../context/AppProvider'
 import { useAuthContext } from '../context/AuthProvider'
-import { useFeastDetails } from '../hooks/useFeastDetails'
+import { useFeastDetails } from '../hooks/useFeastPlaces'
 import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '../lib/constants'
+import { LoadingIndicator } from '../components/LoadingIndicator'
 
 const HomeScreen = ({ route, navigation }) => {
-  // const feastId = route.params?.feast
+  const feastId = route.params?.feast
   const ctx = useAppContext()
+  const { currentFeast, places, loading, handleChangeFeast } = ctx
+  // const feastDetails = ctx.handleChangeFeast(feastId)
   const authContext = useAuthContext()
   const [activeScreen, setActiveScreen] = useState('Home')
   const color = '#b5b5b5'
   const activeColor = '#F76C6B'
   const swipeRef = useRef(null)
   // const [feast, setFeast] = useState({})
-  const feastDetails = useFeastDetails(ctx.feast)
-  const places = feastDetails?.places
-  // const [places, setPlaces] = useState([])
+  // const places = feastDetails?.places
+  const [deck, setDeck] = useState([])
   // const [currentIndex, setCurrentIndex] = useState(0)
   // const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const globalPadding = rs(12)
   const wrapperPadding = rs(12)
 
-  if (!feastDetails) return null
+  // if (!feastDetails) return null
+
+  useEffect(() => {
+    const feastDetails = handleChangeFeast(feastId)
+    if (feastDetails) {
+      setDeck(feastDetails.places)
+    }
+  }, [feastId])
+
+  if (loading) return <LoadingIndicator />
 
   const swipeLeft = async (cardIndex) => {
     if (!places[cardIndex]) return
@@ -112,16 +123,16 @@ const HomeScreen = ({ route, navigation }) => {
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
-          {ctx.feast ? ctx.feast.name : 'No Feast Context'}
+          {currentFeast ? currentFeast.name : 'No Feast Context'}
         </Text>
-        {places ? (
+        {deck ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={places}
-            stackSize={places.length}
+            cards={deck}
+            stackSize={deck.length}
             cardIndex={0}
-            key={places.length}
+            key={deck.length}
             animateCardOpacity
             animateOverlayLabelsOpacity
             swipeBackCard
