@@ -28,20 +28,18 @@ import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '../lib/constants'
 import { LoadingIndicator } from '../components/LoadingIndicator'
+import Header from '../components/Header'
 
 const HomeScreen = ({ route, navigation }) => {
   const feastId = route.params?.feast
   const ctx = useAppContext()
-  const { currentFeast, places, loading, handleChangeFeast } = ctx
+  const { currentFeast, loading, handleChangeFeast } = ctx
   // const feastDetails = ctx.handleChangeFeast(feastId)
-  const authContext = useAuthContext()
-  const [activeScreen, setActiveScreen] = useState('Home')
-  const color = '#b5b5b5'
-  const activeColor = '#F76C6B'
+  const auth = useAuthContext()
   const swipeRef = useRef(null)
   // const [feast, setFeast] = useState({})
-  // const places = feastDetails?.places
-  const [deck, setDeck] = useState([])
+  const [places, setPlaces] = useState(null)
+  // const [deck, setDeck] = useState([])
   // const [currentIndex, setCurrentIndex] = useState(0)
   // const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const globalPadding = rs(12)
@@ -50,11 +48,29 @@ const HomeScreen = ({ route, navigation }) => {
   // if (!feastDetails) return null
 
   useEffect(() => {
-    const feastDetails = handleChangeFeast(feastId)
-    if (feastDetails) {
-      setDeck(feastDetails.places)
+    let unsub
+    const fetchPlaces = async () => {
+      unsub = await axios({
+        url: `http://localhost:3000/api/feast/${ctx.currentFeast.id}`,
+        method: 'get',
+        headers: { authorization: `Bearer ${auth.user.token}` },
+      })
+      if (unsub.data.success) {
+        setPlaces(
+          // unsub.data.feast.places,
+          unsub.data.feast.places.map((place) => ({
+            ...place,
+          })),
+        )
+      } else {
+        console.warn(`Failed fetching places for ${currentFeast}`)
+      }
     }
-  }, [feastId])
+    fetchPlaces()
+    return unsub
+  }, [])
+
+  // console.warn(places)
 
   if (loading) return <LoadingIndicator />
 
@@ -71,68 +87,21 @@ const HomeScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={tw`flex-1`}>
-      {/* Header */}
-      <View style={tw`flex-row justify-around w-full p-2.5`}>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveScreen('Home')
-            navigation.navigate('Home')
-          }}>
-          <Fontisto
-            name="tinder"
-            size={30}
-            color={activeScreen === 'Home' ? activeColor : color}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveScreen('Feasts')
-            navigation.navigate('Feasts')
-          }}>
-          <MaterialCommunityIcons
-            name="star-four-points"
-            size={30}
-            color={activeScreen === 'Feasts' ? activeColor : color}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveScreen('NewFeast')
-            navigation.navigate('NewFeast')
-          }}>
-          <Ionicons
-            name="ios-chatbubbles"
-            size={30}
-            color={activeScreen === 'NewFeast' ? activeColor : color}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveScreen('Profile')
-            navigation.navigate('Profile')
-          }}>
-          <FontAwesome
-            name="user"
-            size={30}
-            color={activeScreen === 'Profile' ? activeColor : color}
-          />
-        </TouchableOpacity>
-      </View>
-      {/* End Header */}
+      <Header />
 
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
           {currentFeast ? currentFeast.name : 'No Feast Context'}
         </Text>
-        {deck ? (
+        {places ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={deck}
-            stackSize={deck.length}
+            cards={places}
+            stackSize={places.length}
             cardIndex={0}
-            key={deck.length}
+            key={places.length}
             animateCardOpacity
             animateOverlayLabelsOpacity
             swipeBackCard

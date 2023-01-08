@@ -34,6 +34,7 @@ import {
   KeyboardAwareSectionList,
   KeyboardAwareScrollView,
 } from 'react-native-keyboard-aware-scroll-view'
+import Header from '../components/Header'
 
 const feastSchema = Yup.object().shape({
   name: Yup.string().required('Feast name required'),
@@ -160,7 +161,7 @@ const FeastScreen = ({ navigation }) => {
         data: { ...values },
       })
       // console.log(JSON.stringify(response))
-      ctx.setFeast(response.data.feast)
+      ctx.setCurrentFeast(response.data.feast)
       Alert.alert('Feast info saved successfully')
 
       navigation.navigate('Home')
@@ -170,6 +171,7 @@ const FeastScreen = ({ navigation }) => {
   }
   return (
     <SafeAreaView style={styles.root}>
+      <Header />
       <View style={styles.container}>
         {/* <ScrollView showsVerticalScrollIndicator={false}> */}
 

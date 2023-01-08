@@ -17,6 +17,7 @@ import { ListItem } from '../components/ListItem'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { Divider } from 'native-base'
 import { useAppContext } from '../context/AppProvider'
+import Header from '../components/Header'
 
 const FeastScreen = ({ navigation }) => {
   const ctx = useAppContext()
@@ -24,7 +25,7 @@ const FeastScreen = ({ navigation }) => {
 
   const onListItemPress = useCallback(
     (feast) => {
-      // ctx.handleChangeFeast(feast)
+      ctx.handleChangeFeast(feast)
       navigation.navigate('Home', {
         feast,
       })
@@ -44,6 +45,8 @@ const FeastScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.root}>
+      <Header />
+
       <View style={styles.container}>
         <Text style={styles.title}>Your Feasts</Text>
 

@@ -8,6 +8,8 @@ import React, {
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useAuthContext } from '../context/AuthProvider'
 import getFeastPlaces from '../hooks/useFeastPlaces'
+import { activeColor, color } from '../lib/constants'
+import axios from 'axios'
 
 const storageKey = 'app-data'
 const feastDetails = 'feast-data'
@@ -35,15 +37,31 @@ const getAppData = async () => {
 }
 
 export const AppProvider = ({ children }) => {
+  const [activeScreen, setActiveScreen] = useState('Home')
   const [loading, setLoading] = useState(false)
   const { user } = useAuthContext()
   const [currentFeast, setCurrentFeast] = useState(null)
   const [places, setPlaces] = useState([])
 
+  async function getFeastPlaces(feast, user) {
+    if (!feast || !user) return null
+
+    const { data } = await axios({
+      url: `http://localhost:3000/api/feast/${feast.id}`,
+      method: 'get',
+      headers: { authorization: `Bearer ${user.token}` },
+    })
+
+    setPlaces(data.feast.places)
+
+    // return data.success ? data.feast : null
+    // return data.feast.places
+  }
+
   const handleChangeFeast = (feast) => {
     setLoading(true)
     try {
-      const feast = getFeastPlaces(feast, user)
+      const feastPlaces = getFeastPlaces(feast, user)
       setCurrentFeast(feast)
       setPlaces(feast.places)
 
@@ -71,6 +89,10 @@ export const AppProvider = ({ children }) => {
   }, [])
 
   const values = {
+    color,
+    activeColor,
+    activeScreen,
+    setActiveScreen,
     currentFeast,
     setCurrentFeast,
     places,

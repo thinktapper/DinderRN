@@ -7,3 +7,7 @@ export const queryKeys = {
   user: 'user',
   places: 'places',
 }
+
+// Theme
+export const color = '#b5b5b5'
+export const activeColor = '#F76C6B'
