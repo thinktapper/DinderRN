@@ -160,22 +160,26 @@ const FeastScreen = ({ navigation }) => {
         headers: { authorization: `Bearer ${authContext.user.token}` },
         data: { ...values },
       })
-      // console.log(JSON.stringify(response))
-      ctx.setCurrentFeast(response.data.feast)
-      Alert.alert('Feast info saved successfully')
+      console.log(JSON.stringify(response))
 
-      navigation.navigate('Home')
+      if (response.data.success) {
+        ctx.setCurrentFeast(response.data.feast)
+        Alert.alert('Feast info saved successfully')
+        navigation.navigate('Home')
+      } else {
+        console.warn('woops')
+      }
     } catch (err) {
       console.log(`Error saving feast: ${err}`)
     }
   }
   return (
     <SafeAreaView style={styles.root}>
-      <Header />
+      {/* <Header /> */}
       <View style={styles.container}>
         {/* <ScrollView showsVerticalScrollIndicator={false}> */}
 
-        <Text style={styles.title}>Set your swipe session</Text>
+        <Text style={styles.title}>Create a new feast</Text>
 
         <TextInput
           style={styles.input}

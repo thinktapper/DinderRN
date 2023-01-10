@@ -4,7 +4,7 @@ import tw from 'twrnc'
 import CardImageSteps from '../components/CardImageSteps'
 import CardImageCarousel from '../components/CardImageCarousel'
 
-const PlaceCard = props => {
+const PlaceCard = (props) => {
   const {
     card,
     swipeRef,
@@ -14,10 +14,11 @@ const PlaceCard = props => {
     wrapperPadding,
   } = props
   const [currentIndex, setCurrentIndex] = useState(0)
-
+  if (card.photos.length < 1) {
+    card.photos = ['https://links.papareact.com/6gb']
+  }
   return (
     <View key={card.id} style={tw`relative bg-white h-3/4 rounded-xl`}>
-      {/* <View style={tw`flex-1`}> */}
       <CardImageSteps
         images={card.photos}
         currentIndex={currentIndex}

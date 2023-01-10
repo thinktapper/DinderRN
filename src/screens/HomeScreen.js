@@ -26,7 +26,8 @@ import { useAuthContext } from '../context/AuthProvider'
 import { useFeastDetails } from '../hooks/useFeastPlaces'
 import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
-import { queryKeys } from '../lib/constants'
+import { queryKeys, VOTE } from '../lib/constants'
+import produce from 'immer'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import Header from '../components/Header'
 
@@ -60,6 +61,7 @@ const HomeScreen = ({ route, navigation }) => {
           // unsub.data.feast.places,
           unsub.data.feast.places.map((place) => ({
             ...place,
+            votes: [],
           })),
         )
       } else {
@@ -78,11 +80,96 @@ const HomeScreen = ({ route, navigation }) => {
     if (!places[cardIndex]) return
 
     const placeSwiped = places[cardIndex]
-    console.warn('swiped NAH on: ', places[cardIndex].name)
+    const submit = await axios({
+      url: `http://localhost:3000/api/vote`,
+      method: 'post',
+      headers: { authorization: `Bearer ${auth.user.token}` },
+      data: {
+        feastId: currentFeast.id,
+        placeId: placeSwiped.id,
+        voteType: VOTE.yass,
+      },
+    })
+    if (submit.data.success) {
+      const updatedPlaces = produce(places, (draft) => {
+        draft[cardIndex].votes.push(VOTE.yass)
+      })
+      // placeSwiped.votes ? placeSwiped.votes.push(VOTE.yass) : placeSwiped
+      // setPlaces((places) =>
+      //   produce((places) => {
+      //     places[cardIndex].votes.push(VOTE.yass)
+      //   }),
+      // )
+
+      console.warn('swiped YASS on: ', places[cardIndex].name)
+      console.log(placeSwiped)
+    } else {
+      console.warn(`Oops! Did not count vote for ${placeSwiped}`)
+    }
+    // if (!places[cardIndex]) return
+    // console.warn(cardIndex)
+
+    // const placeSwiped = places[cardIndex]
+    // console.warn(placeSwiped)
+
+    // const submit = await axios({
+    //   url: `http://localhost:3000/api/vote`,
+    //   method: 'post',
+    //   headers: { authorization: `Bearer ${auth.user.token}` },
+    //   data: {
+    //     feastId: currentFeast.id,
+    //     placeId: placeSwiped.id,
+    //     voteType: VOTE.nah,
+    //   },
+    // })
+    // console.warn(JSON.stringify(submit))
+    // if (submit.data.success) {
+    //   // placeSwiped.votes = []
+    //   // placeSwiped.votes?.push(VOTE.nah)
+    //   console.warn(submit.data)
+    //   setPlaces((places) =>
+    //     produce((places) => {
+    //       places[cardIndex].votes.push(VOTE.nah)
+    //     }),
+    //   )
+
+    //   console.warn('swiped NAH on: ', places[cardIndex].name)
+    //   console.log(placeSwiped)
+    // } else {
+    //   console.warn(`Oops! Did not count vote for ${placeSwiped}`)
+    // }
   }
 
   const swipeRight = async (cardIndex) => {
-    console.warn('swipe YASS on: ', places[cardIndex].name)
+    if (!places[cardIndex]) return
+
+    const placeSwiped = places[cardIndex]
+    const submit = await axios({
+      url: `http://localhost:3000/api/vote`,
+      method: 'post',
+      headers: { authorization: `Bearer ${auth.user.token}` },
+      data: {
+        feastId: currentFeast.id,
+        placeId: placeSwiped.id,
+        voteType: VOTE.yass,
+      },
+    })
+    if (submit.data.success) {
+      const updatedPlaces = produce(places, (draft) => {
+        draft[cardIndex].votes.push(VOTE.yass)
+      })
+      // placeSwiped.votes ? placeSwiped.votes.push(VOTE.yass) : placeSwiped
+      // setPlaces((places) =>
+      //   produce((places) => {
+      //     places[cardIndex].votes.push(VOTE.yass)
+      //   }),
+      // )
+
+      console.warn('swiped YASS on: ', places[cardIndex].name)
+      console.log(placeSwiped)
+    } else {
+      console.warn(`Oops! Did not count vote for ${placeSwiped}`)
+    }
   }
 
   return (
