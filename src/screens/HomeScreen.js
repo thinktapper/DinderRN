@@ -87,7 +87,7 @@ const HomeScreen = ({ route, navigation }) => {
       data: {
         feastId: currentFeast.id,
         placeId: placeSwiped.id,
-        voteType: VOTE.yass,
+        voteType: VOTE.nah,
       },
     })
     if (submit.data.success) {
@@ -101,7 +101,7 @@ const HomeScreen = ({ route, navigation }) => {
       //   }),
       // )
 
-      console.warn('swiped YASS on: ', places[cardIndex].name)
+      console.warn('swiped NAH on: ', places[cardIndex].name)
       console.log(placeSwiped)
     } else {
       console.warn(`Oops! Did not count vote for ${placeSwiped}`)
