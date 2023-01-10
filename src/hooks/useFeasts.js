@@ -24,7 +24,7 @@ export function useUserFeasts() {
     isLoading,
     error,
   } = useQuery(
-    [queryKeys.feasts, queryKeys.user, user?.id],
+    [queryKeys.feasts, queryKeys.user],
     () => getOrganizedFeasts(user),
     { enabled: !!user },
   )

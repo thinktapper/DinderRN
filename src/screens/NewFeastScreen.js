@@ -188,7 +188,11 @@ const FeastScreen = ({ navigation }) => {
         />
       </View>
 
-      <View style={tw`flex-1`}>
+      {/* <View style={tw`flex-1`}> */}
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ flexGrow: 1 }}
+        horizontal>
         <GooglePlacesAutocomplete
           placeholder="Type a location"
           fetchDetails={true}
@@ -254,8 +258,7 @@ const FeastScreen = ({ navigation }) => {
             },
           }}
         />
-      </View>
-
+      </ScrollView>
       {/* <View style={styles.elementContainer}>
         <SearchBarWithAutocomplete
           value={search.term}

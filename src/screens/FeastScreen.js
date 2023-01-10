@@ -23,6 +23,8 @@ const FeastScreen = ({ navigation }) => {
   const ctx = useAppContext()
   const { feasts, isLoading, error } = useUserFeasts()
 
+  // useEffect(() => {
+  // }, [])
   const onListItemPress = useCallback(
     (feast) => {
       ctx.handleChangeFeast(feast)
