@@ -1,3 +1,4 @@
+// @ts-ignore
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import {
   View,
@@ -12,9 +13,13 @@ import tw from 'twrnc'
 import {
   AntDesign,
   Entypo,
+  // @ts-ignore
   Ionicons,
+  // @ts-ignore
   FontAwesome,
+  // @ts-ignore
   Fontisto,
+  // @ts-ignore
   MaterialCommunityIcons,
 } from '@expo/vector-icons'
 // import users from '../../assets/data/users'
@@ -23,154 +28,149 @@ import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
 import { useAppContext } from '../context/AppProvider'
 import { useAuthContext } from '../context/AuthProvider'
-import { useFeastDetails } from '../hooks/useFeastPlaces'
+// import { useFeastDetails } from '../hooks/useFeastPlaces'
 import axios from 'axios'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation } from '@tanstack/react-query'
 import { queryKeys, VOTE } from '../lib/constants'
-import produce from 'immer'
+// import produce from 'immer'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import Header from '../components/Header'
+import { feastState } from '../context/FeastState'
+import { produce } from 'immer'
 
+// Fetch places belonging to current feast from API
+const getFeastPlaces = async (currentFeast, user) => {
+  const { data } = await axios({
+    url: `http://localhost:3000/api/feast/${currentFeast.id}`,
+    method: 'get',
+    headers: { authorization: `Bearer ${user.token}` },
+  })
+  return data.feast.places
+}
+
+// @ts-ignore
 const HomeScreen = ({ route, navigation }) => {
-  const feastId = route.params?.feast
+  // @ts-ignore
   const ctx = useAppContext()
-  const { currentFeast, loading, handleChangeFeast } = ctx
-  // const feastDetails = ctx.handleChangeFeast(feastId)
-  const auth = useAuthContext()
+  // const feastId = route.params?.feast
+  const currentFeast = feastState.useValue()
+  // const { currentFeast, loading, handleChangeFeast } = ctx
+  // @ts-ignore
+  const { user } = useAuthContext()
   const swipeRef = useRef(null)
-  // const [feast, setFeast] = useState({})
-  const [places, setPlaces] = useState(null)
-  // const [deck, setDeck] = useState([])
-  // const [currentIndex, setCurrentIndex] = useState(0)
-  // const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [places, setPlaces] = feastState.use()
   const globalPadding = rs(12)
   const wrapperPadding = rs(12)
+  // const [currentIndex, setCurrentIndex] = useState(0)
+  // const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  // if (!feastDetails) return null
+  // query to fetch places
+  // @ts-ignore
+  const { data, refetch, isLoading, error } = useQuery(
+    [queryKeys.places, currentFeast],
+    async () => {
+      const response = await getFeastPlaces(currentFeast, user) //fetch('https://your-api.com/data')
+      return response
+    },
+    {
+      initialData: places,
+      staleTime: 600000,
+      cacheTime: 900000,
+    },
+  )
 
-  useEffect(() => {
-    let unsub
-    const fetchPlaces = async () => {
-      unsub = await axios({
-        url: `http://localhost:3000/api/feast/${ctx.currentFeast.id}`,
-        method: 'get',
-        headers: { authorization: `Bearer ${auth.user.token}` },
+  // mutation to submit nah vote on left swipe
+  const nahMutation = useMutation(
+    // @ts-ignore
+    async (placeSwiped, cardIndex) => {
+      const response = await axios({
+        url: `http://localhost:3000/api/vote`,
+        method: 'post',
+        headers: { authorization: `Bearer ${user.token}` },
+        data: {
+          // @ts-ignore
+          feastId: currentFeast.id,
+          placeId: placeSwiped.id,
+          voteType: VOTE.nah,
+        },
       })
-      if (unsub.data.success) {
-        setPlaces(
-          // unsub.data.feast.places,
-          unsub.data.feast.places.map((place) => ({
-            ...place,
-            votes: [],
-          })),
-        )
-      } else {
-        console.warn(`Failed fetching places for ${currentFeast}`)
-      }
-    }
-    fetchPlaces()
-    return unsub
-  }, [])
+      return response.data
+    },
+    {
+      onSuccess: (cardIndex) => {
+        const updatedPlaces = produce(places, (updatedPlaces) => {
+          updatedPlaces[cardIndex].votes.push(VOTE.nah)
+        })
+        setPlaces(updatedPlaces)
+      },
+    },
+  )
 
-  // console.warn(places)
-
-  if (loading) return <LoadingIndicator />
+  // @ts-ignore
+  const yassMutation = useMutation({
+    // @ts-ignore
+    mutationFn: (placeSwiped, cardIndex) => {
+      return axios({
+        url: `http://localhost:3000/api/vote`,
+        method: 'post',
+        headers: { authorization: `Bearer ${user.token}` },
+        data: {
+          // @ts-ignore
+          feastId: currentFeast.id,
+          placeId: placeSwiped.id,
+          voteType: VOTE.yass,
+        },
+      })
+      // return response.data
+    },
+  })
+  // {
+  // On success, refetch the user data
+  // eslint-disable-next-line no-undef
+  // onSuccess: () => refetch(),
+  // },
+  // {
+  //   onSuccess: (cardIndex) => {
+  //     const updatedPlaces = produce(places, (updatedPlaces) => {
+  //       updatedPlaces[cardIndex].votes.push(VOTE.nah)
+  //     })
+  //     setPlaces(updatedPlaces)
+  //   },
+  // },
+  // })
 
   const swipeLeft = async (cardIndex) => {
     if (!places[cardIndex]) return
 
     const placeSwiped = places[cardIndex]
-    const submit = await axios({
-      url: `http://localhost:3000/api/vote`,
-      method: 'post',
-      headers: { authorization: `Bearer ${auth.user.token}` },
-      data: {
-        feastId: currentFeast.id,
-        placeId: placeSwiped.id,
-        voteType: VOTE.nah,
-      },
-    })
-    if (submit.data.success) {
-      const updatedPlaces = produce(places, (draft) => {
-        draft[cardIndex].votes.push(VOTE.yass)
-      })
-      // placeSwiped.votes ? placeSwiped.votes.push(VOTE.yass) : placeSwiped
-      // setPlaces((places) =>
-      //   produce((places) => {
-      //     places[cardIndex].votes.push(VOTE.yass)
-      //   }),
-      // )
 
-      console.warn('swiped NAH on: ', places[cardIndex].name)
-      console.log(placeSwiped)
-    } else {
-      console.warn(`Oops! Did not count vote for ${placeSwiped}`)
-    }
-    // if (!places[cardIndex]) return
-    // console.warn(cardIndex)
-
-    // const placeSwiped = places[cardIndex]
-    // console.warn(placeSwiped)
-
-    // const submit = await axios({
-    //   url: `http://localhost:3000/api/vote`,
-    //   method: 'post',
-    //   headers: { authorization: `Bearer ${auth.user.token}` },
-    //   data: {
-    //     feastId: currentFeast.id,
-    //     placeId: placeSwiped.id,
-    //     voteType: VOTE.nah,
-    //   },
-    // })
-    // console.warn(JSON.stringify(submit))
-    // if (submit.data.success) {
-    //   // placeSwiped.votes = []
-    //   // placeSwiped.votes?.push(VOTE.nah)
-    //   console.warn(submit.data)
-    //   setPlaces((places) =>
-    //     produce((places) => {
-    //       places[cardIndex].votes.push(VOTE.nah)
-    //     }),
-    //   )
-
-    //   console.warn('swiped NAH on: ', places[cardIndex].name)
-    //   console.log(placeSwiped)
-    // } else {
-    //   console.warn(`Oops! Did not count vote for ${placeSwiped}`)
-    // }
+    // @ts-ignore
+    nahMutation(placeSwiped, cardIndex)
+    console.warn('swiped NAH on: ', places[cardIndex].name)
   }
 
   const swipeRight = async (cardIndex) => {
     if (!places[cardIndex]) return
 
     const placeSwiped = places[cardIndex]
-    const submit = await axios({
-      url: `http://localhost:3000/api/vote`,
-      method: 'post',
-      headers: { authorization: `Bearer ${auth.user.token}` },
-      data: {
-        feastId: currentFeast.id,
-        placeId: placeSwiped.id,
-        voteType: VOTE.yass,
-      },
-    })
-    if (submit.data.success) {
-      const updatedPlaces = produce(places, (draft) => {
-        draft[cardIndex].votes.push(VOTE.yass)
-      })
-      // placeSwiped.votes ? placeSwiped.votes.push(VOTE.yass) : placeSwiped
-      // setPlaces((places) =>
-      //   produce((places) => {
-      //     places[cardIndex].votes.push(VOTE.yass)
-      //   }),
-      // )
-
-      console.warn('swiped YASS on: ', places[cardIndex].name)
-      console.log(placeSwiped)
-    } else {
-      console.warn(`Oops! Did not count vote for ${placeSwiped}`)
-    }
+    yassMutation.mutate(placeSwiped, cardIndex)
+    console.warn('swiped YASS on: ', places[cardIndex].name)
   }
+
+  useEffect(() => {
+    // @ts-ignore
+    if (currentFeast) {
+      // @ts-ignore
+      const fetchFeastPlaces = async () => {
+        // @ts-ignore
+        const response = await getFeastPlaces(currentFeast, user)
+        setPlaces(response)
+      }
+      fetchFeastPlaces()
+    }
+  }, [currentFeast])
+
+  if (isLoading) return <LoadingIndicator />
 
   return (
     <SafeAreaView style={tw`flex-1`}>
@@ -179,16 +179,19 @@ const HomeScreen = ({ route, navigation }) => {
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
-          {currentFeast ? currentFeast.name : 'No Feast Context'}
+          {currentFeast
+            ? // @ts-ignore
+              currentFeast.name
+            : 'No Feast Context'}
         </Text>
-        {places ? (
+        {data.places ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={places}
-            stackSize={places.length}
+            cards={data.places}
+            stackSize={data.places.length}
             cardIndex={0}
-            key={places.length}
+            key={data.places.id}
             animateCardOpacity
             animateOverlayLabelsOpacity
             swipeBackCard
@@ -213,7 +216,9 @@ const HomeScreen = ({ route, navigation }) => {
               left: {
                 element: (
                   <Image
+                    // @ts-ignore
                     source={require('../../assets/images/nope.png')}
+                    // @ts-ignore
                     width={100}
                     height={100}
                   />
@@ -229,7 +234,9 @@ const HomeScreen = ({ route, navigation }) => {
               right: {
                 element: (
                   <Image
+                    // @ts-ignore
                     source={require('../../assets/images/yass.png')}
+                    // @ts-ignore
                     width={100}
                     height={100}
                   />
@@ -255,6 +262,7 @@ const HomeScreen = ({ route, navigation }) => {
             <Text style={tw`font-bold pb-5`}>No more places</Text>
             <Image
               style={tw`h-20 w-full`}
+              // @ts-ignore
               height={100}
               width={100}
               source={{ uri: 'https://links.papareact.com/6gb' }}
@@ -267,11 +275,13 @@ const HomeScreen = ({ route, navigation }) => {
       {/* Bottom Buttons */}
       <View style={tw`flex flex-row justify-evenly`}>
         <TouchableOpacity
+          // @ts-ignore
           onPress={() => swipeRef.current.swipeLeft()}
           style={tw`items-center justify-center rounded-full w-16 h-16 bg-red-200`}>
           <Entypo name="cross" size={24} color="red" />
         </TouchableOpacity>
         <TouchableOpacity
+          // @ts-ignore
           onPress={() => swipeRef.current.swipeRight()}
           style={tw`items-center justify-center rounded-full w-16 h-16 bg-green-200`}>
           <AntDesign name="heart" size={24} color="green" />

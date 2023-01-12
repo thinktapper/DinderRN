@@ -139,38 +139,6 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // async function updateUser(newUserData) {
-  //   // get original user data
-  //   // const originalUserData = await getStoredUser()
-  //   // if (!newUserData || !originalUserData) return null
-  //   try {
-  //     // create a patch for the differences between the original and new user data
-  //     // const patch = jsonpatch.compare(originalUserData, newUserData)
-
-  //     // send patched data to server
-  //     const { data } = await request({
-  //       url: '/api/user/update',
-  //       method: 'put',
-  //       data: {
-  //         newUserData,
-  //       },
-  //     })
-  //     if ('user' in data && 'token' in data.user) {
-  //       console.debug(`User ${data.user.username} updated`)
-  //       setUser(data.user)
-  //       // update stored user data
-  //       await setStoredUser(data.user)
-  //       // } else {
-  //       //   console.error(
-  //       //     `Unable to update user -> status: ${status}, data: ${{ ...data }}`,
-  //       //   )
-  //     }
-  //     // return data.user
-  //   } catch (err) {
-  //     console.error(`Unable to update user -> ${err}`)
-  //   }
-  // }
-
   async function logout() {
     // setIsSignOut(true)
     try {

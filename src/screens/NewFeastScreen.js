@@ -35,6 +35,7 @@ import {
   KeyboardAwareScrollView,
 } from 'react-native-keyboard-aware-scroll-view'
 import Header from '../components/Header'
+import { feastState } from '../context/FeastState'
 
 const feastSchema = Yup.object().shape({
   name: Yup.string().required('Feast name required'),
@@ -53,6 +54,7 @@ const feastSchema = Yup.object().shape({
 })
 
 const FeastScreen = ({ navigation }) => {
+  const [feasts, setFeasts, currentFeast, setCurrentFeast] = feastState.use()
   const ctx = useAppContext()
   const authContext = useAuthContext()
   const [feastName, setFeastName] = useState('')
@@ -160,10 +162,12 @@ const FeastScreen = ({ navigation }) => {
         headers: { authorization: `Bearer ${authContext.user.token}` },
         data: { ...values },
       })
-      console.log(JSON.stringify(response))
+      // console.log(JSON.stringify(response))
 
       if (response.data.success) {
-        ctx.setCurrentFeast(response.data.feast)
+        // ctx.setCurrentFeast(response.data.feast)
+        setFeasts(response.data.feasts)
+        setCurrentFeast(response.data.feast)
         Alert.alert('Feast info saved successfully')
         navigation.navigate('Home')
       } else {
@@ -202,7 +206,7 @@ const FeastScreen = ({ navigation }) => {
           fetchDetails={true}
           onPress={(data, details = null) => {
             // 'details' is provided when fetchDetails = true
-            console.warn(data, details)
+            // console.warn(data, details)
             // appContext.getCoords(details)
             setLocation({
               lat: details.geometry.location.lat,
