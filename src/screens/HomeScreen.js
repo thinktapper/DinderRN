@@ -41,7 +41,7 @@ import { produce } from 'immer'
 // Fetch places belonging to current feast from API
 const getFeastPlaces = async (currentFeast, user) => {
   const { data } = await axios({
-    url: `http://localhost:3000/api/feast/${currentFeast.id}`,
+    url: `http://localhost:3000/api/feast/${currentFeast?.id}`,
     method: 'get',
     headers: { authorization: `Bearer ${user.token}` },
   })
@@ -50,22 +50,22 @@ const getFeastPlaces = async (currentFeast, user) => {
 
 // @ts-ignore
 const HomeScreen = ({ route, navigation }) => {
-  // @ts-ignore
-  const ctx = useAppContext()
+  const currentFeast = route.params?.currentFeast
+  // const ctx = useAppContext()
   // const feastId = route.params?.feast
-  const currentFeast = feastState.useValue()
+  // const currentFeast = useState(null)
+  // const currentFeast = feastState.useValue()
   // const { currentFeast, loading, handleChangeFeast } = ctx
-  // @ts-ignore
   const { user } = useAuthContext()
   const swipeRef = useRef(null)
-  const [places, setPlaces] = feastState.use()
+  const [places, setPlaces] = useState([])
+  // const [places, setPlaces] = feastState.use()
   const globalPadding = rs(12)
   const wrapperPadding = rs(12)
   // const [currentIndex, setCurrentIndex] = useState(0)
   // const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   // query to fetch places
-  // @ts-ignore
   const { data, refetch, isLoading, error } = useQuery(
     [queryKeys.places, currentFeast],
     async () => {
@@ -81,7 +81,6 @@ const HomeScreen = ({ route, navigation }) => {
 
   // mutation to submit nah vote on left swipe
   const nahMutation = useMutation(
-    // @ts-ignore
     async (placeSwiped, cardIndex) => {
       const response = await axios({
         url: `http://localhost:3000/api/vote`,

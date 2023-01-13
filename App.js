@@ -1,4 +1,4 @@
-// import 'react-native-gesture-handler'
+import 'react-native-gesture-handler'
 import React from 'react'
 // import { StatusBar } from 'expo-status-bar'
 import 'react-native-url-polyfill/auto'
@@ -35,7 +35,6 @@ const asyncPersister = createAsyncStoragePersister({
 })
 
 if (__DEV__) {
-  // @ts-ignore
   import('./src/utils/reactotron')
 }
 // if (__DEV__) {
@@ -48,19 +47,19 @@ const App = ({ navigation }) => {
   return (
     // <SafeAreaView style={tw`flex-1 bg-slate-200`}>
 
-    // <PersistQueryClientProvider
-    //   client={queryClient}
-    //   persistOptions={{ persister: asyncPersister }}>
-    <AuthProvider>
-      <AppProvider>
-        <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: asyncPersister }}>
+      <AuthProvider>
+        <AppProvider>
+          {/* <QueryClientProvider client={queryClient}> */}
           <NativeBaseProvider>
             <Navigation />
           </NativeBaseProvider>
-        </QueryClientProvider>
-      </AppProvider>
-    </AuthProvider>
-    // </PersistQueryClientProvider>
+          {/* </QueryClientProvider> */}
+        </AppProvider>
+      </AuthProvider>
+    </PersistQueryClientProvider>
     // </SafeAreaView>
   )
 }

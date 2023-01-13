@@ -347,9 +347,7 @@ const styles = StyleSheet.create({
     color: 'gray',
     marginVertical: 10,
   },
-  // container: {
-  //   padding: 10,
-  // },
+
   elementContainer: {
     // marginVertical: 10,
     flex: 1,
@@ -369,6 +367,40 @@ const styles = StyleSheet.create({
     margin: 10,
     borderBottomColor: 'lightgray',
     borderBottomWidth: 1,
+  },
+  innerContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 72, 147, 0.75)',
+    marginTop: 10,
+    borderTopEndRadius: 30,
+    borderTopStartRadius: 30,
+    paddingHorizontal: 20,
+  },
+  placeApiContainer: {
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: 'red',
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    alignItems: 'center',
+    minHeight: 46,
+    marginTop: 5,
+    backgroundColor: 'white',
+    width: '90%',
+  },
+  mapInputContainer: {
+    width: '100%',
+    alignSelf: 'flex-start',
+    paddingLeft: 30,
+    backgroundColor: 'rgba(255,255,255,0.6)',
+  },
+  locationSearchInput: {
+    color: '#5d5d5d',
+  },
+  placeButton: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
   },
 })
 

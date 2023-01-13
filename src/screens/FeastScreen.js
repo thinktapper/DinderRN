@@ -56,17 +56,19 @@ const getUserFeasts = async (userId) => {
 }
 
 const FeastScreen = ({ navigation }) => {
-  const [feasts, setFeasts] = feastState.use()
-  const [currentFeast, setCurrentFeast] = feastState.use()
-  // @ts-ignore
+  const [feasts, setFeasts] = useState([])
+  const [currentFeast, setCurrentFeast] = useState(null)
+
+  // const [feasts, setFeasts] = feastState.use()
+  // const [currentFeast, setCurrentFeast] = feastState.use()
   const { user } = useAuthContext()
-  const ctx = useAppContext()
+  // const ctx = useAppContext()
   // const feastsRef = useRef(true)
   // const { feasts, isLoading, error } = useUserFeasts()
 
   const userId = user?.token
 
-  const { data, refetch, isLoading, isFetching, error } = useQuery(
+  const { data, refetch, isLoading, isFetching, isError, error } = useQuery(
     [queryKeys.feasts],
     async () => {
       const response = await getUserFeasts(userId) //fetch('https://your-api.com/data')
@@ -158,14 +160,14 @@ const FeastScreen = ({ navigation }) => {
 
   const onItemPress = useCallback(
     (item) => {
-      setCurrentFeast(item)
+      // setCurrentFeast(item)
       // feastState.set((previous) => {
       //   return produce(previous, (updated) => {
       //     updated.currentFeast = item
       //   })
       // })
 
-      navigation.navigate('Home')
+      navigation.navigate('Home', { currentFeast: item })
     },
     [navigation],
   )
