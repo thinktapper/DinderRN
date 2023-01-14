@@ -206,9 +206,9 @@ const FeastScreen = ({ navigation }) => {
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => {
                 {
-                  let pic =
-                    item.places?.[0]?.photos?.[0] ||
-                    'https://links.papareact.com/6gb'
+                  // let pic =
+                  //   item.places?.[0]?.photos?.[0] ||
+                  //   'https://links.papareact.com/6gb'
 
                   return (
                     <Box
@@ -220,7 +220,6 @@ const FeastScreen = ({ navigation }) => {
                       pl={['0', '4']}
                       pr={['0', '5']}
                       py="2">
-                      {/* <Pressable onPress={() => onItemPress(item)}> */}
                       <Pressable
                         onPress={() =>
                           navigation.push('Home', { feast: item })
@@ -230,12 +229,6 @@ const FeastScreen = ({ navigation }) => {
                             size="md"
                             source={require('../../assets/images/flame-square.png')}
                             alignSelf="center"
-                            // source={{
-                            // uri: 'https://links.papareact.com/6gb',
-                            // uri:
-                            //   item.places[0]?.photos[0] ||
-                            //   'https://links.papareact.com/6gb',
-                            // }}
                           />
                           <VStack>
                             <Text
@@ -316,13 +309,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#051C60',
-    margin: 10,
+    marginBottom: 10,
+    paddingVertical: 10,
   },
   text: {
     color: 'gray',
     marginVertical: 10,
   },
   container: {
+    marginTop: 10,
     padding: 10,
   },
   elementContainer: {

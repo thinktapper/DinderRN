@@ -1,6 +1,6 @@
-import Reactotron from 'reactotron-react-native'
+import Reactotron, { asyncStorage } from 'reactotron-react-native'
 import { queryClient } from '../lib/queryClient'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+// import AsyncStorage from '@react-native-async-storage/async-storage'
 import {
   QueryClientManager,
   reactotronReactQuery,
@@ -10,7 +10,7 @@ const queryClientManager = new QueryClientManager({
   queryClient,
 })
 
-Reactotron.setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
+// Reactotron.setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
 
 Reactotron.use(reactotronReactQuery(queryClientManager))
   .configure({
@@ -19,5 +19,6 @@ Reactotron.use(reactotronReactQuery(queryClientManager))
       queryClientManager.unsubscribe()
     },
   })
+  .use(asyncStorage())
   .useReactNative() // add all built-in react native plugins
   .connect() // let's connect!

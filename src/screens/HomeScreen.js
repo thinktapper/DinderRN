@@ -23,36 +23,37 @@ import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
 import { useAppContext } from '../context/AppProvider'
 import { useAuthContext } from '../context/AuthProvider'
-// import { useFeastDetails } from '../hooks/useFeastPlaces'
+import { queryClient } from '../lib/queryClient'
+import useFeast from '../hooks/useFeast'
 import axios from 'axios'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { queryKeys, VOTE } from '../lib/constants'
-// import produce from 'immer'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
 import { produce } from 'immer'
 
 // Fetch places belonging to current feast from API
-const getFeastPlaces = async (feastId, user) => {
-  const { data } = await axios({
-    url: `http://localhost:3000/api/feast/${feastId?.id}`,
-    method: 'get',
-    headers: { authorization: `Bearer ${user?.token}` },
-  })
-  return data
-}
+// const getFeastPlaces = async (feastId, user) => {
+//   const { data } = await axios({
+//     url: `http://localhost:3000/api/feast/${feastId?.id}`,
+//     method: 'get',
+//     headers: { authorization: `Bearer ${user?.token}` },
+//   })
+//   return data
+// }
 
 const HomeScreen = ({ route, navigation }) => {
+  const swipeRef = useRef(null)
   const { user } = useAuthContext()
   const feastId = route.params?.feast
+  const { places, refetch } = useFeast(feastId)
+  // const [places, setPlaces] = useState([])
   // const feastId = route.params?.feastId
   // const ctx = useAppContext()
   // const feastId = useState(null)
   // const feastId = feastState.useValue()
   // const { feastId, loading, handleChangeFeast } = ctx
-  const swipeRef = useRef(null)
-  const [places, setPlaces] = useState([])
   // const [places, setPlaces] = feastState.use()
   const globalPadding = rs(12)
   const wrapperPadding = rs(12)
@@ -60,25 +61,25 @@ const HomeScreen = ({ route, navigation }) => {
   // const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   // query to fetch places
-  const { data, refetch, isLoading, error } = useQuery(
-    [queryKeys.places, feastId, user],
-    () => getFeastPlaces(feastId, user),
-    {
-      select: (data) => data.feast.places,
-      // onSuccess: (data) => {
-      //   setPlaces(data.places)
-      // },
-      // enabled: false,
-      // select: (data) => data.places,
-      // initialData: places,
-      // staleTime: 900000, // 15 minutes
-      // cacheTime: 1000 * 60 * 60 * 24, // 24 hours
-      // retry: 1,
-      refetchOnWindowFocus: true,
-      refetchOnMount: true,
-      refetchOnReconnect: true,
-    },
-  )
+  // const { data, refetch, isLoading, error } = useQuery(
+  //   [queryKeys.places, feastId, user],
+  //   () => getFeastPlaces(feastId, user),
+  //   {
+  //     select: (data) => data.feast.places,
+  //     // onSuccess: (data) => {
+  //     //   setPlaces(data.places)
+  //     // },
+  //     // enabled: false,
+  //     // select: (data) => data.places,
+  //     // initialData: places,
+  //     // staleTime: 900000, // 15 minutes
+  //     // cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+  //     // retry: 1,
+  //     refetchOnWindowFocus: true,
+  //     refetchOnMount: true,
+  //     refetchOnReconnect: true,
+  //   },
+  // )
 
   // mutation to submit nah vote on left swipe
   const nahMutation = useMutation(
@@ -95,14 +96,14 @@ const HomeScreen = ({ route, navigation }) => {
       })
       return response.data
     },
-    {
-      onSuccess: (cardIndex) => {
-        const updatedPlaces = produce(places, (updatedPlaces) => {
-          updatedPlaces[cardIndex].votes.push(VOTE.nah)
-        })
-        setPlaces(updatedPlaces)
-      },
-    },
+    // {
+    //   onSuccess: () => {
+    //     const updatedPlaces = produce(places, (updatedPlaces) => {
+    //       updatedPlaces[cardIndex].votes.push(VOTE.nah)
+    //     })
+    //     setPlaces(updatedPlaces)
+    //   },
+    // },
   )
 
   const yassMutation = useMutation({
@@ -153,18 +154,14 @@ const HomeScreen = ({ route, navigation }) => {
   }
 
   // ?
-  // useEffect(() => {
-  //   if (feastId) {
-  //     const fetchFeastPlaces = async () => {
-  //       // const response = await getFeastPlaces(feastId, user)
-  //       const response = await refetch(feastId, user)
-  //       setPlaces(response)
-  //     }
-  //     fetchFeastPlaces()
-  //   }
-  // }, [])
+  useEffect(() => {
+    if (feastId) {
+      queryClient.invalidateQueries(['places', feastId, user.id])
+      // places.refetch(feastId)
+    }
+  }, [feastId])
 
-  if (isLoading) return <LoadingIndicator />
+  // if (isLoading) return <LoadingIndicator />
 
   return (
     <SafeAreaView style={tw`flex-1`}>
@@ -175,14 +172,14 @@ const HomeScreen = ({ route, navigation }) => {
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
           {feastId ? feastId.name : 'No Feast Context'}
         </Text>
-        {data.length > 0 ? (
+        {places.length > 0 ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={data}
-            stackSize={data.length}
+            cards={places}
+            stackSize={places.length}
             cardIndex={0}
-            key={data.id}
+            key={places.id}
             animateCardOpacity
             animateOverlayLabelsOpacity
             swipeBackCard
