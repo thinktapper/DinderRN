@@ -61,21 +61,22 @@ const HomeScreen = ({ route, navigation }) => {
 
   // query to fetch places
   const { data, refetch, isLoading, error } = useQuery(
-    [queryKeys.places, feastId],
+    [queryKeys.places, feastId, user],
     () => getFeastPlaces(feastId, user),
     {
-      onSuccess: (data) => {
-        setPlaces(data.places)
-      },
+      select: (data) => data.feast.places,
+      // onSuccess: (data) => {
+      //   setPlaces(data.places)
+      // },
       // enabled: false,
       // select: (data) => data.places,
       // initialData: places,
       // staleTime: 900000, // 15 minutes
       // cacheTime: 1000 * 60 * 60 * 24, // 24 hours
       // retry: 1,
-      // refetchOnWindowFocus: false,
-      // refetchOnMount: false,
-      // refetchOnReconnect: false,
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
     },
   )
 
@@ -152,16 +153,16 @@ const HomeScreen = ({ route, navigation }) => {
   }
 
   // ?
-  useEffect(() => {
-    if (feastId) {
-      const fetchFeastPlaces = async () => {
-        // const response = await getFeastPlaces(feastId, user)
-        const response = await refetch(feastId, user)
-        setPlaces(response)
-      }
-      fetchFeastPlaces()
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (feastId) {
+  //     const fetchFeastPlaces = async () => {
+  //       // const response = await getFeastPlaces(feastId, user)
+  //       const response = await refetch(feastId, user)
+  //       setPlaces(response)
+  //     }
+  //     fetchFeastPlaces()
+  //   }
+  // }, [])
 
   if (isLoading) return <LoadingIndicator />
 
@@ -174,14 +175,14 @@ const HomeScreen = ({ route, navigation }) => {
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
           {feastId ? feastId.name : 'No Feast Context'}
         </Text>
-        {places?.length ? (
+        {data.length > 0 ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={places}
-            stackSize={places.length}
+            cards={data}
+            stackSize={data.length}
             cardIndex={0}
-            key={places.id}
+            key={data.id}
             animateCardOpacity
             animateOverlayLabelsOpacity
             swipeBackCard
