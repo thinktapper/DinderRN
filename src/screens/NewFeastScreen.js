@@ -166,10 +166,10 @@ const FeastScreen = ({ navigation }) => {
 
       if (response.data.success) {
         // ctx.setCurrentFeast(response.data.feast)
-        setFeasts(response.data.feasts)
-        setCurrentFeast(response.data.feast)
+        // setFeasts(response.data.feasts)
+        // setCurrentFeast(response.data.feast)
         Alert.alert('Feast info saved successfully')
-        navigation.navigate('Home')
+        navigation.navigate('Home', { feast: response.data.feast })
       } else {
         console.warn('woops')
       }

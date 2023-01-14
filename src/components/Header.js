@@ -14,7 +14,8 @@ import { useNavigation } from '@react-navigation/native'
 
 const Header = () => {
   const navigation = useNavigation()
-  const { color, activeColor, activeScreen, setActiveScreen } = useAppContext()
+  const { color, activeColor } = useAppContext()
+  const [activeScreen, setActiveScreen] = React.useState('Home')
 
   return (
     <View style={tw`flex-row justify-around w-full p-2.5`}>

@@ -5,8 +5,9 @@ import React, {
   useEffect,
   useMemo,
 } from 'react'
-import { Alert } from 'react-native'
 import * as SecureStore from 'expo-secure-store'
+import { queryClient } from '../lib/queryClient'
+// import { invalidateQueries } from '@tanstack/react-query'
 import axios from 'axios'
 import { SECURE_SECRET } from '@env'
 
@@ -41,6 +42,7 @@ export const AuthProvider = ({ children }) => {
   }
 
   async function clearStoredUser() {
+    queryClient.invalidateQueries()
     await SecureStore.deleteItemAsync(SECURE_SECRET)
   }
 
@@ -179,6 +181,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     isLoggedIn()
+    // logout()
   }, [])
 
   // const authContext = useMemo(

@@ -9,7 +9,7 @@ export const feastState = newRidgeState(
   {
     feasts: [],
     currentFeast: null,
-    places: [],
+    places: [], // ??
   },
   {
     onSet: async (newState) => {

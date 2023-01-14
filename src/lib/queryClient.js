@@ -3,8 +3,11 @@ import { QueryClient, MutationCache } from '@tanstack/react-query'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
       cacheTime: 1000 * 60 * 60 * 24, // 24 hours
-      staleTime: 2000,
+      staleTime: 20000,
       retry: 1,
     },
   },

@@ -1,4 +1,3 @@
-// @ts-ignore
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import {
   View,
@@ -13,13 +12,9 @@ import tw from 'twrnc'
 import {
   AntDesign,
   Entypo,
-  // @ts-ignore
   Ionicons,
-  // @ts-ignore
   FontAwesome,
-  // @ts-ignore
   Fontisto,
-  // @ts-ignore
   MaterialCommunityIcons,
 } from '@expo/vector-icons'
 // import users from '../../assets/data/users'
@@ -39,24 +34,23 @@ import { feastState } from '../context/FeastState'
 import { produce } from 'immer'
 
 // Fetch places belonging to current feast from API
-const getFeastPlaces = async (currentFeast, user) => {
+const getFeastPlaces = async (feastId, user) => {
   const { data } = await axios({
-    url: `http://localhost:3000/api/feast/${currentFeast?.id}`,
+    url: `http://localhost:3000/api/feast/${feastId?.id}`,
     method: 'get',
-    headers: { authorization: `Bearer ${user.token}` },
+    headers: { authorization: `Bearer ${user?.token}` },
   })
-  return data.feast.places
+  return data
 }
 
-// @ts-ignore
 const HomeScreen = ({ route, navigation }) => {
-  const currentFeast = route.params?.currentFeast
-  // const ctx = useAppContext()
-  // const feastId = route.params?.feast
-  // const currentFeast = useState(null)
-  // const currentFeast = feastState.useValue()
-  // const { currentFeast, loading, handleChangeFeast } = ctx
   const { user } = useAuthContext()
+  const feastId = route.params?.feast
+  // const feastId = route.params?.feastId
+  // const ctx = useAppContext()
+  // const feastId = useState(null)
+  // const feastId = feastState.useValue()
+  // const { feastId, loading, handleChangeFeast } = ctx
   const swipeRef = useRef(null)
   const [places, setPlaces] = useState([])
   // const [places, setPlaces] = feastState.use()
@@ -67,15 +61,21 @@ const HomeScreen = ({ route, navigation }) => {
 
   // query to fetch places
   const { data, refetch, isLoading, error } = useQuery(
-    [queryKeys.places, currentFeast],
-    async () => {
-      const response = await getFeastPlaces(currentFeast, user) //fetch('https://your-api.com/data')
-      return response
-    },
+    [queryKeys.places, feastId],
+    () => getFeastPlaces(feastId, user),
     {
-      initialData: places,
-      staleTime: 600000,
-      cacheTime: 900000,
+      onSuccess: (data) => {
+        setPlaces(data.places)
+      },
+      // enabled: false,
+      // select: (data) => data.places,
+      // initialData: places,
+      // staleTime: 900000, // 15 minutes
+      // cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+      // retry: 1,
+      // refetchOnWindowFocus: false,
+      // refetchOnMount: false,
+      // refetchOnReconnect: false,
     },
   )
 
@@ -87,8 +87,7 @@ const HomeScreen = ({ route, navigation }) => {
         method: 'post',
         headers: { authorization: `Bearer ${user.token}` },
         data: {
-          // @ts-ignore
-          feastId: currentFeast.id,
+          feastId: feastId.id,
           placeId: placeSwiped.id,
           voteType: VOTE.nah,
         },
@@ -105,17 +104,14 @@ const HomeScreen = ({ route, navigation }) => {
     },
   )
 
-  // @ts-ignore
   const yassMutation = useMutation({
-    // @ts-ignore
     mutationFn: (placeSwiped, cardIndex) => {
       return axios({
         url: `http://localhost:3000/api/vote`,
         method: 'post',
         headers: { authorization: `Bearer ${user.token}` },
         data: {
-          // @ts-ignore
-          feastId: currentFeast.id,
+          feastId: feastId.id,
           placeId: placeSwiped.id,
           voteType: VOTE.yass,
         },
@@ -143,7 +139,6 @@ const HomeScreen = ({ route, navigation }) => {
 
     const placeSwiped = places[cardIndex]
 
-    // @ts-ignore
     nahMutation(placeSwiped, cardIndex)
     console.warn('swiped NAH on: ', places[cardIndex].name)
   }
@@ -156,18 +151,17 @@ const HomeScreen = ({ route, navigation }) => {
     console.warn('swiped YASS on: ', places[cardIndex].name)
   }
 
+  // ?
   useEffect(() => {
-    // @ts-ignore
-    if (currentFeast) {
-      // @ts-ignore
+    if (feastId) {
       const fetchFeastPlaces = async () => {
-        // @ts-ignore
-        const response = await getFeastPlaces(currentFeast, user)
+        // const response = await getFeastPlaces(feastId, user)
+        const response = await refetch(feastId, user)
         setPlaces(response)
       }
       fetchFeastPlaces()
     }
-  }, [currentFeast])
+  }, [])
 
   if (isLoading) return <LoadingIndicator />
 
@@ -178,19 +172,16 @@ const HomeScreen = ({ route, navigation }) => {
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
-          {currentFeast
-            ? // @ts-ignore
-              currentFeast.name
-            : 'No Feast Context'}
+          {feastId ? feastId.name : 'No Feast Context'}
         </Text>
-        {data.places ? (
+        {places?.length ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={data.places}
-            stackSize={data.places.length}
+            cards={places}
+            stackSize={places.length}
             cardIndex={0}
-            key={data.places.id}
+            key={places.id}
             animateCardOpacity
             animateOverlayLabelsOpacity
             swipeBackCard
@@ -215,9 +206,7 @@ const HomeScreen = ({ route, navigation }) => {
               left: {
                 element: (
                   <Image
-                    // @ts-ignore
                     source={require('../../assets/images/nope.png')}
-                    // @ts-ignore
                     width={100}
                     height={100}
                   />
@@ -233,9 +222,7 @@ const HomeScreen = ({ route, navigation }) => {
               right: {
                 element: (
                   <Image
-                    // @ts-ignore
                     source={require('../../assets/images/yass.png')}
-                    // @ts-ignore
                     width={100}
                     height={100}
                   />
@@ -261,7 +248,6 @@ const HomeScreen = ({ route, navigation }) => {
             <Text style={tw`font-bold pb-5`}>No more places</Text>
             <Image
               style={tw`h-20 w-full`}
-              // @ts-ignore
               height={100}
               width={100}
               source={{ uri: 'https://links.papareact.com/6gb' }}
@@ -274,13 +260,11 @@ const HomeScreen = ({ route, navigation }) => {
       {/* Bottom Buttons */}
       <View style={tw`flex flex-row justify-evenly`}>
         <TouchableOpacity
-          // @ts-ignore
           onPress={() => swipeRef.current.swipeLeft()}
           style={tw`items-center justify-center rounded-full w-16 h-16 bg-red-200`}>
           <Entypo name="cross" size={24} color="red" />
         </TouchableOpacity>
         <TouchableOpacity
-          // @ts-ignore
           onPress={() => swipeRef.current.swipeRight()}
           style={tw`items-center justify-center rounded-full w-16 h-16 bg-green-200`}>
           <AntDesign name="heart" size={24} color="green" />

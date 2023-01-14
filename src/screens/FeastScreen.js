@@ -29,16 +29,16 @@ import {
   Spacer,
   Center,
 } from 'native-base'
+import Flame from '../../assets/images/flame-square.png'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import tw from 'twrnc'
-import { useUserFeasts } from '../hooks/useFeasts'
+import { useFeasts } from '../hooks/useFeasts'
 import Feast from '../components/Feast'
 import { ListItem } from '../components/ListItem'
 import { LoadingIndicator } from '../components/LoadingIndicator'
-// import { Divider } from 'native-base'
 import { useAuthContext } from '../context/AuthProvider'
 import { useAppContext } from '../context/AppProvider'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+// import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { produce } from 'immer'
 import Header from '../components/Header'
@@ -46,37 +46,42 @@ import { feastState } from '../context/FeastState'
 import { queryKeys } from '../lib/constants'
 import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
 
-const getUserFeasts = async (userId) => {
-  const { data } = await axios({
-    url: 'http://localhost:3000/api/user/feasts',
-    method: 'get',
-    headers: { authorization: `Bearer ${userId}` },
-  })
-  return data.feasts
-}
+// const getUserFeasts = async (userId) => {
+//   const { data } = await axios({
+//     url: 'http://localhost:3000/api/user/feasts',
+//     method: 'get',
+//     headers: { authorization: `Bearer ${userId}` },
+//   })
+//   return data.feasts
+// }
 
 const FeastScreen = ({ navigation }) => {
-  const [feasts, setFeasts] = useState([])
-  const [currentFeast, setCurrentFeast] = useState(null)
+  const feasts = useFeasts()
+  // const { data, isLoading, isSuccess, refetch } = useFeasts()
+  // const [feasts, setFeasts] = useState([])
+  // const [currentFeast, setCurrentFeast] = useState(null)
 
   // const [feasts, setFeasts] = feastState.use()
   // const [currentFeast, setCurrentFeast] = feastState.use()
-  const { user } = useAuthContext()
+  // const { user } = useAuthContext()
   // const ctx = useAppContext()
   // const feastsRef = useRef(true)
   // const { feasts, isLoading, error } = useUserFeasts()
 
-  const userId = user?.token
+  // const userId = user?.token
 
-  const { data, refetch, isLoading, isFetching, isError, error } = useQuery(
-    [queryKeys.feasts],
-    async () => {
-      const response = await getUserFeasts(userId) //fetch('https://your-api.com/data')
-      return response
-    },
-  )
+  // const { data, refetch, isLoading, isFetching, isError, error } = useQuery(
+  //   [queryKeys.feasts],
+  //   async () => {
+  //     const response = await getUserFeasts(userId) //fetch('https://your-api.com/data')
+  //     return response
+  //   },
+  // )
+  // useEffect(() => {
+  //   refetch()
+  // }, [])
 
-  useRefetchOnFocus(refetch)
+  // useRefetchOnFocus(refetch)
 
   // useLayoutEffect(() => {
   //   // subscribe to feastState changes outside React
@@ -88,7 +93,6 @@ const FeastScreen = ({ navigation }) => {
   //   unsubscribe()
   // }, [])
 
-  // const datas = useUserFeasts()
   // useEffect(() => {
 
   //   let unsub
@@ -158,19 +162,19 @@ const FeastScreen = ({ navigation }) => {
   //   navigation.navigate('Home')
   // }
 
-  const onItemPress = useCallback(
-    (item) => {
-      // setCurrentFeast(item)
-      // feastState.set((previous) => {
-      //   return produce(previous, (updated) => {
-      //     updated.currentFeast = item
-      //   })
-      // })
+  // const onItemPress = useCallback(
+  //   (item) => {
+  //     // setCurrentFeast(item)
+  //     // feastState.set((previous) => {
+  //     //   return produce(previous, (updated) => {
+  //     //     updated.currentFeast = item
+  //     //   })
+  //     // })
 
-      navigation.navigate('Home', { currentFeast: item })
-    },
-    [navigation],
-  )
+  //     navigation.push('Home', { currentFeast: item })
+  //   },
+  //   [navigation],
+  // )
 
   const onEditPress = (feast) => {
     console.warn(`Edit pressed for ${feast}`)
@@ -180,12 +184,12 @@ const FeastScreen = ({ navigation }) => {
     console.warn(`Delete pressed for ${feast}`)
   }
 
-  if (isLoading) return <LoadingIndicator />
-  if (error) return console.log(error)
+  // if (isLoading) return <LoadingIndicator />
+  // if (error) return console.log(error)
 
   // if (!feasts) return <LoadingIndicator />
 
-  if (!data) return <LoadingIndicator />
+  // if (!data) return <LoadingIndicator />
 
   return (
     <SafeAreaView style={styles.root}>
@@ -193,93 +197,109 @@ const FeastScreen = ({ navigation }) => {
 
       <View style={styles.container}>
         <Text style={styles.title}>Your Feasts</Text>
+        {/* {isLoading && <LoadingIndicator />} */}
+        {/* {isSuccess && ( */}
+        {feasts.length > 0 ? (
+          <Box>
+            <FlatList
+              data={feasts}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => {
+                {
+                  let pic =
+                    item.places?.[0]?.photos?.[0] ||
+                    'https://links.papareact.com/6gb'
 
-        <Box>
-          <FlatList
-            data={data}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => {
-              {
-                let pic =
-                  item.places?.[0]?.photos?.[0] ||
-                  'https://links.papareact.com/6gb'
-
-                return (
-                  <Box
-                    borderBottomWidth="1"
-                    _dark={{
-                      borderColor: 'muted.50',
-                    }}
-                    borderColor="muted.800"
-                    pl={['0', '4']}
-                    pr={['0', '5']}
-                    py="2">
-                    <Pressable onPress={() => onItemPress(item)}>
-                      <HStack space={[2, 3]} justifyContent="space-between">
-                        <Avatar
-                          size="64px"
-                          source={{ uri: pic }}
-                          // source={{
-                          // uri: 'https://links.papareact.com/6gb',
-                          // uri:
-                          //   item.places[0]?.photos[0] ||
-                          //   'https://links.papareact.com/6gb',
-                          // }}
-                        />
-                        <VStack>
+                  return (
+                    <Box
+                      borderBottomWidth="1"
+                      _dark={{
+                        borderColor: 'muted.50',
+                      }}
+                      borderColor="muted.800"
+                      pl={['0', '4']}
+                      pr={['0', '5']}
+                      py="2">
+                      {/* <Pressable onPress={() => onItemPress(item)}> */}
+                      <Pressable
+                        onPress={() =>
+                          navigation.push('Home', { feast: item })
+                        }>
+                        <HStack space={[2, 3]} justifyContent="space-between">
+                          <Avatar
+                            size="md"
+                            source={require('../../assets/images/flame-square.png')}
+                            alignSelf="center"
+                            // source={{
+                            // uri: 'https://links.papareact.com/6gb',
+                            // uri:
+                            //   item.places[0]?.photos[0] ||
+                            //   'https://links.papareact.com/6gb',
+                            // }}
+                          />
+                          <VStack>
+                            <Text
+                              _dark={{
+                                color: 'warmGray.50',
+                              }}
+                              color="coolGray.800"
+                              bold>
+                              {item.name}
+                            </Text>
+                            <Text
+                              color="coolGray.600"
+                              _dark={{
+                                color: 'warmGray.200',
+                              }}>
+                              {item.createdAt}
+                            </Text>
+                          </VStack>
+                          {/* <Spacer /> */}
                           <Text
+                            fontSize="xs"
                             _dark={{
                               color: 'warmGray.50',
                             }}
                             color="coolGray.800"
-                            bold>
-                            {item.name}
+                            alignSelf="flex-start">
+                            {item.places?.length}
                           </Text>
-                          <Text
-                            color="coolGray.600"
-                            _dark={{
-                              color: 'warmGray.200',
-                            }}>
-                            {item.createdAt}
-                          </Text>
-                        </VStack>
-                        {/* <Spacer /> */}
-                        <Text
-                          fontSize="xs"
-                          _dark={{
-                            color: 'warmGray.50',
-                          }}
-                          color="coolGray.800"
-                          alignSelf="flex-start">
-                          {item.places?.length}
-                        </Text>
-                      </HStack>
-                      <HStack>
-                        <Pressable onPress={() => onEditPress(item)}>
-                          <FontAwesome name="edit" size={24} color="black" />
-                        </Pressable>
-                        <Pressable onPress={() => onDeletePress(item)}>
-                          <MaterialIcons
-                            name="delete"
-                            size={24}
-                            color="black"
-                          />
-                        </Pressable>
-                      </HStack>
-                    </Pressable>
-                  </Box>
-                  // />
-                )
-              }
-            }}
-            refreshControl={
-              <RefreshControl
-                refreshing={isFetching}
-                onRefresh={() => refetch()}
-              />
-            }
-          />
-        </Box>
+                          {/* <HStack> */}
+                          <Pressable onPress={() => onEditPress(item)}>
+                            <FontAwesome name="edit" size={24} color="black" />
+                          </Pressable>
+                          <Pressable onPress={() => onDeletePress(item)}>
+                            <MaterialIcons
+                              name="delete"
+                              size={24}
+                              color="black"
+                            />
+                          </Pressable>
+                          {/* </HStack> */}
+                        </HStack>
+                      </Pressable>
+                    </Box>
+                    // />
+                  )
+                }
+              }}
+              // refreshControl={
+              //   <RefreshControl
+              //     refreshing={isFetching}
+              //     onRefresh={() => refetch()}
+              //   />
+              // }
+            />
+          </Box>
+        ) : (
+          <Box>
+            <Pressable onPress={() => navigation.navigate('NewFeast')}>
+              <Text style={styles.text}>
+                You don't have any feasts yet. Create one!
+              </Text>
+            </Pressable>
+          </Box>
+        )}
       </View>
     </SafeAreaView>
   )
