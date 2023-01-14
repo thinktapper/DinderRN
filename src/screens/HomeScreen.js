@@ -47,7 +47,7 @@ const HomeScreen = ({ route, navigation }) => {
   const swipeRef = useRef(null)
   const { user } = useAuthContext()
   const feastId = route.params?.feast
-  const { places, refetch } = useFeast(feastId)
+  const places = useFeast()
   // const [places, setPlaces] = useState([])
   // const feastId = route.params?.feastId
   // const ctx = useAppContext()
@@ -154,12 +154,12 @@ const HomeScreen = ({ route, navigation }) => {
   }
 
   // ?
-  useEffect(() => {
-    if (feastId) {
-      queryClient.invalidateQueries(['places', feastId, user.id])
-      // places.refetch(feastId)
-    }
-  }, [feastId])
+  // useEffect(() => {
+  //   if (feastId) {
+  //     queryClient.invalidateQueries(['places', feastId, user.id])
+  //     // places.refetch(feastId)
+  //   }
+  // }, [feastId])
 
   // if (isLoading) return <LoadingIndicator />
 

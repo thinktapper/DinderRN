@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { useAuthContext } from '../context/AuthProvider'
@@ -20,9 +21,11 @@ export function useFeasts() {
     () => fetchFeasts(user),
     {
       enabled: !!user,
+      staleTime: 1000 * 60 * 60 * 24,
+      cacheTime: Infinity,
     },
   )
 
   return feasts
 }
-// export default useFeasts
+export default useFeasts

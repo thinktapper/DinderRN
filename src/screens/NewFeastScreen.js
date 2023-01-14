@@ -36,6 +36,7 @@ import {
 } from 'react-native-keyboard-aware-scroll-view'
 import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
+import { useCreateFeast } from '../hooks/useCreateFeast'
 
 const feastSchema = Yup.object().shape({
   name: Yup.string().required('Feast name required'),
@@ -54,7 +55,8 @@ const feastSchema = Yup.object().shape({
 })
 
 const FeastScreen = ({ navigation }) => {
-  const [feasts, setFeasts, currentFeast, setCurrentFeast] = feastState.use()
+  const createFeast = useCreateFeast()
+  // const [feasts, setFeasts, currentFeast, setCurrentFeast] = feastState.use()
   const ctx = useAppContext()
   const authContext = useAuthContext()
   const [feastName, setFeastName] = useState('')
@@ -138,6 +140,15 @@ const FeastScreen = ({ navigation }) => {
   //   setNewEndsAt(text)
   // }
 
+  const values = {
+    name: feastName,
+    location: location,
+    endsAt: endsAt.toUTCString,
+    radius: radius,
+  }
+
+  const onSaveClick = () => createFeast(values)
+
   const isValid = () => {
     return feastName && endsAt && radius && location
   }
@@ -148,34 +159,35 @@ const FeastScreen = ({ navigation }) => {
       return
     }
 
-    const values = {
-      name: feastName,
-      location: location,
-      endsAt: endsAt.toUTCString,
-      radius: radius,
-    }
-
     try {
-      const response = await axios({
-        url: 'http://localhost:3000/api/feast',
-        method: 'post',
-        headers: { authorization: `Bearer ${authContext.user.token}` },
-        data: { ...values },
-      })
-      // console.log(JSON.stringify(response))
-
-      if (response.data.success) {
-        // ctx.setCurrentFeast(response.data.feast)
-        // setFeasts(response.data.feasts)
-        // setCurrentFeast(response.data.feast)
-        Alert.alert('Feast info saved successfully')
-        navigation.navigate('Home', { feast: response.data.feast })
-      } else {
-        console.warn('woops')
-      }
+      onSaveClick()
+      // Alert.alert('Feast info saved successfully')
+      navigation.navigate('Home')
     } catch (err) {
-      console.log(`Error saving feast: ${err}`)
+      console.warn(`Error saving feast: ${err}`)
     }
+
+    // try {
+    //   const response = await axios({
+    //     url: 'http://localhost:3000/api/feast',
+    //     method: 'post',
+    //     headers: { authorization: `Bearer ${authContext.user.token}` },
+    //     data: { ...values },
+    //   })
+    //   // console.log(JSON.stringify(response))
+
+    //   if (response.data.success) {
+    //     // ctx.setCurrentFeast(response.data.feast)
+    //     // setFeasts(response.data.feasts)
+    //     // setCurrentFeast(response.data.feast)
+    //     Alert.alert('Feast info saved successfully')
+    //     navigation.navigate('Home', { feast: response.data.feast })
+    //   } else {
+    //     console.warn('woops')
+    //   }
+    // } catch (err) {
+    //   console.log(`Error saving feast: ${err}`)
+    // }
   }
   return (
     <SafeAreaView style={styles.root}>

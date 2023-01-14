@@ -7,9 +7,9 @@ const appStorageKey = 'app-feast'
 export const feastState = newRidgeState(
   // initial state
   {
-    feasts: [],
+    // feasts: [],
     currentFeast: null,
-    places: [], // ??
+    // places: [], // ??
   },
   {
     onSet: async (newState) => {

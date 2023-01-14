@@ -32,7 +32,8 @@ import {
 import Flame from '../../assets/images/flame-square.png'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import tw from 'twrnc'
-import { useFeasts } from '../hooks/useFeasts'
+import useFeasts from '../hooks/useFeasts'
+import useFeast from '../hooks/useFeast'
 import Feast from '../components/Feast'
 import { ListItem } from '../components/ListItem'
 import { LoadingIndicator } from '../components/LoadingIndicator'
@@ -56,125 +57,8 @@ import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
 // }
 
 const FeastScreen = ({ navigation }) => {
+  const [currentFeast, setCurrentFeast] = feastState.use()
   const feasts = useFeasts()
-  // const { data, isLoading, isSuccess, refetch } = useFeasts()
-  // const [feasts, setFeasts] = useState([])
-  // const [currentFeast, setCurrentFeast] = useState(null)
-
-  // const [feasts, setFeasts] = feastState.use()
-  // const [currentFeast, setCurrentFeast] = feastState.use()
-  // const { user } = useAuthContext()
-  // const ctx = useAppContext()
-  // const feastsRef = useRef(true)
-  // const { feasts, isLoading, error } = useUserFeasts()
-
-  // const userId = user?.token
-
-  // const { data, refetch, isLoading, isFetching, isError, error } = useQuery(
-  //   [queryKeys.feasts],
-  //   async () => {
-  //     const response = await getUserFeasts(userId) //fetch('https://your-api.com/data')
-  //     return response
-  //   },
-  // )
-  // useEffect(() => {
-  //   refetch()
-  // }, [])
-
-  // useRefetchOnFocus(refetch)
-
-  // useLayoutEffect(() => {
-  //   // subscribe to feastState changes outside React
-  //   feastState.subscribe((newState, oldState) => {
-  //     console.log('Feast State changed')
-  //   })
-
-  //   // call the returned unsubscribe function to unsubscribe.
-  //   unsubscribe()
-  // }, [])
-
-  // useEffect(() => {
-
-  //   let unsub
-  //   const fetchUserFeasts = async () => {
-  //     unsub = await getUserFeasts()
-  //     if (unsub.data.success) {
-  //       setPlaces(
-  //         // unsub.data.feast.places,
-  //         unsub.data.feast.places.map((place) => ({
-  //           ...place,
-  //           votes: [],
-  //         })),
-  //       )
-  //     } else {
-  //       console.warn(`Failed fetching places for ${currentFeast}`)
-  //     }
-  //   }
-  //   fetchPlaces()
-  //   return unsub
-  //   getUserFeasts(userId).then((feasts) => {
-  //     setFeasts(feasts)
-  //     // setFeasts(
-  //     //   feasts.map((feast) => ({
-  //     //     ...feast,
-  //     //     votes: [],
-  //     //   })),
-  //     // )
-  //   })
-
-  //   // return unsub
-  // }, [currentFeast])
-
-  // useEffect(() => {
-  //   let unsub
-  //   const fetchFeasts = async () => {
-  //     unsub = await axios({
-  //       url: `http://localhost:3000/api/feast/${currentFeast.id}`,
-  //       method: 'get',
-  //       headers: { authorization: `Bearer ${user.token}` },
-  //     })
-  //     if (unsub.data.success) {
-  //       setFeasts(
-  //         unsub.data.feasts.map((feast) => ({
-  //           // id: feast.id,
-  //           ...feast,
-  //           votes: [],
-  //         })),
-  //       )
-  //     } else {
-  //       console.warn(`Failed fetching places for ${currentFeast}`)
-  //     }
-  //   }
-
-  //   fetchFeasts()
-  //   return unsub
-  // }, [])
-
-  // console.warn(`Feasts: ${JSON.stringify(feasts)}`)
-
-  // const onListItemPress = (item) => {
-  //   setCurrentFeast(item)
-  //   feastState.set((previous) => {
-  //     return produce(previous, (updated) => {
-  //       updated.currentFeast = item
-  //     })
-  //   })
-  //   navigation.navigate('Home')
-  // }
-
-  // const onItemPress = useCallback(
-  //   (item) => {
-  //     // setCurrentFeast(item)
-  //     // feastState.set((previous) => {
-  //     //   return produce(previous, (updated) => {
-  //     //     updated.currentFeast = item
-  //     //   })
-  //     // })
-
-  //     navigation.push('Home', { currentFeast: item })
-  //   },
-  //   [navigation],
-  // )
 
   const onEditPress = (feast) => {
     console.warn(`Edit pressed for ${feast}`)
@@ -197,8 +81,6 @@ const FeastScreen = ({ navigation }) => {
 
       <View style={styles.container}>
         <Text style={styles.title}>Your Feasts</Text>
-        {/* {isLoading && <LoadingIndicator />} */}
-        {/* {isSuccess && ( */}
         {feasts.length > 0 ? (
           <Box>
             <FlatList
@@ -221,9 +103,10 @@ const FeastScreen = ({ navigation }) => {
                       pr={['0', '5']}
                       py="2">
                       <Pressable
-                        onPress={() =>
+                        onPress={() => {
+                          setCurrentFeast(item)
                           navigation.push('Home', { feast: item })
-                        }>
+                        }}>
                         <HStack space={[2, 3]} justifyContent="space-between">
                           <Avatar
                             size="md"
@@ -283,6 +166,14 @@ const FeastScreen = ({ navigation }) => {
               //   />
               // }
             />
+
+            <Box>
+              <Pressable
+                onPress={() => navigation.navigate('NewFeast')}
+                style={styles.button}>
+                <Text>Create new</Text>
+              </Pressable>
+            </Box>
           </Box>
         ) : (
           <Box>
