@@ -12,14 +12,15 @@ const createFeast = async (values, user) => {
     data: { ...values },
   })
 
-  // return data
+  return data.feast
 }
 
 export function useCreateFeast() {
   const { user } = useAuthContext()
 
   const { mutate } = useMutation((values) => createFeast(values, user), {
-    onSuccess: () => {
+    onSuccess: (newFeast) => {
+      // queryClient.setQueryData(['feasts'], newFeast)
       queryClient.invalidateQueries('feasts')
       console.log('success, you created a feast')
       Alert.alert('Feast info saved successfully')
