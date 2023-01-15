@@ -87,77 +87,76 @@ const FeastScreen = ({ navigation }) => {
               data={feasts}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => {
-                {
-                  // let pic =
-                  //   item.places?.[0]?.photos?.[0] ||
-                  //   'https://links.papareact.com/6gb'
-
-                  return (
-                    <Box
-                      borderBottomWidth="1"
-                      _dark={{
-                        borderColor: 'muted.50',
-                      }}
-                      borderColor="muted.800"
-                      pl={['0', '4']}
-                      pr={['0', '5']}
-                      py="2">
-                      <Pressable
-                        onPress={() => {
-                          setCurrentFeast(item)
-                          navigation.push('Home', { feast: item })
-                        }}>
-                        <HStack space={[2, 3]} justifyContent="space-between">
-                          <Avatar
-                            size="md"
-                            source={require('../../assets/images/flame-square.png')}
-                            alignSelf="center"
-                          />
-                          <VStack>
-                            <Text
-                              _dark={{
-                                color: 'warmGray.50',
-                              }}
-                              color="coolGray.800"
-                              bold>
-                              {item.name}
-                            </Text>
-                            <Text
-                              color="coolGray.600"
-                              _dark={{
-                                color: 'warmGray.200',
-                              }}>
-                              {item.createdAt}
-                            </Text>
-                          </VStack>
-                          {/* <Spacer /> */}
+                return (
+                  <Box
+                    borderBottomWidth="1"
+                    _dark={{
+                      borderColor: 'muted.50',
+                    }}
+                    borderColor="muted.800"
+                    pl={['0', '4']}
+                    pr={['0', '5']}
+                    py="2">
+                    <Pressable
+                      onPress={() => {
+                        setCurrentFeast(item)
+                        navigation.push('Home', { feast: item })
+                      }}>
+                      <HStack space={[2, 3]} justifyContent="space-between">
+                        <Avatar
+                          size="md"
+                          source={
+                            item.image
+                              ? { uri: item.image }
+                              : require('../../assets/images/flame-square.png')
+                          }
+                          // source={require('../../assets/images/flame-square.png')}
+                          alignSelf="center"
+                        />
+                        <VStack>
                           <Text
-                            fontSize="xs"
                             _dark={{
                               color: 'warmGray.50',
                             }}
                             color="coolGray.800"
-                            alignSelf="flex-start">
-                            {item.places?.length}
+                            bold>
+                            {item.name}
                           </Text>
-                          {/* <HStack> */}
-                          <Pressable onPress={() => onEditPress(item)}>
-                            <FontAwesome name="edit" size={24} color="black" />
-                          </Pressable>
-                          <Pressable onPress={() => onDeletePress(item)}>
-                            <MaterialIcons
-                              name="delete"
-                              size={24}
-                              color="black"
-                            />
-                          </Pressable>
-                          {/* </HStack> */}
-                        </HStack>
-                      </Pressable>
-                    </Box>
-                    // />
-                  )
-                }
+                          <Text
+                            color="coolGray.600"
+                            _dark={{
+                              color: 'warmGray.200',
+                            }}>
+                            {item.createdAt}
+                          </Text>
+                        </VStack>
+                        {/* <Spacer /> */}
+                        <Text
+                          fontSize="xs"
+                          _dark={{
+                            color: 'warmGray.50',
+                          }}
+                          color="coolGray.800"
+                          alignSelf="flex-start">
+                          {item.places?.length}
+                        </Text>
+                        {/* <HStack> */}
+                        <Pressable onPress={() => onEditPress(item)}>
+                          <FontAwesome name="edit" size={24} color="black" />
+                        </Pressable>
+                        <Pressable onPress={() => onDeletePress(item)}>
+                          <MaterialIcons
+                            name="delete"
+                            size={24}
+                            color="black"
+                          />
+                        </Pressable>
+                        {/* </HStack> */}
+                      </HStack>
+                    </Pressable>
+                  </Box>
+                  // />
+                )
               }}
               // refreshControl={
               //   <RefreshControl

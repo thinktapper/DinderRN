@@ -153,7 +153,7 @@ export const AuthProvider = ({ children }) => {
         },
       })
       // console.log(JSON.stringify(response))
-      if (response.status === 201) {
+      if (response.status === 200) {
         setUser(null)
         // remove stored user data
         await clearStoredUser()

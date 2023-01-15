@@ -17,13 +17,15 @@ import {
   NativeBaseProvider,
   Center,
 } from 'native-base'
+import { LoadingIndicator } from '../components/LoadingIndicator'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import tw from 'twrnc'
 import { Picker } from '@react-native-picker/picker'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 // import DateTimePicker from '@react-native-community/datetimepicker'
-import SearchBarWithAutocomplete from '../components/SearchBarAutocomplete'
-import { useDebounce } from '../utils/useDebounce'
+// import SearchBarWithAutocomplete from '../components/SearchBarAutocomplete'
+// import { useDebounce } from '../utils/useDebounce'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
@@ -36,7 +38,8 @@ import {
 } from 'react-native-keyboard-aware-scroll-view'
 import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
-import { useCreateFeast } from '../hooks/useCreateFeast'
+// import { useCreateFeast } from '../hooks/useCreateFeast'
+// import { queryClient } from '../lib/queryClient'
 
 const feastSchema = Yup.object().shape({
   name: Yup.string().required('Feast name required'),
@@ -55,146 +58,95 @@ const feastSchema = Yup.object().shape({
 })
 
 const FeastScreen = ({ navigation }) => {
-  const createFeast = useCreateFeast()
-  // const [feasts, setFeasts, currentFeast, setCurrentFeast] = feastState.use()
-  const ctx = useAppContext()
-  const authContext = useAuthContext()
+  // const createFeast = useCreateFeast()
+  const queryClient = useQueryClient()
+  const { user } = useAuthContext()
   const [feastName, setFeastName] = useState('')
-  // const [feastAddress, setFeastAddress] = useState(null)
+  const [image, setImage] = useState(null)
+  const [startsAt, setStartsAt] = useState(null)
+  const [endsAt, setEndsAt] = useState(new Date())
   const [location, setLocation] = useState({ lat: 0, long: 0 })
   const [radius, setRadius] = useState(1)
-  const [endsAt, setEndsAt] = useState(new Date())
-  const [search, setSearch] = useState({ term: '', fetchPredictions: false })
-  const [predictions, setPredictions] = useState([])
-  const [showPredictions, setShowPredictions] = useState(true)
-  // const [newEndsAt, setNewEndsAt] = useState(new Date())
-  // const feastAddress = appContext.feastAddress
-  // const feastName = appContext.feastName
-  // const radius = appContext.radius
-  // const date = appContext.endsAt
-  // const { lat, long } = appContext.coords
 
-  const GOOGLE_PACES_API_BASE_URL = 'https://maps.googleapis.com/maps/api/place'
-
-  const onChangeSearch = async () => {
-    if (search.term.trim() === '') return
-    if (!search.fetchPredictions) return
-    const apiUrl = `${GOOGLE_PACES_API_BASE_URL}/autocomplete/json?key=${GOOGLE_API}&input=${search.term}`
-    try {
-      const result = await axios.request({
-        method: 'get',
-        url: apiUrl,
-      })
-      if (result) {
-        const {
-          data: { predictions },
-        } = result
-        setPredictions(predictions)
-      }
-    } catch (e) {
-      console.log(e)
-    }
-  }
-  useDebounce(onChangeSearch, 1000, [search.term])
-
-  const onPredictionTapped = async (placeId, description) => {
-    const apiUrl = `${GOOGLE_PACES_API_BASE_URL}/details/json?key=${GOOGLE_API}&place_id=${placeId}`
-    try {
-      const result = await axios.request({
+  const mutation = useMutation({
+    mutationFn: ({ ...values }) => {
+      return axios({
+        url: 'http://localhost:3000/api/feast',
         method: 'post',
-        url: apiUrl,
+        headers: { authorization: `Bearer ${user?.token}` },
+        data: { values },
       })
-      if (result) {
-        const {
-          data: {
-            result: {
-              geometry: { location },
-            },
-          },
-        } = result
-        const { lat, lng } = location
-        setShowPredictions(false)
-        setLocation({ lat: lat, long: lng })
-        setSearch({ term: description })
-      }
-    } catch (e) {
-      console.log(e)
-    }
-  }
+    },
+  })
 
   // const autocompleteRef = useRef()
 
-  // const handleFeastNameChange = text => {
-  //   setNewFeastName(text)
+  // const isValid = () => {
+  //   return feastName && image && endsAt && radius && location
   // }
 
-  // const handleFeastAddressChange = text => {
-  //   setNewFeastAddress(text)
+  // const save = async () => {
+  //   if (!isValid) {
+  //     console.debug('Not valid')
+  //     return
+  //   }
+  //   const values = {
+  //     name: feastName,
+  //     image: image,
+  //     location: location,
+  //     endsAt: endsAt.toISOString(),
+  //     radius: radius,
+  //   }
+  //   console.log(values)
+
+  //   createFeast.mutate(values, {
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries('feasts')
+  //       navigation.pop('Feasts')
+  //     },
+  //     onError: (err) => {
+  //       console.warn(`Error saving feast: ${err.message}`)
+  //     },
+  //     onSettled: (data, error) => {},
+  //   })
+
+  //   // try {
+  //   //   // onSaveClick()
+  //   //   mutate(values)
+  //   //   // Alert.alert('Feast info saved successfully')
+  //   //   navigation.pop('Feasts')
+  //   // } catch (err) {
+  //   //   console.warn(`Error saving feast: ${err}`)
+  //   // }
+
+  //   // try {
+  //   //   const response = await axios({
+  //   //     url: 'http://localhost:3000/api/feast',
+  //   //     method: 'post',
+  //   //     headers: { authorization: `Bearer ${authContext.user.token}` },
+  //   //     data: { ...values },
+  //   //   })
+  //   //     .then((res) => console.log(JSON.stringify(res)))
+  //   //     .catch((res, err) => console.log(err, JSON.stringify(res)))
+
+  //   //   // if (response.data.success) {
+  //   //   //   queryClient.invalidateQueries('feasts')
+  //   //   //   // ctx.setCurrentFeast(response.data.feast)
+  //   //   //   // setFeasts(response.data.feasts)
+  //   //   //   // setCurrentFeast(response.data.feast)
+  //   //   //   Alert.alert('Feast info saved successfully')
+  //   //   //   navigation.navigate('Home', { feast: response.data.feast })
+  //   //   // } else {
+  //   //   //   console.warn('woops')
+  //   //   // }
+  //   // } catch (err) {
+  //   //   console.log(`Error saving feast: ${err}`)
+  //   // }
   // }
 
-  // const handleRadiusChange = text => {
-  //   setNewRadius(text)
-  // }
-
-  // const handleEndsAtChange = text => {
-  //   setNewEndsAt(text)
-  // }
-
-  const values = {
-    name: feastName,
-    location: location,
-    endsAt: endsAt.toUTCString,
-    radius: radius,
-  }
-
-  const onSaveClick = () => createFeast(values)
-
-  const isValid = () => {
-    return feastName && endsAt && radius && location
-  }
-
-  const save = async () => {
-    if (!isValid) {
-      console.debug('Not valid')
-      return
-    }
-
-    try {
-      onSaveClick()
-      // Alert.alert('Feast info saved successfully')
-      navigation.navigate('Home')
-    } catch (err) {
-      console.warn(`Error saving feast: ${err}`)
-    }
-
-    // try {
-    //   const response = await axios({
-    //     url: 'http://localhost:3000/api/feast',
-    //     method: 'post',
-    //     headers: { authorization: `Bearer ${authContext.user.token}` },
-    //     data: { ...values },
-    //   })
-    //   // console.log(JSON.stringify(response))
-
-    //   if (response.data.success) {
-    //     // ctx.setCurrentFeast(response.data.feast)
-    //     // setFeasts(response.data.feasts)
-    //     // setCurrentFeast(response.data.feast)
-    //     Alert.alert('Feast info saved successfully')
-    //     navigation.navigate('Home', { feast: response.data.feast })
-    //   } else {
-    //     console.warn('woops')
-    //   }
-    // } catch (err) {
-    //   console.log(`Error saving feast: ${err}`)
-    // }
-  }
   return (
     <SafeAreaView style={styles.root}>
-      {/* <Header /> */}
       <View style={styles.container}>
-        {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-
         <Text style={styles.title}>Create a new feast</Text>
 
         <TextInput
@@ -208,7 +160,6 @@ const FeastScreen = ({ navigation }) => {
         />
       </View>
 
-      {/* <View style={tw`flex-1`}> */}
       <ScrollView
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1 }}
@@ -219,7 +170,8 @@ const FeastScreen = ({ navigation }) => {
           onPress={(data, details = null) => {
             // 'details' is provided when fetchDetails = true
             // console.warn(data, details)
-            // appContext.getCoords(details)
+            const imageUrl = `https://maps.googleapis.com/maps/api/place/photo?parameters&maxwidth=400&photoreference=${details.photos[0].photo_reference}&key=${GOOGLE_API}`
+            setImage(imageUrl)
             setLocation({
               lat: details.geometry.location.lat,
               long: details.geometry.location.lng,
@@ -279,17 +231,6 @@ const FeastScreen = ({ navigation }) => {
           }}
         />
       </ScrollView>
-      {/* <View style={styles.elementContainer}>
-        <SearchBarWithAutocomplete
-          value={search.term}
-          onChangeText={(text) => {
-            setSearch({ term: text, fetchPredictions: true })
-          }}
-          showPredictions={showPredictions}
-          predictions={predictions}
-          onPredictionTapped={onPredictionTapped}
-        />
-      </View> */}
 
       <View style={[styles.container, tw`flex-1 justify-around`]}>
         <Text style={tw`text-center text-xl font-semibold`}>End date</Text>
@@ -322,16 +263,27 @@ const FeastScreen = ({ navigation }) => {
         </View>
       </ScrollView>
 
-      <Pressable onPress={save} style={styles.button}>
-        <Text>Save</Text>
-      </Pressable>
-
       <Pressable
-        onPress={() => navigation.navigate('Home')}
+        onPress={() =>
+          mutation.mutate({
+            name: feastName,
+            image,
+            location,
+            startsAt,
+            endsAt: endsAt.toISOString(),
+            radius,
+          })
+        }
+        style={styles.button}>
+        <Text>{mutation.isLoading ? 'Loading...' : 'Create Feast'}</Text>
+      </Pressable>
+      <Pressable
+        onPress={() => navigation.navigate('Feasts')}
         style={styles.button}>
         <Text>Cancel</Text>
       </Pressable>
-      {/* </View> */}
+
+      {mutation.isError && <Text>{mutation.error.message}</Text>}
     </SafeAreaView>
   )
 }
