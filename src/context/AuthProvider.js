@@ -6,8 +6,8 @@ import React, {
   useMemo,
 } from 'react'
 import * as SecureStore from 'expo-secure-store'
-import { queryClient } from '../lib/queryClient'
-// import { invalidateQueries } from '@tanstack/react-query'
+// import { queryClient } from '../lib/queryClient'
+import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { SECURE_SECRET } from '@env'
 
@@ -18,6 +18,7 @@ const authClient = axios.create({ baseURL: 'http://localhost:3000' })
 const AuthContext = createContext({})
 
 export const AuthProvider = ({ children }) => {
+  const queryClient = useQueryClient()
   const [user, setUser] = useState(null)
   const [isSignOut, setIsSignOut] = useState(false)
   // const [isLoading, setIsLoading] = useState(false)
@@ -42,8 +43,10 @@ export const AuthProvider = ({ children }) => {
   }
 
   async function clearStoredUser() {
-    queryClient.invalidateQueries()
+    // setUser(null)
+    queryClient.clear()
     await SecureStore.deleteItemAsync(SECURE_SECRET)
+    // return 'Success, User logged out'
   }
 
   async function authRequest({ ...options }) {
@@ -153,11 +156,16 @@ export const AuthProvider = ({ children }) => {
         },
       })
       // console.log(JSON.stringify(response))
-      if (response.status === 200) {
+      if (response.data.success) {
         setUser(null)
         // remove stored user data
         await clearStoredUser()
-        console.debug('User logged out')
+        // if (message === 'Success, User logged out') {
+        //   console.debug(message)
+        // }
+      } else {
+        console.log('Error logging out')
+        throw new Error('Error logging out')
       }
     } catch (err) {
       console.error(`Error loggin out: ${err}`)

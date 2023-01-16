@@ -40,6 +40,7 @@ import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
 // import { useCreateFeast } from '../hooks/useCreateFeast'
 // import { queryClient } from '../lib/queryClient'
+import CreateFeastForm from '../components/CreateFeastForm'
 
 const feastSchema = Yup.object().shape({
   name: Yup.string().required('Feast name required'),
@@ -58,232 +59,254 @@ const feastSchema = Yup.object().shape({
 })
 
 const FeastScreen = ({ navigation }) => {
-  // const createFeast = useCreateFeast()
   const queryClient = useQueryClient()
-  const { user } = useAuthContext()
-  const [feastName, setFeastName] = useState('')
-  const [image, setImage] = useState(null)
-  const [startsAt, setStartsAt] = useState(null)
-  const [endsAt, setEndsAt] = useState(new Date())
-  const [location, setLocation] = useState({ lat: 0, long: 0 })
-  const [radius, setRadius] = useState(1)
+  // const createFeast = useCreateFeast()
+  // const queryClient = useQueryClient()
+  // const { user } = useAuthContext()
+  // const [feastName, setFeastName] = useState('')
+  // const [image, setImage] = useState(null)
+  // const [startsAt, setStartsAt] = useState(null)
+  // const [endsAt, setEndsAt] = useState(new Date())
+  // const [location, setLocation] = useState({ lat: 0, long: 0 })
+  // const [radius, setRadius] = useState(1)
 
-  const mutation = useMutation({
-    mutationFn: ({ ...values }) => {
-      return axios({
-        url: 'http://localhost:3000/api/feast',
-        method: 'post',
-        headers: { authorization: `Bearer ${user?.token}` },
-        data: { values },
-      })
-    },
-  })
+  // const mutation = useMutation({
+  //   mutationFn: (values) => {
+  //     return axios({
+  //       url: 'http://localhost:3000/api/feast',
+  //       method: 'post',
+  //       headers: { authorization: `Bearer ${user?.token}` },
+  //       data: { ...values },
+  //     })
+  //   },
+  // })
 
-  // const autocompleteRef = useRef()
+  // // const autocompleteRef = useRef()
 
-  // const isValid = () => {
-  //   return feastName && image && endsAt && radius && location
-  // }
+  // // const isValid = () => {
+  // //   return feastName && image && endsAt && radius && location
+  // // }
 
-  // const save = async () => {
-  //   if (!isValid) {
-  //     console.debug('Not valid')
-  //     return
-  //   }
-  //   const values = {
-  //     name: feastName,
-  //     image: image,
-  //     location: location,
-  //     endsAt: endsAt.toISOString(),
-  //     radius: radius,
-  //   }
-  //   console.log(values)
+  // // const save = async () => {
+  // //   if (!isValid) {
+  // //     console.debug('Not valid')
+  // //     return
+  // //   }
+  // //   const values = {
+  // //     name: feastName,
+  // //     image: image,
+  // //     location: location,
+  // //     endsAt: endsAt.toISOString(),
+  // //     radius: radius,
+  // //   }
+  // //   console.log(values)
 
-  //   createFeast.mutate(values, {
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries('feasts')
-  //       navigation.pop('Feasts')
-  //     },
-  //     onError: (err) => {
-  //       console.warn(`Error saving feast: ${err.message}`)
-  //     },
-  //     onSettled: (data, error) => {},
-  //   })
+  // //   createFeast.mutate(values, {
+  // //     onSuccess: () => {
+  // //       queryClient.invalidateQueries('feasts')
+  // //       navigation.pop('Feasts')
+  // //     },
+  // //     onError: (err) => {
+  // //       console.warn(`Error saving feast: ${err.message}`)
+  // //     },
+  // //     onSettled: (data, error) => {},
+  // //   })
 
-  //   // try {
-  //   //   // onSaveClick()
-  //   //   mutate(values)
-  //   //   // Alert.alert('Feast info saved successfully')
-  //   //   navigation.pop('Feasts')
-  //   // } catch (err) {
-  //   //   console.warn(`Error saving feast: ${err}`)
-  //   // }
+  // //   // try {
+  // //   //   // onSaveClick()
+  // //   //   mutate(values)
+  // //   //   // Alert.alert('Feast info saved successfully')
+  // //   //   navigation.pop('Feasts')
+  // //   // } catch (err) {
+  // //   //   console.warn(`Error saving feast: ${err}`)
+  // //   // }
 
-  //   // try {
-  //   //   const response = await axios({
-  //   //     url: 'http://localhost:3000/api/feast',
-  //   //     method: 'post',
-  //   //     headers: { authorization: `Bearer ${authContext.user.token}` },
-  //   //     data: { ...values },
-  //   //   })
-  //   //     .then((res) => console.log(JSON.stringify(res)))
-  //   //     .catch((res, err) => console.log(err, JSON.stringify(res)))
+  // //   // try {
+  // //   //   const response = await axios({
+  // //   //     url: 'http://localhost:3000/api/feast',
+  // //   //     method: 'post',
+  // //   //     headers: { authorization: `Bearer ${authContext.user.token}` },
+  // //   //     data: { ...values },
+  // //   //   })
+  // //   //     .then((res) => console.log(JSON.stringify(res)))
+  // //   //     .catch((res, err) => console.log(err, JSON.stringify(res)))
 
-  //   //   // if (response.data.success) {
-  //   //   //   queryClient.invalidateQueries('feasts')
-  //   //   //   // ctx.setCurrentFeast(response.data.feast)
-  //   //   //   // setFeasts(response.data.feasts)
-  //   //   //   // setCurrentFeast(response.data.feast)
-  //   //   //   Alert.alert('Feast info saved successfully')
-  //   //   //   navigation.navigate('Home', { feast: response.data.feast })
-  //   //   // } else {
-  //   //   //   console.warn('woops')
-  //   //   // }
-  //   // } catch (err) {
-  //   //   console.log(`Error saving feast: ${err}`)
-  //   // }
-  // }
+  // //   //   // if (response.data.success) {
+  // //   //   //   queryClient.invalidateQueries('feasts')
+  // //   //   //   // ctx.setCurrentFeast(response.data.feast)
+  // //   //   //   // setFeasts(response.data.feasts)
+  // //   //   //   // setCurrentFeast(response.data.feast)
+  // //   //   //   Alert.alert('Feast info saved successfully')
+  // //   //   //   navigation.navigate('Home', { feast: response.data.feast })
+  // //   //   // } else {
+  // //   //   //   console.warn('woops')
+  // //   //   // }
+  // //   // } catch (err) {
+  // //   //   console.log(`Error saving feast: ${err}`)
+  // //   // }
+  // // }
+
+  // return (
+  //   <SafeAreaView style={styles.root}>
+  //     <View style={styles.container}>
+  //       <Text style={styles.title}>Create a new feast</Text>
+
+  //       <TextInput
+  //         style={styles.input}
+  //         placeholder="Feast name..."
+  //         // placeholder={
+  //         //   appContext.feastName ? appContext.feastName : 'Feast name...'
+  //         // }
+  //         value={feastName}
+  //         onChangeText={setFeastName}
+  //       />
+  //     </View>
+
+  //     <ScrollView
+  //       keyboardShouldPersistTaps="handled"
+  //       contentContainerStyle={{ flexGrow: 1 }}
+  //       horizontal>
+  //       <GooglePlacesAutocomplete
+  //         placeholder="Type a location"
+  //         fetchDetails={true}
+  //         onPress={(data, details = null) => {
+  //           // 'details' is provided when fetchDetails = true
+  //           // console.warn(data, details)
+  //           const imageUrl = `https://maps.googleapis.com/maps/api/place/photo?parameters&maxwidth=400&photoreference=${details.photos[0].photo_reference}&key=${GOOGLE_API}`
+  //           setImage(imageUrl)
+  //           setLocation({
+  //             lat: details.geometry.location.lat,
+  //             long: details.geometry.location.lng,
+  //           })
+  //         }}
+  //         query={{
+  //           key: GOOGLE_API,
+  //         }}
+  //         onFail={(error) => console.warn(error)}
+  //         onNotFound={() => console.warn('no results')}
+  //         listViewDisplayed="auto"
+  //         listEmptyComponent={() => (
+  //           <View style={{ flex: 1 }}>
+  //             <Text>No results were found</Text>
+  //           </View>
+  //         )}
+  //         styles={{
+  //           container: {
+  //             flex: 1,
+  //           },
+  //           textInputContainer: {
+  //             flexDirection: 'row',
+  //           },
+  //           textInput: {
+  //             backgroundColor: '#e13959',
+  //             color: '#212121',
+  //             height: 44,
+  //             borderRadius: 20,
+  //             paddingVertical: 16,
+  //             paddingHorizontal: 16,
+  //             fontSize: 16,
+  //             flex: 1,
+  //           },
+  //           listView: {
+  //             backgroundColor: '#cfcfcf',
+  //             borderBottomLeftRadius: 10,
+  //             borderBottomRightRadius: 10,
+  //           },
+  //           row: {
+  //             backgroundColor: '#e13959',
+  //             padding: 13,
+  //             height: 44,
+  //             flexDirection: 'row',
+  //             borderBottomColor: 'black',
+  //             borderBottomWidth: 1,
+  //           },
+  //           separator: {
+  //             height: 0.5,
+  //             backgroundColor: '#c8c7cc',
+  //           },
+  //           description: {},
+  //           loader: {
+  //             flexDirection: 'row',
+  //             justifyContent: 'flex-end',
+  //             height: 20,
+  //           },
+  //         }}
+  //       />
+  //     </ScrollView>
+
+  //     <View style={[styles.container, tw`flex-1 justify-around`]}>
+  //       <Text style={tw`text-center text-xl font-semibold`}>End date</Text>
+  //       {/* <DateTimePicker value={endsAt} onChange={setEndsAt} /> */}
+  //       <RNDateTimePicker
+  //         // display="inline"
+  //         mode="date"
+  //         value={endsAt}
+  //         minimumDate={new Date()}
+  //         style={tw`flex-1 w-full mt-2`}
+  //         onChange={(e, selectedDate) => {
+  //           setEndsAt(selectedDate)
+  //         }}
+  //       />
+  //     </View>
+
+  //     <ScrollView style={styles.elementContainer}>
+  //       <Text>Radius</Text>
+  //       <View style={styles.container}>
+  //         <Picker
+  //           label="Radius"
+  //           selectedValue={radius}
+  //           onValueChange={(itemValue) => setRadius(itemValue)}>
+  //           <Picker.Item label="1 Mile" value={1} />
+  //           <Picker.Item label="2 Miles" value={2} />
+  //           <Picker.Item label="3 Miles" value={3} />
+  //           <Picker.Item label="4 Miles" value={4} />
+  //           <Picker.Item label="5 Miles" value={5} />
+  //         </Picker>
+  //       </View>
+  //     </ScrollView>
+
+  //     <Pressable
+  //       onPress={() =>
+  //         mutation.mutate({
+  //           name: feastName,
+  //           image,
+  //           location,
+  //           startsAt,
+  //           endsAt: endsAt.toISOString(),
+  //           radius,
+  //         })
+  //       }
+  //       style={styles.button}>
+  //       <Text>{mutation.isLoading ? 'Loading...' : 'Create Feast'}</Text>
+  //     </Pressable>
+  //     <Pressable
+  //       onPress={() => navigation.navigate('Feasts')}
+  //       style={styles.button}>
+  //       <Text>Cancel</Text>
+  //     </Pressable>
+
+  //     {mutation.isError && <Text>{mutation.error.message}</Text>}
+  // </SafeAreaView>
+  // )
+
+  const onFeastCreated = (response) => {
+    console.warn(JSON.stringify(response))
+
+    if (response.success) {
+      console.log('success, you created a feast: ', response.data)
+
+      queryClient.invalidateQueries('feasts')
+      Alert.alert('Feast info saved successfully')
+      navigation.push('Feasts')
+    }
+  }
 
   return (
     <SafeAreaView style={styles.root}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Create a new feast</Text>
-
-        <TextInput
-          style={styles.input}
-          placeholder="Feast name..."
-          // placeholder={
-          //   appContext.feastName ? appContext.feastName : 'Feast name...'
-          // }
-          value={feastName}
-          onChangeText={setFeastName}
-        />
-      </View>
-
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flexGrow: 1 }}
-        horizontal>
-        <GooglePlacesAutocomplete
-          placeholder="Type a location"
-          fetchDetails={true}
-          onPress={(data, details = null) => {
-            // 'details' is provided when fetchDetails = true
-            // console.warn(data, details)
-            const imageUrl = `https://maps.googleapis.com/maps/api/place/photo?parameters&maxwidth=400&photoreference=${details.photos[0].photo_reference}&key=${GOOGLE_API}`
-            setImage(imageUrl)
-            setLocation({
-              lat: details.geometry.location.lat,
-              long: details.geometry.location.lng,
-            })
-          }}
-          query={{
-            key: GOOGLE_API,
-          }}
-          onFail={(error) => console.warn(error)}
-          onNotFound={() => console.warn('no results')}
-          listViewDisplayed="auto"
-          listEmptyComponent={() => (
-            <View style={{ flex: 1 }}>
-              <Text>No results were found</Text>
-            </View>
-          )}
-          styles={{
-            container: {
-              flex: 1,
-            },
-            textInputContainer: {
-              flexDirection: 'row',
-            },
-            textInput: {
-              backgroundColor: '#e13959',
-              color: '#212121',
-              height: 44,
-              borderRadius: 20,
-              paddingVertical: 16,
-              paddingHorizontal: 16,
-              fontSize: 16,
-              flex: 1,
-            },
-            listView: {
-              backgroundColor: '#cfcfcf',
-              borderBottomLeftRadius: 10,
-              borderBottomRightRadius: 10,
-            },
-            row: {
-              backgroundColor: '#e13959',
-              padding: 13,
-              height: 44,
-              flexDirection: 'row',
-              borderBottomColor: 'black',
-              borderBottomWidth: 1,
-            },
-            separator: {
-              height: 0.5,
-              backgroundColor: '#c8c7cc',
-            },
-            description: {},
-            loader: {
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              height: 20,
-            },
-          }}
-        />
+      <ScrollView style={styles.body}>
+        <Text style={styles.title}>Create a Feast</Text>
+        <CreateFeastForm onFeastCreated={onFeastCreated} />
       </ScrollView>
-
-      <View style={[styles.container, tw`flex-1 justify-around`]}>
-        <Text style={tw`text-center text-xl font-semibold`}>End date</Text>
-        {/* <DateTimePicker value={endsAt} onChange={setEndsAt} /> */}
-        <RNDateTimePicker
-          // display="inline"
-          mode="date"
-          value={endsAt}
-          minimumDate={new Date()}
-          style={tw`flex-1 w-full mt-2`}
-          onChange={(e, selectedDate) => {
-            setEndsAt(selectedDate)
-          }}
-        />
-      </View>
-
-      <ScrollView style={styles.elementContainer}>
-        <Text>Radius</Text>
-        <View style={styles.container}>
-          <Picker
-            label="Radius"
-            selectedValue={radius}
-            onValueChange={(itemValue) => setRadius(itemValue)}>
-            <Picker.Item label="1 Mile" value={1} />
-            <Picker.Item label="2 Miles" value={2} />
-            <Picker.Item label="3 Miles" value={3} />
-            <Picker.Item label="4 Miles" value={4} />
-            <Picker.Item label="5 Miles" value={5} />
-          </Picker>
-        </View>
-      </ScrollView>
-
-      <Pressable
-        onPress={() =>
-          mutation.mutate({
-            name: feastName,
-            image,
-            location,
-            startsAt,
-            endsAt: endsAt.toISOString(),
-            radius,
-          })
-        }
-        style={styles.button}>
-        <Text>{mutation.isLoading ? 'Loading...' : 'Create Feast'}</Text>
-      </Pressable>
-      <Pressable
-        onPress={() => navigation.navigate('Feasts')}
-        style={styles.button}>
-        <Text>Cancel</Text>
-      </Pressable>
-
-      {mutation.isError && <Text>{mutation.error.message}</Text>}
     </SafeAreaView>
   )
 }
