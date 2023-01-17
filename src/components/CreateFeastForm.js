@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TextInput,
   // Text,
+  Alert,
   View,
 } from 'react-native'
 import {
@@ -23,14 +24,18 @@ import {
   FormControl,
   Center,
   Pressable,
-  Alert,
+  // Alert,
   Text,
   Flex,
 } from 'native-base'
 import tw from 'twrnc'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { LoadingIndicator } from '../components/LoadingIndicator'
-import { useMutation, useAsyncMutation } from '@tanstack/react-query'
+import {
+  useMutation,
+  useAsyncMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
 import { PickerIOS, Picker } from '@react-native-picker/picker'
@@ -38,13 +43,27 @@ import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useAuthContext } from '../context/AuthProvider'
 import axios from 'axios'
 
-function CreateFeastForm({ onFeastCreated }) {
+const submitFeast = async (formData, user) => {
+  const response = await axios('http:localhost:3000/api/feast', {
+    method: 'POST',
+    data: { ...formData },
+    headers: {
+      // prettier-ignore
+      'authorization': `Bearer ${user?.token}`,
+    },
+  })
+  // console.warn('submitFeast:', JSON.stringify(response))
+  return response.data
+}
+
+function CreateFeastForm({ props }) {
+  const { queryClient, navigation, onFeastCreated } = props
   const { user } = useAuthContext()
   const [showAlert, setShowAlert] = useState(false)
   // const [isLoading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    image: 'https://images.pexels.com/photos/1563256/pexels-photo-1563256.jpeg',
+    image: '',
     startDate: new Date(),
     endDate: new Date(),
     location: { lat: 0, long: 0 },
@@ -55,42 +74,91 @@ function CreateFeastForm({ onFeastCreated }) {
     setFormData({ ...formData, [name]: value })
   }
 
-  const handleCreateFeast = async () => {
-    try {
-      const result = await createFeast.mutateAsync({ formData, user })
-      // console.warn('result:', result)
-    } catch (err) {
-      console.error(err)
+  function handlePlaceSelect(data, details) {
+    console.debug('data:', data, 'details:', details)
+
+    if (details.photos.length > 0) {
+      const imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${details.photos[0].photo_reference}&key=${GOOGLE_API}`
+      handleChange('image', imageUrl)
     }
+
+    handleChange('location', {
+      lat: details.geometry.location.lat,
+      long: details.geometry.location.lng,
+    })
   }
 
-  const createFeast = useMutation(({ formData, user }) => {
-    // setLoading(true)
-    try {
-      return axios('http:localhost:3000/api/feast', {
-        method: 'POST',
-        data: { ...formData },
-        headers: {
-          // prettier-ignore
-          'authorization': `Bearer ${user?.token}`,
-        },
-      }).then((response) => {
-        // console.warn('response:', { ...response })
-        onFeastCreated(response.data)
-        return response.data
-      })
-    } catch (err) {
-      console.error(err)
-    } finally {
-      // setLoading(false)
-    }
-  })
+  const handleCreateFeast = () => {
+    createFeast.mutate({ formData, user })
+    // try {
+    // const result = await createFeast.mutateAsync({ formData, user })
+    // console.warn('result:', result)
+    // } catch (err) {
+    //   console.error(err)
+    // }
+  }
+
+  const createFeast = useMutation(
+    ({ formData, user }) => submitFeast(formData, user),
+    {
+      onSuccess: (response) => {
+        return onFeastCreated(response)
+        // console.log('success, you created a feast: ', response.data)
+        // return queryClient.invalidateQueries('feasts')
+        // if (response.success) {
+        //   onFeastCreated(response.data)
+        // }
+      },
+      onError: (error) => {
+        console.log('error', error)
+        // Alert.alert('Error', 'There was an error saving your feast')
+      },
+      onSettled: () => {
+        // setLoading(false)
+        // Alert.alert('Feast info saved successfully')
+        navigation.goBack
+      },
+    },
+  )
+
+  // setLoading(true)
+  // try {
+  //   return axios('http:localhost:3000/api/feast', {
+  //     method: 'POST',
+  //     data: { ...formData },
+  //     headers: {
+  //       // prettier-ignore
+  //       'authorization': `Bearer ${user?.token}`,
+  //     },
+  //   })
+  //   }).then((response) => {
+  //     // console.warn('response:', { ...response })
+  //     // onFeastCreated(response.data)
+  //     // return response.data
+  //     if (response.data.success) {
+  //       console.log('success, you created a feast: ', response.data.data)
+
+  //       queryClient.invalidateQueries('feasts')
+  //       Alert.alert('Feast info saved successfully')
+  //       navigation.push('Feasts')
+  //     }
+  //   })
+  // } catch (err) {
+  //   console.error(err)
+  //   return err
+  // }
+  // })
+  //   } finally {
+  //     // setLoading(false)
+  //   }
+  // })
 
   return (
     <Box safeArea flex={1} w="100%">
       <Heading size="lg" color="coolGray.800" fontWeight="bold">
         Create a Feast
       </Heading>
+      <Button onPress={() => navigation.goBack()} title="Dismiss" />
       {createFeast.isLoading ? (
         <LoadingIndicator />
       ) : (
@@ -116,14 +184,9 @@ function CreateFeastForm({ onFeastCreated }) {
                   placeholder="Type a location"
                   fetchDetails={true}
                   onPress={(data, details = null) => {
-                    // console.warn(data, details)
                     // 'details' is provided when fetchDetails = true
-                    const imageUrl = `https://maps.googleapis.com/maps/api/place/photo?parameters&maxwidth=400&photoreference=${details.photos[0].photo_reference}&key=${GOOGLE_API}`
-                    handleChange('image', imageUrl)
-                    handleChange('location', {
-                      lat: details.geometry.location.lat,
-                      long: details.geometry.location.lng,
-                    })
+                    // console.warn(data, details)
+                    handlePlaceSelect(data, details)
                   }}
                   query={{
                     key: GOOGLE_API,
@@ -218,8 +281,6 @@ function CreateFeastForm({ onFeastCreated }) {
               </HStack>
             </Box>
 
-            {/* <Center w="100%">
-              <Box w="100%"> */}
             <ScrollView style={styles.elementContainer}>
               <Text textAlign="center" fontWeight="bold">
                 Radius
@@ -239,8 +300,6 @@ function CreateFeastForm({ onFeastCreated }) {
                 </Picker>
               </View>
             </ScrollView>
-            {/* </Box>
-            </Center> */}
 
             <Button
               mt="5"
@@ -248,7 +307,7 @@ function CreateFeastForm({ onFeastCreated }) {
               onPress={() => handleCreateFeast()}>
               <Text>Create Feast</Text>
             </Button>
-            {createFeast.status === 'loading' && (
+            {createFeast.isLoading && (
               <HStack space={2} justifyContent="center">
                 <Spinner accessibilityLabel="Submitting feast" />
                 <Heading color="primary.500" fontSize="md">
@@ -256,7 +315,7 @@ function CreateFeastForm({ onFeastCreated }) {
                 </Heading>
               </HStack>
             )}
-            {createFeast.status === 'error' && (
+            {createFeast.error && (
               <Box w="100%" alignItems="center">
                 <Collapse isOpen={showAlert}>
                   <Alert maxW="400" status="error">
