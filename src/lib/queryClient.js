@@ -11,14 +11,14 @@ const queryClient = new QueryClient({
     },
   },
   // configure global cache callbacks to show warns in dev
-  // mutationCache: new MutationCache({
-  //   onSuccess: (data) => {
-  //     console.log('Mutation cache success', data.message)
-  //   },
-  //   onError: (error) => {
-  //     console.warn('Mutation cache error', error.message)
-  //   },
-  // }),
+  mutationCache: new MutationCache({
+    onSuccess: (data) => {
+      console.log('Mutation cache success', data.message)
+    },
+    onError: (error) => {
+      console.warn('Mutation cache error', error.message)
+    },
+  }),
 })
 
 export { queryClient }

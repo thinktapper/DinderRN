@@ -6,6 +6,7 @@ export const queryKeys = {
   feasts: 'feasts',
   user: 'user',
   places: 'places',
+  votes: 'votes',
 }
 
 // Theme

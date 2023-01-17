@@ -70,76 +70,6 @@ const SignUpScreen = ({ navigation }) => {
       <View style={styles.root}>
         <Text style={styles.title}>Create an account</Text>
 
-        {/* <CustomInput
-          name="name"
-          control={control}
-          placeholder="Name"
-          rules={{
-            required: 'Name is required',
-            minLength: {
-              value: 3,
-              message: 'Name should be at least 3 characters long',
-            },
-            maxLength: {
-              value: 24,
-              message: 'Name should be max 24 characters long',
-            },
-          }}
-        /> */}
-
-        {/* <CustomInput
-          name="username"
-          control={control}
-          placeholder="Username"
-          autoCompleteType="username"
-          capitalize="none"
-          rules={{
-            required: 'Username is required',
-            minLength: {
-              value: 3,
-              message: 'Username should be at least 3 characters long',
-            },
-            maxLength: {
-              value: 24,
-              message: 'Username should be max 24 characters long',
-            },
-          }}
-        />
-        <CustomInput
-          name="email"
-          control={control}
-          placeholder="Email"
-          autoCompleteType="email"
-          capitalize="none"
-          rules={{
-            required: 'Email is required',
-            pattern: { value: EMAIL_REGEX, message: 'Email is invalid' },
-          }}
-        />
-        <CustomInput
-          name="password"
-          control={control}
-          placeholder="Password"
-          secureTextEntry
-          autoCompleteType="password"
-          rules={{
-            required: 'Password is required',
-            minLength: {
-              value: 8,
-              message: 'Password should be at least 8 characters long',
-            },
-          }}
-        />
-        <CustomInput
-          name="password-repeat"
-          control={control}
-          placeholder="Repeat Password"
-          secureTextEntry
-          rules={{
-            validate: (value) => value === pwd || 'Password do not match',
-          }}
-        /> */}
-
         <Formik
           initialValues={{
             username: '',
@@ -208,7 +138,10 @@ const SignUpScreen = ({ navigation }) => {
                 </FormControl.ErrorMessage>
               </FormControl>
 
-              <FormControl isInvalid={'confirmPassword' in errors && touched.confirmPassword}>
+              <FormControl
+                isInvalid={
+                  'confirmPassword' in errors && touched.confirmPassword
+                }>
                 <FormControl.Label>Confirm Password</FormControl.Label>
                 <Input
                   autoCapitalize="none"

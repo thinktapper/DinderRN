@@ -290,8 +290,7 @@ const FeastScreen = ({ navigation }) => {
   // )
 
   const onFeastCreated = (response) => {
-    console.warn(JSON.stringify(response))
-
+    // console.warn(JSON.stringify(response))
     if (response.success) {
       console.log('success, you created a feast: ', response.data)
 
@@ -302,12 +301,11 @@ const FeastScreen = ({ navigation }) => {
   }
 
   return (
-    <SafeAreaView style={styles.root}>
-      <ScrollView style={styles.body}>
-        <Text style={styles.title}>Create a Feast</Text>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <Center w="100%" padding={10}>
         <CreateFeastForm onFeastCreated={onFeastCreated} />
-      </ScrollView>
-    </SafeAreaView>
+      </Center>
+    </ScrollView>
   )
 }
 
