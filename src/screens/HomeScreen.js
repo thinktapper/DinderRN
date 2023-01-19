@@ -23,68 +23,51 @@ import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
 import { useAppContext } from '../context/AppProvider'
 import { useAuthContext } from '../context/AuthProvider'
-import { queryClient } from '../lib/queryClient'
+// import { queryClient } from '../lib/queryClient'
 import useFeast from '../hooks/useFeast'
+// import useVote from '../hooks/useVote'
 import axios from 'axios'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
 import { queryKeys, VOTE } from '../lib/constants'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
-import { produce } from 'immer'
-
-// Fetch places belonging to current feast from API
-// const getFeastPlaces = async (feastId, user) => {
-//   const { data } = await axios({
-//     url: `http://localhost:3000/api/feast/${feastId?.id}`,
-//     method: 'get',
-//     headers: { authorization: `Bearer ${user?.token}` },
-//   })
-//   return data
-// }
+// import { produce } from 'immer'
 
 const HomeScreen = ({ route, navigation }) => {
   const swipeRef = useRef(null)
   const { user } = useAuthContext()
   const feastId = route.params?.feast
   const places = useFeast()
-  // const [places, setPlaces] = useState([])
-  // const feastId = route.params?.feastId
-  // const ctx = useAppContext()
-  // const feastId = useState(null)
-  // const feastId = feastState.useValue()
-  // const { feastId, loading, handleChangeFeast } = ctx
-  // const [places, setPlaces] = feastState.use()
+  const queryClient = useQueryClient()
+  // const mutate = useVote()
   const globalPadding = rs(12)
   const wrapperPadding = rs(12)
   // const [currentIndex, setCurrentIndex] = useState(0)
   // const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  // query to fetch places
-  // const { data, refetch, isLoading, error } = useQuery(
-  //   [queryKeys.places, feastId, user],
-  //   () => getFeastPlaces(feastId, user),
-  //   {
-  //     select: (data) => data.feast.places,
-  //     // onSuccess: (data) => {
-  //     //   setPlaces(data.places)
-  //     // },
-  //     // enabled: false,
-  //     // select: (data) => data.places,
-  //     // initialData: places,
-  //     // staleTime: 900000, // 15 minutes
-  //     // cacheTime: 1000 * 60 * 60 * 24, // 24 hours
-  //     // retry: 1,
-  //     refetchOnWindowFocus: true,
-  //     refetchOnMount: true,
-  //     refetchOnReconnect: true,
-  //   },
-  // )
+  // const handleNahVote = (placeSwiped) => {
+  //   const voteData = {
+  //     feastId: feastId.id,
+  //     placeId: placeSwiped.id,
+  //     voteType: VOTE.nah,
+  //   }
+  //   mutate({ voteData })
+  // }
+
+  // const handleYassVote = (placeSwiped) => {
+  //   const voteData = {
+  //     feastId: feastId.id,
+  //     placeId: placeSwiped.id,
+  //     voteType: VOTE.yass,
+  //   }
+  //   mutate({ voteData })
+  // }
 
   // mutation to submit nah vote on left swipe
   const nahMutation = useMutation(
-    async (placeSwiped, cardIndex) => {
-      const response = await axios({
+    (placeSwiped) => {
+      return axios({
         url: `http://localhost:3000/api/vote`,
         method: 'post',
         headers: { authorization: `Bearer ${user.token}` },
@@ -94,20 +77,17 @@ const HomeScreen = ({ route, navigation }) => {
           voteType: VOTE.nah,
         },
       })
-      return response.data
     },
-    // {
-    //   onSuccess: () => {
-    //     const updatedPlaces = produce(places, (updatedPlaces) => {
-    //       updatedPlaces[cardIndex].votes.push(VOTE.nah)
-    //     })
-    //     setPlaces(updatedPlaces)
-    //   },
-    // },
+    {
+      onSuccess: (data, variables, context) => {
+        console.warn('nah mutation success:', JSON.stringify(data))
+      },
+    },
   )
 
+  // mutation to submit yass vote on right swipe
   const yassMutation = useMutation({
-    mutationFn: (placeSwiped, cardIndex) => {
+    mutationFn: (placeSwiped) => {
       return axios({
         url: `http://localhost:3000/api/vote`,
         method: 'post',
@@ -118,48 +98,28 @@ const HomeScreen = ({ route, navigation }) => {
           voteType: VOTE.yass,
         },
       })
-      // return response.data
+    },
+    onSuccess: (data, variables, context) => {
+      console.warn('yass mutation success:', JSON.stringify(data))
     },
   })
-  // {
-  // On success, refetch the user data
-  // eslint-disable-next-line no-undef
-  // onSuccess: () => refetch(),
-  // },
-  // {
-  //   onSuccess: (cardIndex) => {
-  //     const updatedPlaces = produce(places, (updatedPlaces) => {
-  //       updatedPlaces[cardIndex].votes.push(VOTE.nah)
-  //     })
-  //     setPlaces(updatedPlaces)
-  //   },
-  // },
-  // })
 
-  const swipeLeft = async (cardIndex) => {
+  const swipeLeft = (cardIndex) => {
     if (!places[cardIndex]) return
 
     const placeSwiped = places[cardIndex]
 
-    nahMutation(placeSwiped, cardIndex)
-    console.warn('swiped NAH on: ', places[cardIndex].name)
+    nahMutation.mutate(placeSwiped)
+    // console.warn('swiped NAH on: ', places[cardIndex].name)
   }
 
-  const swipeRight = async (cardIndex) => {
+  const swipeRight = (cardIndex) => {
     if (!places[cardIndex]) return
 
     const placeSwiped = places[cardIndex]
-    yassMutation.mutate(placeSwiped, cardIndex)
-    console.warn('swiped YASS on: ', places[cardIndex].name)
+    yassMutation.mutate(placeSwiped)
+    // console.warn('swiped YASS on: ', places[cardIndex].name)
   }
-
-  // ?
-  // useEffect(() => {
-  //   if (feastId) {
-  //     queryClient.invalidateQueries(['places', feastId, user.id])
-  //     // places.refetch(feastId)
-  //   }
-  // }, [feastId])
 
   // if (isLoading) return <LoadingIndicator />
 
@@ -205,8 +165,8 @@ const HomeScreen = ({ route, navigation }) => {
                 element: (
                   <Image
                     source={require('../../assets/images/nope.png')}
-                    width={100}
-                    height={100}
+                    width={40}
+                    height={40}
                   />
                 ),
                 title: 'NOPE',
@@ -221,8 +181,8 @@ const HomeScreen = ({ route, navigation }) => {
                 element: (
                   <Image
                     source={require('../../assets/images/yass.png')}
-                    width={100}
-                    height={100}
+                    width={40}
+                    height={40}
                   />
                 ),
                 title: 'LIKE',
@@ -254,6 +214,9 @@ const HomeScreen = ({ route, navigation }) => {
         )}
       </View>
       {/* End Cards */}
+
+      {nahMutation.isLoading ||
+        (yassMutation.isLoading && <Text>Submitting Vote...</Text>)}
 
       {/* Bottom Buttons */}
       <View style={tw`flex flex-row justify-evenly`}>

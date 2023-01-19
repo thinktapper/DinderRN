@@ -19,7 +19,7 @@ const useFeast = () => {
 
   const fallback = []
   const { data: places = fallback } = useQuery(
-    ['places', currentFeast?.id, user.id],
+    [queryKeys.places, currentFeast?.id, user.id],
     () => fetchFeast(currentFeast, user),
     {
       enabled: !!currentFeast,
