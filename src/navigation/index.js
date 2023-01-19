@@ -16,8 +16,6 @@ import FeastScreen from '../screens/FeastScreen'
 import NewFeastScreen from '../screens/NewFeastScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 // import { useQuery } from '@tanstack/react-query'
-// import { getMe } from '../utils/authApi'
-// import { useUser } from '../hooks/user/useUser'
 
 const Stack = createNativeStackNavigator()
 
@@ -73,8 +71,10 @@ const Navigation = () => {
         ) : (
           <>
             <Stack.Screen name="Feasts" component={FeastScreen} />
+            <Stack.Group screenOptions={{ presentation: 'modal' }}>
+              <Stack.Screen name="NewFeast" component={NewFeastScreen} />
+            </Stack.Group>
             <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="NewFeast" component={NewFeastScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
           </>
         )}

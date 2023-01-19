@@ -23,105 +23,123 @@ import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
 import { useAppContext } from '../context/AppProvider'
 import { useAuthContext } from '../context/AuthProvider'
-import { useFeastDetails } from '../hooks/useFeastDetails'
+// import { queryClient } from '../lib/queryClient'
+import useFeast from '../hooks/useFeast'
+// import useVote from '../hooks/useVote'
 import axios from 'axios'
-import { useQuery } from '@tanstack/react-query'
-import { queryKeys } from '../lib/constants'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
+import { queryKeys, VOTE } from '../lib/constants'
+import { LoadingIndicator } from '../components/LoadingIndicator'
+import Header from '../components/Header'
+import { feastState } from '../context/FeastState'
+// import { produce } from 'immer'
 
 const HomeScreen = ({ route, navigation }) => {
-  // const feastId = route.params?.feast
-  const appContext = useAppContext()
-  const authContext = useAuthContext()
-  const [activeScreen, setActiveScreen] = useState('Home')
-  const color = '#b5b5b5'
-  const activeColor = '#F76C6B'
   const swipeRef = useRef(null)
-  // const [feast, setFeast] = useState({})
-  const feastDetails = useFeastDetails(route.params.feast)
-  const places = feastDetails?.places
-  // const [places, setPlaces] = useState([])
-  // const [currentIndex, setCurrentIndex] = useState(0)
-  // const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const { user } = useAuthContext()
+  const feastId = route.params?.feast
+  const places = useFeast()
+  const queryClient = useQueryClient()
+  // const mutate = useVote()
   const globalPadding = rs(12)
   const wrapperPadding = rs(12)
+  // const [currentIndex, setCurrentIndex] = useState(0)
+  // const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  if (!feastDetails) return null
+  // const handleNahVote = (placeSwiped) => {
+  //   const voteData = {
+  //     feastId: feastId.id,
+  //     placeId: placeSwiped.id,
+  //     voteType: VOTE.nah,
+  //   }
+  //   mutate({ voteData })
+  // }
 
-  const swipeLeft = async (cardIndex) => {
+  // const handleYassVote = (placeSwiped) => {
+  //   const voteData = {
+  //     feastId: feastId.id,
+  //     placeId: placeSwiped.id,
+  //     voteType: VOTE.yass,
+  //   }
+  //   mutate({ voteData })
+  // }
+
+  // mutation to submit nah vote on left swipe
+  const nahMutation = useMutation(
+    (placeSwiped) => {
+      return axios({
+        url: `http://localhost:3000/api/vote`,
+        method: 'post',
+        headers: { authorization: `Bearer ${user.token}` },
+        data: {
+          feastId: feastId.id,
+          placeId: placeSwiped.id,
+          voteType: VOTE.nah,
+        },
+      })
+    },
+    {
+      onSuccess: (data, variables, context) => {
+        console.warn('nah mutation success:', JSON.stringify(data))
+      },
+    },
+  )
+
+  // mutation to submit yass vote on right swipe
+  const yassMutation = useMutation({
+    mutationFn: (placeSwiped) => {
+      return axios({
+        url: `http://localhost:3000/api/vote`,
+        method: 'post',
+        headers: { authorization: `Bearer ${user.token}` },
+        data: {
+          feastId: feastId.id,
+          placeId: placeSwiped.id,
+          voteType: VOTE.yass,
+        },
+      })
+    },
+    onSuccess: (data, variables, context) => {
+      console.warn('yass mutation success:', JSON.stringify(data))
+    },
+  })
+
+  const swipeLeft = (cardIndex) => {
     if (!places[cardIndex]) return
 
     const placeSwiped = places[cardIndex]
-    console.warn('swiped NAH on: ', places[cardIndex].name)
+
+    nahMutation.mutate(placeSwiped)
+    // console.warn('swiped NAH on: ', places[cardIndex].name)
   }
 
-  const swipeRight = async (cardIndex) => {
-    console.warn('swipe YASS on: ', places[cardIndex].name)
+  const swipeRight = (cardIndex) => {
+    if (!places[cardIndex]) return
+
+    const placeSwiped = places[cardIndex]
+    yassMutation.mutate(placeSwiped)
+    // console.warn('swiped YASS on: ', places[cardIndex].name)
   }
+
+  // if (isLoading) return <LoadingIndicator />
 
   return (
     <SafeAreaView style={tw`flex-1`}>
-      {/* Header */}
-      <View style={tw`flex-row justify-around w-full p-2.5`}>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveScreen('Home')
-            navigation.navigate('Home')
-          }}>
-          <Fontisto
-            name="tinder"
-            size={30}
-            color={activeScreen === 'Home' ? activeColor : color}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveScreen('Feasts')
-            navigation.navigate('Feasts')
-          }}>
-          <MaterialCommunityIcons
-            name="star-four-points"
-            size={30}
-            color={activeScreen === 'Feasts' ? activeColor : color}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveScreen('NewFeast')
-            navigation.navigate('NewFeast')
-          }}>
-          <Ionicons
-            name="ios-chatbubbles"
-            size={30}
-            color={activeScreen === 'NewFeast' ? activeColor : color}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setActiveScreen('Profile')
-            navigation.navigate('Profile')
-          }}>
-          <FontAwesome
-            name="user"
-            size={30}
-            color={activeScreen === 'Profile' ? activeColor : color}
-          />
-        </TouchableOpacity>
-      </View>
-      {/* End Header */}
+      <Header />
 
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
-          {feastDetails ? feastDetails.name : 'No Feast Context'}
+          {feastId ? feastId.name : 'No Feast Context'}
         </Text>
-        {places ? (
+        {places.length > 0 ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
             cards={places}
             stackSize={places.length}
             cardIndex={0}
-            key={places.length}
+            key={places.id}
             animateCardOpacity
             animateOverlayLabelsOpacity
             swipeBackCard
@@ -131,14 +149,6 @@ const HomeScreen = ({ route, navigation }) => {
             onSwipedRight={(cardIndex) => swipeRight(cardIndex)}
             // onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
             renderCard={(card) => {
-              // return (
-              //   <Animated.View
-              //     style={[styles.cardContainer, styles.cardShadow]}>
-              //     <Animated.View style={styles.cardInner}>
-              //       <MainCard style={{ flex: 1 }} card={card} />
-              //     </Animated.View>
-              //   </Animated.View>
-              // )
               return (
                 <PlaceCard
                   card={card}
@@ -155,8 +165,8 @@ const HomeScreen = ({ route, navigation }) => {
                 element: (
                   <Image
                     source={require('../../assets/images/nope.png')}
-                    width={100}
-                    height={100}
+                    width={40}
+                    height={40}
                   />
                 ),
                 title: 'NOPE',
@@ -171,8 +181,8 @@ const HomeScreen = ({ route, navigation }) => {
                 element: (
                   <Image
                     source={require('../../assets/images/yass.png')}
-                    width={100}
-                    height={100}
+                    width={40}
+                    height={40}
                   />
                 ),
                 title: 'LIKE',
@@ -204,6 +214,9 @@ const HomeScreen = ({ route, navigation }) => {
         )}
       </View>
       {/* End Cards */}
+
+      {nahMutation.isLoading ||
+        (yassMutation.isLoading && <Text>Submitting Vote...</Text>)}
 
       {/* Bottom Buttons */}
       <View style={tw`flex flex-row justify-evenly`}>

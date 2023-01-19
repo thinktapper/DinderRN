@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, Pressable, StyleSheet } from 'react-native'
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 
 export function ListItem({ item, onPress }) {
   return (
@@ -11,6 +12,12 @@ export function ListItem({ item, onPress }) {
         <View style={styles.secondRow}>
           <Text>{item.createdAt}</Text>
         </View>
+        <Pressable>
+          <FontAwesome name="edit" size={24} color="black" />
+        </Pressable>
+        <Pressable>
+          <MaterialIcons name="delete" size={24} color="black" />
+        </Pressable>
       </View>
     </Pressable>
   )
@@ -18,6 +25,7 @@ export function ListItem({ item, onPress }) {
 
 const styles = StyleSheet.create({
   item: {
+    flexDirection: 'row',
     paddingRight: 10,
     paddingLeft: 30,
     paddingTop: 20,

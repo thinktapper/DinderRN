@@ -24,6 +24,7 @@ import * as Yup from 'yup'
 import { EMAIL_REGEX } from '../lib/constants'
 import { useAuthContext } from '../context/AuthProvider'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import Header from '../components/Header'
 // import { useMutation } from '@tanstack/react-query'
 // import { logout } from '../utils/useApi'
 
@@ -69,7 +70,7 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.root}>
-      {/* <KeyboardAwareScrollView style={tw`items-center p-5`}> */}
+      <Header />
       <View style={tw`items-center p-5`}>
         <Text style={styles.title}>Your information</Text>
 

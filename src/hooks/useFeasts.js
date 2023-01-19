@@ -1,37 +1,31 @@
-import React from 'react'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useAuthContext } from '../context/AuthProvider'
-import { queryKeys } from '../lib/constants'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
+import { useAuthContext } from '../context/AuthProvider'
 
-async function getOrganizedFeasts(user) {
-  if (!user) return null
-
+const fetchFeasts = async (user) => {
   const { data } = await axios({
     url: 'http://localhost:3000/api/user/feasts',
     method: 'get',
-    headers: { authorization: `Bearer ${user.token}` },
+    headers: { authorization: `Bearer ${user?.token}` },
   })
   return data.feasts
 }
 
-export function useUserFeasts() {
+export function useFeasts() {
   const { user } = useAuthContext()
 
-  // const fallback = []
-  const {
-    data: feasts,
-    isLoading,
-    error,
-  } = useQuery(
-    [queryKeys.feasts, queryKeys.user, user?.id],
-    () => getOrganizedFeasts(user),
-    { enabled: !!user },
+  const fallback = []
+  const { data: feasts = fallback } = useQuery(
+    ['feasts', user.id],
+    () => fetchFeasts(user),
+    {
+      enabled: !!user,
+      staleTime: 1000 * 60 * 60 * 24,
+      cacheTime: Infinity,
+    },
   )
-  return { feasts, isLoading, error }
-}
 
-// export function usePrefetchFeasts() {
-//   const queryClient = useQueryClient()
-//   queryClient.prefetchQuery([queryKeys.feasts], getOrganizedFeasts)
-// }
+  return feasts
+}
+export default useFeasts

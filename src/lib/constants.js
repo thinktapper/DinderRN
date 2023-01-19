@@ -6,4 +6,15 @@ export const queryKeys = {
   feasts: 'feasts',
   user: 'user',
   places: 'places',
+  votes: 'votes',
+}
+
+// Theme
+export const color = '#b5b5b5'
+export const activeColor = '#F76C6B'
+
+// Vote!
+export const VOTE = {
+  yass: 'YASS',
+  nah: 'NAH',
 }

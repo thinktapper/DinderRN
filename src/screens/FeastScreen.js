@@ -1,73 +1,196 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useCallback,
+} from 'react'
+import { useFocusEffect } from '@react-navigation/native'
 import {
   View,
-  Text,
+  // Text,
   StyleSheet,
   SafeAreaView,
   Pressable,
   TextInput,
   Alert,
   ScrollView,
-  FlatList,
+  // FlatList,
+  RefreshControl,
 } from 'react-native'
+import {
+  Box,
+  FlatList,
+  Heading,
+  Avatar,
+  HStack,
+  VStack,
+  Text,
+  Spacer,
+  Center,
+  Container,
+} from 'native-base'
+import Flame from '../../assets/images/flame-square.png'
+import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import tw from 'twrnc'
-import { useUserFeasts } from '../hooks/useFeasts'
+import useFeasts from '../hooks/useFeasts'
+import useFeast from '../hooks/useFeast'
 import Feast from '../components/Feast'
 import { ListItem } from '../components/ListItem'
 import { LoadingIndicator } from '../components/LoadingIndicator'
-import { Divider } from 'native-base'
+import { useAuthContext } from '../context/AuthProvider'
+import { useAppContext } from '../context/AppProvider'
+// import { useQuery, useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
+import { produce } from 'immer'
+import Header from '../components/Header'
+import { feastState } from '../context/FeastState'
+import { queryKeys } from '../lib/constants'
+import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
+
+// const getUserFeasts = async (userId) => {
+//   const { data } = await axios({
+//     url: 'http://localhost:3000/api/user/feasts',
+//     method: 'get',
+//     headers: { authorization: `Bearer ${userId}` },
+//   })
+//   return data.feasts
+// }
 
 const FeastScreen = ({ navigation }) => {
-  const { feasts, isLoading, error } = useUserFeasts()
+  const [currentFeast, setCurrentFeast] = feastState.use()
+  const feasts = useFeasts()
 
-  const onListItemPress = useCallback(
-    (feast) => {
-      navigation.navigate('Home', {
-        feast,
-      })
-    },
-    [navigation],
-  )
+  const onEditPress = (feast) => {
+    console.warn(`Edit pressed for ${feast}`)
+  }
 
-  const renderItem = useCallback(
-    ({ item }) => {
-      return <ListItem item={item} onPress={onListItemPress} />
-    },
-    [onListItemPress],
-  )
+  const onDeletePress = (feast) => {
+    console.warn(`Delete pressed for ${feast}`)
+  }
 
-  if (isLoading) return <LoadingIndicator />
-  if (error) return console.log(error)
+  // if (isLoading) return <LoadingIndicator />
+  // if (error) return console.log(error)
 
-  return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.container}>
+  // if (!feasts) return <LoadingIndicator />
+
+  // if (!data) return <LoadingIndicator />
+
+  const getHeader = () => {
+    return (
+      <>
+        <Header />
         <Text style={styles.title}>Your Feasts</Text>
-        {/* <View>
-          {feasts?.map((feastData) => (
-            <Feast key={feastData.id} feastData={feastData} />
-          ))}
-        </View> */}
+      </>
+    )
+  }
 
-        <FlatList
-          data={feasts}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          ItemSeparatorComponent={() => <Divider />}
-        />
-
+  const getFooter = () => {
+    return (
+      <Box>
         <Pressable
           onPress={() => navigation.navigate('NewFeast')}
           style={styles.button}>
-          <Text>Create new feast</Text>
+          <Text>Create new</Text>
         </Pressable>
+      </Box>
+    )
+  }
 
-        <Pressable
-          onPress={() => navigation.navigate('Home')}
-          style={styles.button}>
-          <Text>Cancel</Text>
-        </Pressable>
-      </View>
+  return (
+    <SafeAreaView style={styles.root}>
+      {feasts.length > 0 ? (
+        <VStack px="3">
+          <FlatList
+            data={feasts}
+            ListHeaderComponent={getHeader}
+            ListFooterComponent={getFooter}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => {
+              return (
+                <Box
+                  borderBottomWidth="1"
+                  _dark={{
+                    borderColor: 'muted.50',
+                  }}
+                  borderColor="muted.800"
+                  pl={['0', '4']}
+                  pr={['0', '5']}
+                  py="2">
+                  <Pressable
+                    onPress={() => {
+                      setCurrentFeast(item)
+                      navigation.push('Home', { feast: item })
+                    }}>
+                    <HStack space={[2, 3]} justifyContent="space-between">
+                      <Avatar
+                        size="md"
+                        source={
+                          item.image
+                            ? { uri: item.image }
+                            : require('../../assets/images/flame-square.png')
+                        }
+                        // source={require('../../assets/images/flame-square.png')}
+                        alignSelf="center"
+                      />
+                      <VStack>
+                        <Text
+                          _dark={{
+                            color: 'warmGray.50',
+                          }}
+                          color="coolGray.800"
+                          bold>
+                          {item.name}
+                        </Text>
+                        <Text
+                          color="coolGray.600"
+                          _dark={{
+                            color: 'warmGray.200',
+                          }}>
+                          {item.createdAt}
+                        </Text>
+                      </VStack>
+                      {/* <Spacer /> */}
+                      <Text
+                        fontSize="xs"
+                        _dark={{
+                          color: 'warmGray.50',
+                        }}
+                        color="coolGray.800"
+                        alignSelf="flex-start">
+                        {item.places?.length}
+                      </Text>
+                      {/* <HStack> */}
+                      <Pressable onPress={() => onEditPress(item)}>
+                        <FontAwesome name="edit" size={24} color="black" />
+                      </Pressable>
+                      <Pressable onPress={() => onDeletePress(item)}>
+                        <MaterialIcons name="delete" size={24} color="black" />
+                      </Pressable>
+                      {/* </HStack> */}
+                    </HStack>
+                  </Pressable>
+                </Box>
+                // />
+              )
+            }}
+            // refreshControl={
+            //   <RefreshControl
+            //     refreshing={isFetching}
+            //     onRefresh={() => refetch()}
+            //   />
+            // }
+          />
+        </VStack>
+      ) : (
+        <Box>
+          <Pressable onPress={() => navigation.navigate('NewFeast')}>
+            <Text style={styles.text}>
+              You don't have any feasts yet. Create one!
+            </Text>
+          </Pressable>
+        </Box>
+      )}
     </SafeAreaView>
   )
 }
@@ -83,13 +206,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#051C60',
-    margin: 10,
+    marginBottom: 10,
+    paddingVertical: 10,
   },
   text: {
     color: 'gray',
     marginVertical: 10,
   },
   container: {
+    marginTop: 10,
     padding: 10,
   },
   elementContainer: {

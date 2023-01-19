@@ -5,8 +5,9 @@ import React, {
   useEffect,
   useMemo,
 } from 'react'
-import { Alert } from 'react-native'
 import * as SecureStore from 'expo-secure-store'
+// import { queryClient } from '../lib/queryClient'
+import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { SECURE_SECRET } from '@env'
 
@@ -17,6 +18,7 @@ const authClient = axios.create({ baseURL: 'http://localhost:3000' })
 const AuthContext = createContext({})
 
 export const AuthProvider = ({ children }) => {
+  const queryClient = useQueryClient()
   const [user, setUser] = useState(null)
   const [isSignOut, setIsSignOut] = useState(false)
   // const [isLoading, setIsLoading] = useState(false)
@@ -41,7 +43,10 @@ export const AuthProvider = ({ children }) => {
   }
 
   async function clearStoredUser() {
+    // setUser(null)
+    queryClient.clear()
     await SecureStore.deleteItemAsync(SECURE_SECRET)
+    // return 'Success, User logged out'
   }
 
   async function authRequest({ ...options }) {
@@ -139,38 +144,6 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // async function updateUser(newUserData) {
-  //   // get original user data
-  //   // const originalUserData = await getStoredUser()
-  //   // if (!newUserData || !originalUserData) return null
-  //   try {
-  //     // create a patch for the differences between the original and new user data
-  //     // const patch = jsonpatch.compare(originalUserData, newUserData)
-
-  //     // send patched data to server
-  //     const { data } = await request({
-  //       url: '/api/user/update',
-  //       method: 'put',
-  //       data: {
-  //         newUserData,
-  //       },
-  //     })
-  //     if ('user' in data && 'token' in data.user) {
-  //       console.debug(`User ${data.user.username} updated`)
-  //       setUser(data.user)
-  //       // update stored user data
-  //       await setStoredUser(data.user)
-  //       // } else {
-  //       //   console.error(
-  //       //     `Unable to update user -> status: ${status}, data: ${{ ...data }}`,
-  //       //   )
-  //     }
-  //     // return data.user
-  //   } catch (err) {
-  //     console.error(`Unable to update user -> ${err}`)
-  //   }
-  // }
-
   async function logout() {
     // setIsSignOut(true)
     try {
@@ -183,11 +156,16 @@ export const AuthProvider = ({ children }) => {
         },
       })
       // console.log(JSON.stringify(response))
-      if (response.status === 201) {
+      if (response.data.success) {
         setUser(null)
         // remove stored user data
         await clearStoredUser()
-        console.debug('User logged out')
+        // if (message === 'Success, User logged out') {
+        //   console.debug(message)
+        // }
+      } else {
+        console.log('Error logging out')
+        throw new Error('Error logging out')
       }
     } catch (err) {
       console.error(`Error loggin out: ${err}`)
@@ -211,6 +189,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     isLoggedIn()
+    // logout()
   }, [])
 
   // const authContext = useMemo(
