@@ -42,21 +42,21 @@ import { feastState } from '../context/FeastState'
 // import { queryClient } from '../lib/queryClient'
 import CreateFeastForm from '../components/CreateFeastForm'
 
-const feastSchema = Yup.object().shape({
-  name: Yup.string().required('Feast name required'),
-  startDate: Yup.date(),
-  endDate: Yup.date(),
-  radius: Yup.number()
-    .min(1, ({ min }) => `Radius must be at least ${min} mile`)
-    .max(5, ({ max }) => `Radius cannot be more than ${max} miles`)
-    .required('Radius is required'),
-  location: Yup.object()
-    .shape({
-      lat: Yup.number(),
-      long: Yup.number(),
-    })
-    .required('Location JSON object is required'),
-})
+// const feastSchema = Yup.object().shape({
+//   name: Yup.string().required('Feast name required'),
+//   startDate: Yup.date(),
+//   endDate: Yup.date(),
+//   radius: Yup.number()
+//     .min(1, ({ min }) => `Radius must be at least ${min} mile`)
+//     .max(5, ({ max }) => `Radius cannot be more than ${max} miles`)
+//     .required('Radius is required'),
+//   location: Yup.object()
+//     .shape({
+//       lat: Yup.number(),
+//       long: Yup.number(),
+//     })
+//     .required('Location JSON object is required'),
+// })
 
 const FeastScreen = ({ navigation }) => {
   const queryClient = useQueryClient()

@@ -34,28 +34,15 @@ import Flame from '../../assets/images/flame-square.png'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import tw from 'twrnc'
 import useFeasts from '../hooks/useFeasts'
-import useFeast from '../hooks/useFeast'
 import Feast from '../components/Feast'
 import { ListItem } from '../components/ListItem'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { useAuthContext } from '../context/AuthProvider'
 import { useAppContext } from '../context/AppProvider'
-// import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { produce } from 'immer'
 import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
-import { queryKeys } from '../lib/constants'
 import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
-
-// const getUserFeasts = async (userId) => {
-//   const { data } = await axios({
-//     url: 'http://localhost:3000/api/user/feasts',
-//     method: 'get',
-//     headers: { authorization: `Bearer ${userId}` },
-//   })
-//   return data.feasts
-// }
 
 const FeastScreen = ({ navigation }) => {
   const [currentFeast, setCurrentFeast] = feastState.use()
