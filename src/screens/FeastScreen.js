@@ -30,7 +30,7 @@ import {
   Center,
   Container,
 } from 'native-base'
-import Flame from '../../assets/images/flame-square.png'
+// import Flame from '../../assets/images/flame-square.png'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import tw from 'twrnc'
 import useFeasts from '../hooks/useFeasts'
@@ -43,20 +43,119 @@ import axios from 'axios'
 import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
 import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { queryKeys } from '../lib/constants'
+
+// const submitEdit = async (feastData, user) => {
+//   const response = await axios('http:localhost:3000/api/feast', {
+//     method: 'put',
+//     data: { ...feastData },
+//     headers: {
+//       // prettier-ignore
+//       'authorization': `Bearer ${user?.token}`,
+//     },
+//   })
+//   // console.warn('submitFeast:', JSON.stringify(response))
+//   return response.data
+// }
+function editFeast(feastId, updatedFeast, token) {
+  const editFeast = async () => {
+    // Add JWT to headers
+    const headers = { authorization: `Bearer ${token}` }
+
+    // Make PATCH request to server to update the poll
+    const { data } = await axios.patch(
+      `http:localhost:3000/api/feast/${feastId}`,
+      updatedFeast,
+      {
+        headers,
+      },
+    )
+
+    return data
+  }
+  return editFeast
+}
+
+// const submitDelete = async (feastId, user) => {
+//   const response = await axios('http:localhost:3000/api/feast', {
+//     method: 'delete',
+//     data: { feastId },
+//     headers: {
+//       // prettier-ignore
+//       'authorization': `Bearer ${user?.token}`,
+//     },
+//   })
+//   // console.warn('submitFeast:', JSON.stringify(response))
+//   return response.data
+// }
+
+// async function deleteFeast() {
+const deleteFeast = async (feastId, token) => {
+  // Add JWT to headers
+  const headers = { authorization: `Bearer ${token}` }
+
+  // Make DELETE request to server to delete the poll
+  const { data } = await axios.delete(
+    `http:localhost:3000/api/feast/${feastId}`,
+    { headers },
+  )
+
+  return data
+}
+//   return deleteFeast
+// }
 
 const FeastScreen = ({ navigation }) => {
   const [currentFeast, setCurrentFeast] = feastState.use()
+  const queryClient = useQueryClient()
+  const { user } = useAuthContext()
   const feasts = useFeasts()
 
+  const editItem = useMutation(
+    ({ feastId, updatedFeast, token }) =>
+      editFeast(feastId, updatedFeast, token),
+    {
+      onSuccess: (data) => {
+        console.warn('editFeast success:', JSON.stringify(data))
+        queryClient.invalidateQueries(queryKeys.feasts)
+      },
+      onError: (error) => {
+        console.log('deleteFeast error:', JSON.stringify(error))
+      },
+    },
+  )
+
+  const deleteItem = useMutation(
+    ({ feastId, token }) => deleteFeast(feastId, token),
+    {
+      onSuccess: (data) => {
+        console.warn('deleteFeast success:', data)
+        queryClient.invalidateQueries(queryKeys.feasts)
+      },
+      onError: (error) => {
+        console.log('deleteFeast error:', error)
+      },
+    },
+  )
+
   const onEditPress = (feast) => {
-    console.warn(`Edit pressed for ${feast}`)
+    // console.warn(`Edit pressed for ${feast}`)
+    const feastId = feast.id
+    const updatedFeast = feast
+    const token = user.token
+
+    editItem.mutate({ feastId, updatedFeast, token })
   }
 
   const onDeletePress = (feast) => {
-    console.warn(`Delete pressed for ${feast}`)
+    // console.warn(`Delete pressed for ${feast.name}`)
+    const feastId = feast.id
+    const token = user.token
+    deleteItem.mutate({ feastId, token })
   }
 
-  // if (isLoading) return <LoadingIndicator />
+  if (deleteItem.isLoading || editItem.isLoading) return <LoadingIndicator />
   // if (error) return console.log(error)
 
   // if (!feasts) return <LoadingIndicator />
@@ -117,7 +216,6 @@ const FeastScreen = ({ navigation }) => {
                             ? { uri: item.image }
                             : require('../../assets/images/flame-square.png')
                         }
-                        // source={require('../../assets/images/flame-square.png')}
                         alignSelf="center"
                       />
                       <VStack>
@@ -134,7 +232,7 @@ const FeastScreen = ({ navigation }) => {
                           _dark={{
                             color: 'warmGray.200',
                           }}>
-                          {item.createdAt}
+                          {item.closed ? 'Closed' : 'Open'}
                         </Text>
                       </VStack>
                       {/* <Spacer /> */}

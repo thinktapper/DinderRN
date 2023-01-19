@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { URL } from 'react-native-url-polyfill'
 import {
   ScrollView,
   StyleSheet,
@@ -58,7 +59,7 @@ const submitFeast = async (formData, user) => {
 }
 
 function CreateFeastForm({ props }) {
-  const { queryClient, navigation, onFeastCreated } = props
+  const { navigation, onFeastCreated } = props
   const { user } = useAuthContext()
   const [showAlert, setShowAlert] = useState(false)
   const [formData, setFormData] = useState({
@@ -74,11 +75,15 @@ function CreateFeastForm({ props }) {
     setFormData({ ...formData, [name]: value })
   }
 
-  function handlePlaceSelect(data, details) {
+  async function handlePlaceSelect(data, details) {
     console.debug('data:', data, 'details:', details)
-
-    if (details.photos.length > 0) {
-      const imageUrl = String.raw`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${details.photos[0].photo_reference}&key=${GOOGLE_API}`
+    const photoRef = details.photos?.[0]?.photo_reference
+    if (photoRef) {
+      const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
+      const imgageUrlQuery = await fetch(imageLookupUrl)
+        .then((res) => res.blob())
+        .catch((err) => console.error(err))
+      const imageUrl = URL.createObjectURL(imgageUrlQuery)
       handleChange('image', imageUrl)
     }
 
