@@ -21,11 +21,7 @@ import { LoadingIndicator } from '../components/LoadingIndicator'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import tw from 'twrnc'
-import { Picker } from '@react-native-picker/picker'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-// import DateTimePicker from '@react-native-community/datetimepicker'
-// import SearchBarWithAutocomplete from '../components/SearchBarAutocomplete'
-// import { useDebounce } from '../utils/useDebounce'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
@@ -38,9 +34,7 @@ import {
 } from 'react-native-keyboard-aware-scroll-view'
 import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
-// import { useCreateFeast } from '../hooks/useCreateFeast'
-// import { queryClient } from '../lib/queryClient'
-import CreateFeastForm from '../components/CreateFeastForm'
+import EditFeastForm from '../components/EditFeastForm'
 
 // const feastSchema = Yup.object().shape({
 //   name: Yup.string().required('Feast name required'),
@@ -58,7 +52,7 @@ import CreateFeastForm from '../components/CreateFeastForm'
 //     .required('Location JSON object is required'),
 // })
 
-const FeastScreen = ({ navigation }) => {
+const EditFeastScreen = ({ navigation }) => {
   const queryClient = useQueryClient()
   // const createFeast = useCreateFeast()
   // const queryClient = useQueryClient()
@@ -289,21 +283,21 @@ const FeastScreen = ({ navigation }) => {
   // </SafeAreaView>
   // )
 
-  const onFeastCreated = (response) => {
-    // console.warn(JSON.stringify(response))
-    // if (response.success) {
-    console.log('success, you created a feast: ', response.data)
+  const onFeastEdited = (response) => {
+    console.warn(JSON.stringify(response))
+    if (response.success) {
+      console.log('success, you edited a feast: ', response.data)
 
-    queryClient.invalidateQueries('feasts')
-    Alert.alert('Feast info saved successfully')
+      queryClient.invalidateQueries('feasts')
+      Alert.alert('Feast info saved successfully')
+    }
     navigation.goBack()
-    // }
   }
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Center w="100%" padding={10}>
-        <CreateFeastForm props={{ queryClient, navigation, onFeastCreated }} />
+        <EditFeastForm props={{ onFeastEdited }} />
       </Center>
     </ScrollView>
   )
@@ -389,4 +383,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default FeastScreen
+export default EditFeastScreen

@@ -16,9 +16,12 @@ import {
   Alert,
   ScrollView,
   // FlatList,
-  RefreshControl,
+  // RefreshControl,
 } from 'react-native'
 import {
+  Modal,
+  // View,
+  Input,
   Box,
   FlatList,
   Heading,
@@ -30,46 +33,143 @@ import {
   Center,
   Container,
 } from 'native-base'
-import Flame from '../../assets/images/flame-square.png'
+// import Flame from '../../assets/images/flame-square.png'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import tw from 'twrnc'
 import useFeasts from '../hooks/useFeasts'
-import useFeast from '../hooks/useFeast'
 import Feast from '../components/Feast'
 import { ListItem } from '../components/ListItem'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { useAuthContext } from '../context/AuthProvider'
-import { useAppContext } from '../context/AppProvider'
-// import { useQuery, useQueryClient } from '@tanstack/react-query'
+// import { useAppContext } from '../context/AppProvider'
 import axios from 'axios'
-import { produce } from 'immer'
+import EditFeastModal from '../components/EditFeastModal'
 import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
-import { queryKeys } from '../lib/constants'
 import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { queryKeys } from '../lib/constants'
 
-// const getUserFeasts = async (userId) => {
-//   const { data } = await axios({
-//     url: 'http://localhost:3000/api/user/feasts',
-//     method: 'get',
-//     headers: { authorization: `Bearer ${userId}` },
+// const submitEdit = async (feastData, user) => {
+//   const response = await axios('http:localhost:3000/api/feast', {
+//     method: 'put',
+//     data: { ...feastData },
+//     headers: {
+//       // prettier-ignore
+//       'authorization': `Bearer ${user?.token}`,
+//     },
 //   })
-//   return data.feasts
+//   // console.warn('submitFeast:', JSON.stringify(response))
+//   return response.data
 // }
+// function editFeast(feastId, updatedFeast, token) {
+//   const editFeast = async () => {
+//     // Add JWT to headers
+//     const headers = { authorization: `Bearer ${token}` }
+
+//     // Make PATCH request to server to update the poll
+//     const { data } = await axios.patch(
+//       `http:localhost:3000/api/feast/${feastId}`,
+//       updatedFeast,
+//       {
+//         headers,
+//       },
+//     )
+
+//     return data
+//   }
+//   return editFeast
+// }
+
+// const submitDelete = async (feastId, user) => {
+//   const response = await axios('http:localhost:3000/api/feast', {
+//     method: 'delete',
+//     data: { feastId },
+//     headers: {
+//       // prettier-ignore
+//       'authorization': `Bearer ${user?.token}`,
+//     },
+//   })
+//   // console.warn('submitFeast:', JSON.stringify(response))
+//   return response.data
+// }
+
+const deleteFeast = async (feastId, token) => {
+  // Add JWT to headers
+  const headers = { authorization: `Bearer ${token}` }
+
+  // Make DELETE request to server to delete the poll
+  const { data } = await axios.delete(
+    `http:localhost:3000/api/feast/${feastId}`,
+    { headers },
+  )
+
+  return data
+}
 
 const FeastScreen = ({ navigation }) => {
   const [currentFeast, setCurrentFeast] = feastState.use()
+  const [selectedFeast, setSelectedFeast] = feastState.use()
+  const [isEditing, setIsEditing] = useState(false)
+  const queryClient = useQueryClient()
+  const { user } = useAuthContext()
   const feasts = useFeasts()
 
-  const onEditPress = (feast) => {
-    console.warn(`Edit pressed for ${feast}`)
-  }
+  // const updateFeast = useMutation(({ selectedFeast, freshFeast }) => {
+  //   return (
+  //     axios.put(
+  //       `http:localhost:3000/api/feasts/${selectedFeast.id}`,
+  //       { freshFeast },
+  //       {
+  //         headers: {
+  //           // prettier-ignore
+  //           authorization: `Bearer ${user?.token}`,
+  //         },
+  //       },
+  //     ),
+  //     {
+  //       onSuccess: (data) => {
+  //         console.warn('editFeast success:', JSON.stringify(data))
+  //         queryClient.invalidateQueries(queryKeys.feasts)
+  //       },
+  //       onError: (error) => {
+  //         console.log('deleteFeast error:', JSON.stringify(error))
+  //       },
+  //     }
+  //   )
+  // })
+
+  const deleteItem = useMutation(
+    ({ feastId, token }) => deleteFeast(feastId, token),
+    {
+      onSuccess: (data) => {
+        console.warn('deleteFeast success:', data)
+        queryClient.invalidateQueries(queryKeys.feasts)
+      },
+      onError: (error) => {
+        console.log('deleteFeast error:', error)
+      },
+    },
+  )
+
+  // const onEditPress = (freshFeast) => {
+  //   // console.warn(`Edit pressed for ${feast}`)
+  //   const feastId = selectedFeast.id
+  //   // const updatedFeast = feast
+  //   const token = user.token
+
+  //   updateFeast.mutate({ feastId, freshFeast, token })
+  // }
 
   const onDeletePress = (feast) => {
-    console.warn(`Delete pressed for ${feast}`)
+    // console.warn(`Delete pressed for ${feast.name}`)
+    const feastId = feast.id
+    const token = user.token
+
+    deleteItem.mutate({ feastId, token })
   }
 
-  // if (isLoading) return <LoadingIndicator />
+  if (deleteItem.isLoading) return <LoadingIndicator />
   // if (error) return console.log(error)
 
   // if (!feasts) return <LoadingIndicator />
@@ -81,6 +181,13 @@ const FeastScreen = ({ navigation }) => {
       <>
         <Header />
         <Text style={styles.title}>Your Feasts</Text>
+        <Box>
+          <Pressable
+            onPress={() => navigation.navigate('NewFeast')}
+            style={styles.button}>
+            <Text>Create new</Text>
+          </Pressable>
+        </Box>
       </>
     )
   }
@@ -89,9 +196,9 @@ const FeastScreen = ({ navigation }) => {
     return (
       <Box>
         <Pressable
-          onPress={() => navigation.navigate('NewFeast')}
+          onPress={() => navigation.navigate('Home')}
           style={styles.button}>
-          <Text>Create new</Text>
+          <Text>Back to deck</Text>
         </Pressable>
       </Box>
     )
@@ -119,20 +226,18 @@ const FeastScreen = ({ navigation }) => {
                   py="2">
                   <Pressable
                     onPress={() => {
-                      setCurrentFeast(item)
+                      setSelectedFeast(item)
+                      // setIsEditing(true)
                       navigation.push('Home', { feast: item })
                     }}>
                     <HStack space={[2, 3]} justifyContent="space-between">
-                      <Avatar
-                        size="md"
-                        source={
-                          item.image
-                            ? { uri: item.image }
-                            : require('../../assets/images/flame-square.png')
-                        }
-                        // source={require('../../assets/images/flame-square.png')}
-                        alignSelf="center"
-                      />
+                      {item.image && (
+                        <Avatar
+                          size="md"
+                          source={{ uri: item.image }}
+                          alignSelf="center"
+                        />
+                      )}
                       <VStack>
                         <Text
                           _dark={{
@@ -147,7 +252,7 @@ const FeastScreen = ({ navigation }) => {
                           _dark={{
                             color: 'warmGray.200',
                           }}>
-                          {item.createdAt}
+                          {item.closed ? 'Closed' : 'Open'}
                         </Text>
                       </VStack>
                       {/* <Spacer /> */}
@@ -161,7 +266,12 @@ const FeastScreen = ({ navigation }) => {
                         {item.places?.length}
                       </Text>
                       {/* <HStack> */}
-                      <Pressable onPress={() => onEditPress(item)}>
+                      <Pressable
+                        onPress={() => {
+                          setSelectedFeast(item)
+                          setIsEditing(true)
+                          navigation.push('EditFeast')
+                        }}>
                         <FontAwesome name="edit" size={24} color="black" />
                       </Pressable>
                       <Pressable onPress={() => onDeletePress(item)}>
@@ -174,12 +284,6 @@ const FeastScreen = ({ navigation }) => {
                 // />
               )
             }}
-            // refreshControl={
-            //   <RefreshControl
-            //     refreshing={isFetching}
-            //     onRefresh={() => refetch()}
-            //   />
-            // }
           />
         </VStack>
       ) : (

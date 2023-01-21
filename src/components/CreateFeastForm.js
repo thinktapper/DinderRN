@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { URL } from 'react-native-url-polyfill'
 import {
   ScrollView,
   StyleSheet,
@@ -28,6 +29,7 @@ import {
   Text,
   Flex,
 } from 'native-base'
+import { EvilIcons } from '@expo/vector-icons'
 import tw from 'twrnc'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { LoadingIndicator } from '../components/LoadingIndicator'
@@ -57,13 +59,12 @@ const submitFeast = async (formData, user) => {
 }
 
 function CreateFeastForm({ props }) {
-  const { queryClient, navigation, onFeastCreated } = props
+  const { navigation, onFeastCreated } = props
   const { user } = useAuthContext()
   const [showAlert, setShowAlert] = useState(false)
-  // const [isLoading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    image: '',
+    image: 'https://loremflickr.com/640/480/food',
     startDate: new Date(),
     endDate: new Date(),
     location: { lat: 0, long: 0 },
@@ -74,11 +75,15 @@ function CreateFeastForm({ props }) {
     setFormData({ ...formData, [name]: value })
   }
 
-  function handlePlaceSelect(data, details) {
+  async function handlePlaceSelect(data, details) {
     console.debug('data:', data, 'details:', details)
-
-    if (details.photos.length > 0) {
-      const imageUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${details.photos[0].photo_reference}&key=${GOOGLE_API}`
+    const photoRef = details.photos?.[0]?.photo_reference
+    if (photoRef) {
+      const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
+      const imgageUrlQuery = await fetch(imageLookupUrl)
+        .then((res) => res.blob())
+        .catch((err) => console.error(err))
+      const imageUrl = URL.createObjectURL(imgageUrlQuery)
       handleChange('image', imageUrl)
     }
 
@@ -90,12 +95,6 @@ function CreateFeastForm({ props }) {
 
   const handleCreateFeast = () => {
     createFeast.mutate({ formData, user })
-    // try {
-    // const result = await createFeast.mutateAsync({ formData, user })
-    // console.warn('result:', result)
-    // } catch (err) {
-    //   console.error(err)
-    // }
   }
 
   const createFeast = useMutation(
@@ -103,62 +102,31 @@ function CreateFeastForm({ props }) {
     {
       onSuccess: (response) => {
         return onFeastCreated(response)
-        // console.log('success, you created a feast: ', response.data)
-        // return queryClient.invalidateQueries('feasts')
-        // if (response.success) {
-        //   onFeastCreated(response.data)
-        // }
       },
       onError: (error) => {
         console.log('error', error)
-        // Alert.alert('Error', 'There was an error saving your feast')
       },
       onSettled: () => {
-        // setLoading(false)
-        // Alert.alert('Feast info saved successfully')
         navigation.goBack
       },
     },
   )
-
-  // setLoading(true)
-  // try {
-  //   return axios('http:localhost:3000/api/feast', {
-  //     method: 'POST',
-  //     data: { ...formData },
-  //     headers: {
-  //       // prettier-ignore
-  //       'authorization': `Bearer ${user?.token}`,
-  //     },
-  //   })
-  //   }).then((response) => {
-  //     // console.warn('response:', { ...response })
-  //     // onFeastCreated(response.data)
-  //     // return response.data
-  //     if (response.data.success) {
-  //       console.log('success, you created a feast: ', response.data.data)
-
-  //       queryClient.invalidateQueries('feasts')
-  //       Alert.alert('Feast info saved successfully')
-  //       navigation.push('Feasts')
-  //     }
-  //   })
-  // } catch (err) {
-  //   console.error(err)
-  //   return err
-  // }
-  // })
-  //   } finally {
-  //     // setLoading(false)
-  //   }
-  // })
 
   return (
     <Box safeArea flex={1} w="100%">
       <Heading size="lg" color="coolGray.800" fontWeight="bold">
         Create a Feast
       </Heading>
-      <Button onPress={() => navigation.goBack()} title="Dismiss" />
+      <IconButton
+        icon={<CloseIcon size="sm" />}
+        position="absolute"
+        top={1}
+        right={1}
+        rounded="full"
+        variant="ghost"
+        colorScheme="rose"
+        onPress={() => navigation.goBack()}
+      />
       {createFeast.isLoading ? (
         <LoadingIndicator />
       ) : (
@@ -392,13 +360,47 @@ const styles = StyleSheet.create({
     color: 'gray',
     marginVertical: 10,
   },
-
   elementContainer: {
     // marginVertical: 10,
     flex: 1,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
+  },
+  closeButton: {
+    position: 'absolute',
+    right: '3',
+    top: '3',
+    zIndex: '1',
+    colorScheme: 'coolGray',
+    p: '2',
+    bg: 'transparent',
+    borderRadius: 'sm',
+    _web: {
+      outlineWidth: 0,
+      cursor: 'pointer',
+    },
+    _icon: {
+      color: 'muted.500',
+      size: '4',
+    },
+    _hover: {
+      bg: 'muted.200',
+    },
+    _pressed: {
+      bg: 'muted.300',
+    },
+    _dark: {
+      _icon: {
+        color: 'muted.400',
+      },
+      _hover: {
+        bg: 'muted.700',
+      },
+      _pressed: {
+        bg: 'muted.600',
+      },
+    },
   },
   button: {
     backgroundColor: '#F63A6E',

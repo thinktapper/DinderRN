@@ -9,6 +9,7 @@ export const feastState = newRidgeState(
   {
     // feasts: [],
     currentFeast: null,
+    selectedFeast: null,
     // places: [], // ??
   },
   {

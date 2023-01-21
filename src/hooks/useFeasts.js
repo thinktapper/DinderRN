@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { queryKeys } from '../lib/constants'
 import axios from 'axios'
 import { useAuthContext } from '../context/AuthProvider'
 
@@ -17,7 +17,7 @@ export function useFeasts() {
 
   const fallback = []
   const { data: feasts = fallback } = useQuery(
-    ['feasts', user.id],
+    [queryKeys.feasts, user.id],
     () => fetchFeasts(user),
     {
       enabled: !!user,
