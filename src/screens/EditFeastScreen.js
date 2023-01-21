@@ -52,7 +52,7 @@ import EditFeastForm from '../components/EditFeastForm'
 //     .required('Location JSON object is required'),
 // })
 
-const EditFeastScreen = ({ navigation, selectedFeast }) => {
+const EditFeastScreen = ({ navigation }) => {
   const queryClient = useQueryClient()
   // const createFeast = useCreateFeast()
   // const queryClient = useQueryClient()
@@ -284,22 +284,20 @@ const EditFeastScreen = ({ navigation, selectedFeast }) => {
   // )
 
   const onFeastEdited = (response) => {
-    // console.warn(JSON.stringify(response))
-    // if (response.success) {
-    console.log('success, you edited a feast: ', response.data)
+    console.warn(JSON.stringify(response))
+    if (response.success) {
+      console.log('success, you edited a feast: ', response.data)
 
-    queryClient.invalidateQueries('feasts')
-    Alert.alert('Feast info saved successfully')
+      queryClient.invalidateQueries('feasts')
+      Alert.alert('Feast info saved successfully')
+    }
     navigation.goBack()
-    // }
   }
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Center w="100%" padding={10}>
-        <EditFeastForm
-          props={{ navigation, queryClient, selectedFeast, onFeastEdited }}
-        />
+        <EditFeastForm props={{ onFeastEdited }} />
       </Center>
     </ScrollView>
   )

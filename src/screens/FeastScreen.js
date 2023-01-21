@@ -109,7 +109,7 @@ const deleteFeast = async (feastId, token) => {
 
 const FeastScreen = ({ navigation }) => {
   const [currentFeast, setCurrentFeast] = feastState.use()
-  const [selectedFeast, setSelectedFeast] = useState(null)
+  const [selectedFeast, setSelectedFeast] = feastState.use()
   const [isEditing, setIsEditing] = useState(false)
   const queryClient = useQueryClient()
   const { user } = useAuthContext()
@@ -270,10 +270,7 @@ const FeastScreen = ({ navigation }) => {
                         onPress={() => {
                           setSelectedFeast(item)
                           setIsEditing(true)
-                          navigation.push('EditFeast', {
-                            navigation,
-                            selectedFeast,
-                          })
+                          navigation.push('EditFeast')
                         }}>
                         <FontAwesome name="edit" size={24} color="black" />
                       </Pressable>
