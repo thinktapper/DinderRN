@@ -62,10 +62,11 @@
 <h2>About The Project</h2>
 
 <p>Like Tinder for food, this app uses swipe matching to decide on the perfect place for your next meal.</p>
-<p>Users are able to create accounts and log in, set profile information and location details, and swipe through a deck of restaurants tailored to their occasion. Each card in the deck contains real-time establishment data sourced from Google Maps and stored alongside user votes on the <a href="https://github.com/thinktapper/DinderIsServed">backend</a>.</p>
 <div align="center">
 
 ![Simulator Screen Recording - iPhone 14 - 2022-11-13 at 15 26 22](https://user-images.githubusercontent.com/10656909/204616384-599bf5b7-ea55-493a-83a4-2d53e11d67c0.gif)
+
+<p>Users are able to create accounts and log in, set profile information and location details, and swipe through a deck of restaurants tailored to their occasion. Each card in the deck contains real-time establishment data sourced from Google Maps and stored alongside user votes on the <a href="https://github.com/thinktapper/DinderIsServed">backend</a>.</p>
 
 <!-- ![Simulator Screen Recording - iPhone 14 - 2022-11-05 at 18 37 37](https://user-images.githubusercontent.com/10656909/200642329-f89bc4ff-69f1-4749-ab1d-9b479be1b35d.gif) -->
 
@@ -75,11 +76,11 @@
 
 ### Built With
 
+- [![React Native][react-native]][react-native-url]
 - [![Prisma][prisma]][prisma-url]
 - [![PostgreSQL][postgresql]][postgresql-url]
 - [![GoogleMaps][googlemaps]][googlemaps-url]
 - [![tailwindcss][tailwindcss]][tailwindcss-url]
-- [![React Native][react-native]][react-native-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -112,7 +113,7 @@ Dinder is a passion project that solves a problem that many can relate to. I enj
 This project was made using React Native and Expo. I used TailwindCSS for styling and Prisma for generating a typesafe ORM to interact with the PostgreSQL database hosted on [Render](https://render.com/). The Google Places API was used to autocomplete the feast location & get restaurant data.
 
 <details name="why-expo">
-<summary>Why Expo vs. plain React Native?</summary>
+<summary><i>Why Expo vs. plain React Native?</i></summary>
 <ul>
     <li> For many reasons, but mostly: <strong>Time</strong></li>
     <li>Expo takes care of a lot of the tedious aspects of RN development - e.g. pod installs, adjusting native iOS & Android code for specific packages</li>
@@ -155,7 +156,9 @@ This full-stack project was a great way to learn about React/React Native for th
 
 ### Key Takeaways:
 
-<ul>
+<i>Coming soon...</i>
+
+<!-- <ul>
   <li>Strengthened skills needed to plan, scope, research, and deploy a full-stack web app.</li>
   <li>Practiced using TypeScript for better type safety and code quality.</li>
   <li>Practiced using TailwindCSS to quickly build out a UI from a design spec.</li>
@@ -165,7 +168,7 @@ This full-stack project was a great way to learn about React/React Native for th
   <li>Learned how to use the new React 18 Suspense component to render loading states.</li>
   <li>Learned how to set up continuous deployment with CI.</li>
   <li>Gained experience debugging and troubleshooting TypeScript and ESLint build errors and deployment issues.</li>
-</ul>
+</ul> -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
