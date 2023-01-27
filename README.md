@@ -230,8 +230,8 @@ Distributed under the GNU GPLv3. See `LICENSE` for more information.
 [stars-url]: https://github.com/thinktapper/DinderRN/stargazers
 [issues-shield]: https://img.shields.io/github/issues/thinktapper/DinderRN.svg?style=for-the-badge
 [issues-url]: https://github.com/thinktapper/DinderRN/issues
-[license-shield]: https://img.shields.io/github/license/thinktapper/DinderRN.svg?style=for-the-badge
-[license-url]: https://github.com/thinktapper/DinderRN/blob/master/LICENSE
+[license-shield]: https://img.shields.io/github/license/thinktapper/DinderRN?style=for-the-badge
+[license-url]: https://github.com/thinktapper/DinderRN/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/thinktapper
 [product-screenshot]: images/screenshot.png
