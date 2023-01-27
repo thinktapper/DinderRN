@@ -43,13 +43,13 @@ const Header = () => {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
-          setActiveScreen('NewFeast')
-          navigation.navigate('NewFeast')
+          setActiveScreen('Winner')
+          navigation.navigate('Winner')
         }}>
         <Ionicons
           name="ios-chatbubbles"
           size={30}
-          color={activeScreen === 'NewFeast' ? activeColor : color}
+          color={activeScreen === 'Winner' ? activeColor : color}
         />
       </TouchableOpacity>
       <TouchableOpacity
