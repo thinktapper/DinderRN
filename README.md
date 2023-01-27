@@ -77,7 +77,6 @@
 ### Built With
 
 - [![React Native][react-native]][react-native-url]
-- [![Prisma][prisma]][prisma-url]
 - [![PostgreSQL][postgresql]][postgresql-url]
 - [![GoogleMaps][googlemaps]][googlemaps-url]
 - [![tailwindcss][tailwindcss]][tailwindcss-url]
