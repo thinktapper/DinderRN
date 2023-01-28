@@ -75,7 +75,7 @@ function CreateFeastForm({ props }) {
     endDate: new Date(),
     location: { lat: 0, long: 0 },
     radius: 1,
-    guests: [],
+    guests: guestArr,
   })
 
   const handleChange = (name, value) => {
@@ -106,20 +106,28 @@ function CreateFeastForm({ props }) {
   }
 
   const handleCreateFeast = () => {
+    // handleChange('guests', guestArr)
     let guestsArrData = []
     try {
-      if (groupValues.length > 0) {
-        groupValues.forEach((val) => guestsArrData.push(val))
+      if (guestArr.length > 0) {
+        guestArr.forEach((val) => guestsArrData.push(val))
       }
-      // handleChange('guests', guestsArr)
-      setGuestArr(...guestsArrData)
+      // setGuestArr(...guestsArrData)
       // setFormData({ ...formData, guests: guestsArr })
       setFormData((prevFormData) => ({
         ...prevFormData,
-        guests: guestArr,
+        [guests]: guestsArrData,
       }))
-      console.log(groupValues.length, { ...formData.guests })
-      if (formData.guests.length > 0) {
+      console.log(
+        guestArr.length,
+        formData.guests.length,
+        guestsArrData.length,
+        JSON.stringify(formData.guests),
+        {
+          ...formData.guests,
+        },
+      )
+      if (formData.guests.length) {
         createFeast.mutate({ formData, user })
       } else {
         console.debug(
@@ -315,14 +323,17 @@ function CreateFeastForm({ props }) {
                 </HStack>
                 <VStack>
                   <Box>
-                    <Text>Selected: ({formData.guests.length})</Text>
+                    <Text>
+                      Selected: (
+                      {guestArr.length ? guestArr.length : 'None yet 😏'})
+                    </Text>
                   </Box>
                 </VStack>
                 <Checkbox.Group
                   colorScheme="rose"
                   defaultValue={guestArr}
                   accessibilityLabel="invite guests"
-                  onChange={(values) => setGuestArr(values)}>
+                  onChange={setGuestArr}>
                   {guests.map((guest) => (
                     <Checkbox key={guest.id} value={guest.username} my="1">
                       <Image

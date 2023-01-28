@@ -13,6 +13,7 @@ export const queryKeys = {
   guests: 'guests',
   places: 'places',
   votes: 'votes',
+  winner: 'winner',
 }
 
 // Theme

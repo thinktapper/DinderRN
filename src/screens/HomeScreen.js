@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Alert,
 } from 'react-native'
 // import Animated from 'react-native-reanimated'
 import tw from 'twrnc'
@@ -38,6 +39,8 @@ const HomeScreen = ({ route, navigation }) => {
   const swipeRef = useRef(null)
   const { user } = useAuthContext()
   const feastId = route.params?.feast
+  // const feast = feastState.useValue()
+  // const feastId = feast.id
   const places = useFeast()
   const queryClient = useQueryClient()
   // const mutate = useVote()
@@ -45,24 +48,6 @@ const HomeScreen = ({ route, navigation }) => {
   const wrapperPadding = rs(12)
   // const [currentIndex, setCurrentIndex] = useState(0)
   // const [currentImageIndex, setCurrentImageIndex] = useState(0)
-
-  // const handleNahVote = (placeSwiped) => {
-  //   const voteData = {
-  //     feastId: feastId.id,
-  //     placeId: placeSwiped.id,
-  //     voteType: VOTE.nah,
-  //   }
-  //   mutate({ voteData })
-  // }
-
-  // const handleYassVote = (placeSwiped) => {
-  //   const voteData = {
-  //     feastId: feastId.id,
-  //     placeId: placeSwiped.id,
-  //     voteType: VOTE.yass,
-  //   }
-  //   mutate({ voteData })
-  // }
 
   // mutation to submit nah vote on left swipe
   const nahMutation = useMutation(
@@ -80,7 +65,7 @@ const HomeScreen = ({ route, navigation }) => {
     },
     {
       onSuccess: (data, variables, context) => {
-        console.warn('nah mutation success:', JSON.stringify(data))
+        console.log('nah mutation success:', JSON.stringify(data))
       },
     },
   )
@@ -100,7 +85,7 @@ const HomeScreen = ({ route, navigation }) => {
       })
     },
     onSuccess: (data, variables, context) => {
-      console.warn('yass mutation success:', JSON.stringify(data))
+      console.log('yass mutation success:', JSON.stringify(data))
     },
   })
 
@@ -130,7 +115,7 @@ const HomeScreen = ({ route, navigation }) => {
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
-          {feastId ? feastId.name : 'No Feast Context'}
+          {feastId ? feastId.name : 'No Feast Selected'}
         </Text>
         {places.length > 0 ? (
           <Swiper
@@ -147,6 +132,13 @@ const HomeScreen = ({ route, navigation }) => {
             backgroundColor={'#4FD0E9'}
             onSwipedLeft={(cardIndex) => swipeLeft(cardIndex)}
             onSwipedRight={(cardIndex) => swipeRight(cardIndex)}
+            onSwipedAll={() => {
+              Alert.alert({
+                title: 'All done!',
+                message: "Let's check for a winner..",
+              })
+              navigation.navigate('Winner')
+            }}
             // onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
             renderCard={(card) => {
               return (

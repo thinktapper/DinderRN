@@ -161,6 +161,7 @@ const FeastScreen = ({ navigation }) => {
                   py="2">
                   <Pressable
                     onPress={() => {
+                      setCurrentFeast(item)
                       setSelectedFeast(item)
                       // setIsEditing(true)
                       navigation.push('Home', { feast: item })

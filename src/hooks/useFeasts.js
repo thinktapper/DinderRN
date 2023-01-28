@@ -21,8 +21,8 @@ export function useFeasts() {
     () => fetchFeasts(user),
     {
       enabled: !!user,
-      staleTime: 1000 * 60 * 60 * 24,
-      cacheTime: Infinity,
+      // staleTime: 1000 * 60 * 60 * 24,
+      // cacheTime: Infinity,
     },
   )
   // let feastsArr = []
