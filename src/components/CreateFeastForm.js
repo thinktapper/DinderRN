@@ -6,12 +6,14 @@ import {
   TextInput,
   // Text,
   Alert,
+  Image,
   View,
 } from 'react-native'
 import {
   Stack,
   Container,
   Collapse,
+  Checkbox,
   VStack,
   HStack,
   Spinner,
@@ -44,6 +46,7 @@ import { PickerIOS, Picker } from '@react-native-picker/picker'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useAuthContext } from '../context/AuthProvider'
 import axios from 'axios'
+import useUsers from '../hooks/useUsers'
 
 const submitFeast = async (formData, user) => {
   const response = await axios('http:localhost:3000/api/feast', {
@@ -61,14 +64,18 @@ const submitFeast = async (formData, user) => {
 function CreateFeastForm({ props }) {
   const { navigation, onFeastCreated } = props
   const { user } = useAuthContext()
+  const guests = useUsers()
+  const [groupValues, setGroupValues] = useState([])
+  const [guestArr, setGuestArr] = useState([])
   const [showAlert, setShowAlert] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    image: 'https://loremflickr.com/640/480/food',
+    image: '',
     startDate: new Date(),
     endDate: new Date(),
     location: { lat: 0, long: 0 },
     radius: 1,
+    guests: [],
   })
 
   const handleChange = (name, value) => {
@@ -76,15 +83,20 @@ function CreateFeastForm({ props }) {
   }
 
   async function handlePlaceSelect(data, details) {
-    console.debug('data:', data, 'details:', details)
+    // console.debug('data:', data, 'details:', details)
     const photoRef = details.photos?.[0]?.photo_reference
+    let imageUrl = ''
     if (photoRef) {
       const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
       const imgageUrlQuery = await fetch(imageLookupUrl)
         .then((res) => res.blob())
         .catch((err) => console.error(err))
-      const imageUrl = URL.createObjectURL(imgageUrlQuery)
-      handleChange('image', imageUrl)
+        .finally(() => {
+          imageUrl = imgageUrlQuery
+          handleChange('image', imageUrl)
+        })
+      // const imageUrl = URL.createObjectURL(imgageUrlQuery)
+      // handleChange('image', imageUrl)
     }
 
     handleChange('location', {
@@ -94,7 +106,31 @@ function CreateFeastForm({ props }) {
   }
 
   const handleCreateFeast = () => {
-    createFeast.mutate({ formData, user })
+    let guestsArrData = []
+    try {
+      if (groupValues.length > 0) {
+        groupValues.forEach((val) => guestsArrData.push(val))
+      }
+      // handleChange('guests', guestsArr)
+      setGuestArr(...guestsArrData)
+      // setFormData({ ...formData, guests: guestsArr })
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        guests: guestArr,
+      }))
+      console.log(groupValues.length, { ...formData.guests })
+      if (formData.guests.length > 0) {
+        createFeast.mutate({ formData, user })
+      } else {
+        console.debug(
+          `Did not send mutation bc formData.guests.length fail, see: ${JSON.stringify(
+            formData.guests,
+          )}}`,
+        )
+      }
+    } catch (err) {
+      console.debug(`ERROR setting guests array in formData: ${err}`)
+    }
   }
 
   const createFeast = useMutation(
@@ -249,25 +285,56 @@ function CreateFeastForm({ props }) {
               </HStack>
             </Box>
 
-            <ScrollView style={styles.elementContainer}>
-              <Text textAlign="center" fontWeight="bold">
-                Radius
-              </Text>
-              <View style={styles.container}>
-                <Picker
-                  label="Radius"
-                  selectedValue={formData.radius}
-                  onValueChange={(itemValue) =>
-                    handleChange('radius', itemValue)
-                  }>
-                  <PickerIOS.Item label="1 Mile" value={1} />
-                  <PickerIOS.Item label="2 Miles" value={2} />
-                  <PickerIOS.Item label="3 Miles" value={3} />
-                  <PickerIOS.Item label="4 Miles" value={4} />
-                  <PickerIOS.Item label="5 Miles" value={5} />
-                </Picker>
+            <ScrollView style={styles.container}>
+              {/* <View style={tw`flex-row justify-evenly`}> */}
+              <View>
+                <Text textAlign="center" fontWeight="bold">
+                  Radius
+                </Text>
+                <View style={styles.elementContainer}>
+                  <Picker
+                    label="Radius"
+                    selectedValue={formData.radius}
+                    onValueChange={(itemValue) =>
+                      handleChange('radius', itemValue)
+                    }>
+                    <PickerIOS.Item label="1 Mile" value={1} />
+                    <PickerIOS.Item label="2 Miles" value={2} />
+                    <PickerIOS.Item label="3 Miles" value={3} />
+                    <PickerIOS.Item label="4 Miles" value={4} />
+                    <PickerIOS.Item label="5 Miles" value={5} />
+                  </Picker>
+                </View>
               </View>
             </ScrollView>
+
+            <Box alignItems="center">
+              <VStack space={2}>
+                <HStack alignItems="baseline">
+                  <Heading fontSize="md">Guests</Heading>
+                </HStack>
+                <VStack>
+                  <Box>
+                    <Text>Selected: ({formData.guests.length})</Text>
+                  </Box>
+                </VStack>
+                <Checkbox.Group
+                  colorScheme="rose"
+                  defaultValue={guestArr}
+                  accessibilityLabel="invite guests"
+                  onChange={(values) => setGuestArr(values)}>
+                  {guests.map((guest) => (
+                    <Checkbox key={guest.id} value={guest.username} my="1">
+                      <Image
+                        style={tw`h-8 w-8 rounded-full py-1`}
+                        source={{ uri: guest.image }}
+                      />
+                      <Text>{guest.username}</Text>
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              </VStack>
+            </Box>
 
             <Button
               mt="5"

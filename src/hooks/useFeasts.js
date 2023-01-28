@@ -25,6 +25,8 @@ export function useFeasts() {
       cacheTime: Infinity,
     },
   )
+  // let feastsArr = []
+  // feastsArr.concat(feasts.organizedFeasts, feasts.joinedFeasts)
 
   return feasts
 }

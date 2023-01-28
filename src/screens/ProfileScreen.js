@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
+  Image,
   Text,
   StyleSheet,
   SafeAreaView,
@@ -46,10 +47,11 @@ const ProfileScreen = ({ navigation }) => {
   }
 
   const updateUserSchema = Yup.object().shape({
+    email: Yup.string().matches(EMAIL_REGEX, 'Invalid email'),
     username: Yup.string()
       .min(3, 'Username should be at least 3 characters long')
       .max(24, 'Username should be max 24 characters long'),
-    email: Yup.string().matches(EMAIL_REGEX, 'Invalid email'),
+    image: Yup.string().optional().trim(),
   })
 
   const handleUpdateUser = async (values) => {
@@ -60,7 +62,7 @@ const ProfileScreen = ({ navigation }) => {
       if (response.data.success) {
         Alert.alert('Success', 'Your profile has been updated')
         setLoading(false)
-        navigation.navigate('Home')
+        navigation.navigate('Feasts')
       }
     } catch (err) {
       console.error(err)
@@ -74,10 +76,16 @@ const ProfileScreen = ({ navigation }) => {
       <View style={tw`items-center p-5`}>
         <Text style={styles.title}>Your information</Text>
 
+        <Image
+          style={tw`h-32 w-32 rounded-full`}
+          source={{ uri: authContext.user.image }}
+        />
+
         <Formik
           initialValues={{
-            username: authContext.user.username,
             email: authContext.user.email,
+            username: authContext.user.username,
+            image: authContext.user.image ? authContext.user.image : '',
           }}
           validationSchema={updateUserSchema}
           onSubmit={handleUpdateUser}>
@@ -119,6 +127,22 @@ const ProfileScreen = ({ navigation }) => {
                 />
                 <FormControl.ErrorMessage>
                   {errors.email}
+                </FormControl.ErrorMessage>
+              </FormControl>
+
+              <FormControl isInvalid={'image' in errors && touched.image}>
+                <FormControl.Label>Profile Pic</FormControl.Label>
+                <Input
+                  autoCapitalize="none"
+                  onBlur={handleBlur('image')}
+                  placeholder="Direct image link, e.g. https://i.imgur.com/8BDXWCv.jpg"
+                  onChangeText={handleChange('image')}
+                  value={values.image}
+                  error={errors.image}
+                  touched={touched.image}
+                />
+                <FormControl.ErrorMessage>
+                  {errors.image}
                 </FormControl.ErrorMessage>
               </FormControl>
 
