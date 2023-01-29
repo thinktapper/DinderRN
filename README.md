@@ -130,8 +130,8 @@ This project was made using React Native and Expo. I used TailwindCSS for stylin
 
 I plan to add the following features:
 
-- [ ] Add a "Winner" screen to display winning restuarant after voting closes.
-- [ ] Implement list of other users/friends to optionally add to new feasts.
+- [x] Add a "Winner" screen to display winning restuarant after voting closes.
+- [x] Implement list of other users/friends to optionally add to new feasts.
 - [ ] Create sharable links for inviting other users (registered or not) to feasts.
 - [ ] Add automatic dark mode support
 - [ ] Implement 'react-native-fast-image’ to replace RN’s Image component (even FB doesn’t use)
