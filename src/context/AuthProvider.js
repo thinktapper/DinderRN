@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
     // setUser(null)
     queryClient.clear()
     await SecureStore.deleteItemAsync(SECURE_SECRET)
-    // return 'Success, User logged out'
+    return 'Success, User logged out'
   }
 
   async function authRequest({ ...options }) {
@@ -190,6 +190,19 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     isLoggedIn()
     // logout()
+
+    // const reset = async () => {
+    //   const message = await clearStoredUser()
+    //   if (message.includes('Success')) {
+    //     // === 'Success, User logged out') {
+    //     console.debug(message)
+    //   } else {
+    //     console.log('Error logging out')
+    //     throw new Error('Error logging out')
+    //   }
+    // }
+
+    // reset()
   }, [])
 
   // const authContext = useMemo(

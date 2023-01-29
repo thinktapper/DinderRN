@@ -295,7 +295,7 @@ const FeastScreen = ({ navigation }) => {
     console.log('success, you created a feast: ', response.data)
 
     queryClient.invalidateQueries('feasts')
-    Alert.alert('Feast info saved successfully')
+    console.debug('Feast info saved successfully')
     navigation.goBack()
     // }
   }

@@ -15,6 +15,7 @@ import HomeScreen from '../screens/HomeScreen'
 import FeastScreen from '../screens/FeastScreen'
 import NewFeastScreen from '../screens/NewFeastScreen'
 import EditFeastScreen from '../screens/EditFeastScreen'
+import WinnerScreen from '../screens/WinnerScreen'
 import ProfileScreen from '../screens/ProfileScreen'
 // import { useQuery } from '@tanstack/react-query'
 
@@ -56,6 +57,7 @@ const Navigation = () => {
               <Stack.Screen name="EditFeast" component={EditFeastScreen} />
             </Stack.Group>
             <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Winner" component={WinnerScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
           </>
         )}

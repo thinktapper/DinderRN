@@ -50,50 +50,6 @@ import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '../lib/constants'
 
-// const submitEdit = async (feastData, user) => {
-//   const response = await axios('http:localhost:3000/api/feast', {
-//     method: 'put',
-//     data: { ...feastData },
-//     headers: {
-//       // prettier-ignore
-//       'authorization': `Bearer ${user?.token}`,
-//     },
-//   })
-//   // console.warn('submitFeast:', JSON.stringify(response))
-//   return response.data
-// }
-// function editFeast(feastId, updatedFeast, token) {
-//   const editFeast = async () => {
-//     // Add JWT to headers
-//     const headers = { authorization: `Bearer ${token}` }
-
-//     // Make PATCH request to server to update the poll
-//     const { data } = await axios.patch(
-//       `http:localhost:3000/api/feast/${feastId}`,
-//       updatedFeast,
-//       {
-//         headers,
-//       },
-//     )
-
-//     return data
-//   }
-//   return editFeast
-// }
-
-// const submitDelete = async (feastId, user) => {
-//   const response = await axios('http:localhost:3000/api/feast', {
-//     method: 'delete',
-//     data: { feastId },
-//     headers: {
-//       // prettier-ignore
-//       'authorization': `Bearer ${user?.token}`,
-//     },
-//   })
-//   // console.warn('submitFeast:', JSON.stringify(response))
-//   return response.data
-// }
-
 const deleteFeast = async (feastId, token) => {
   // Add JWT to headers
   const headers = { authorization: `Bearer ${token}` }
@@ -113,31 +69,8 @@ const FeastScreen = ({ navigation }) => {
   const [isEditing, setIsEditing] = useState(false)
   const queryClient = useQueryClient()
   const { user } = useAuthContext()
+  // const feastsArr = useFeasts()
   const feasts = useFeasts()
-
-  // const updateFeast = useMutation(({ selectedFeast, freshFeast }) => {
-  //   return (
-  //     axios.put(
-  //       `http:localhost:3000/api/feasts/${selectedFeast.id}`,
-  //       { freshFeast },
-  //       {
-  //         headers: {
-  //           // prettier-ignore
-  //           authorization: `Bearer ${user?.token}`,
-  //         },
-  //       },
-  //     ),
-  //     {
-  //       onSuccess: (data) => {
-  //         console.warn('editFeast success:', JSON.stringify(data))
-  //         queryClient.invalidateQueries(queryKeys.feasts)
-  //       },
-  //       onError: (error) => {
-  //         console.log('deleteFeast error:', JSON.stringify(error))
-  //       },
-  //     }
-  //   )
-  // })
 
   const deleteItem = useMutation(
     ({ feastId, token }) => deleteFeast(feastId, token),
@@ -179,7 +112,7 @@ const FeastScreen = ({ navigation }) => {
   const getHeader = () => {
     return (
       <>
-        <Header />
+        {/* <Header /> */}
         <Text style={styles.title}>Your Feasts</Text>
         <Box>
           <Pressable
@@ -206,6 +139,8 @@ const FeastScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.root}>
+      <Header />
+
       {feasts.length > 0 ? (
         <VStack px="3">
           <FlatList
@@ -226,6 +161,7 @@ const FeastScreen = ({ navigation }) => {
                   py="2">
                   <Pressable
                     onPress={() => {
+                      setCurrentFeast(item)
                       setSelectedFeast(item)
                       // setIsEditing(true)
                       navigation.push('Home', { feast: item })
@@ -288,10 +224,13 @@ const FeastScreen = ({ navigation }) => {
         </VStack>
       ) : (
         <Box>
-          <Pressable onPress={() => navigation.navigate('NewFeast')}>
-            <Text style={styles.text}>
-              You don't have any feasts yet. Create one!
-            </Text>
+          <Text style={[tw`text-center mt-8`, styles.title]}>
+            You don't have any feasts yet 😲
+          </Text>
+          <Pressable
+            style={styles.button}
+            onPress={() => navigation.navigate('NewFeast')}>
+            <Text>Create one!</Text>
           </Pressable>
         </Box>
       )}

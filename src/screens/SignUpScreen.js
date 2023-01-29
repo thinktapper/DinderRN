@@ -24,6 +24,7 @@ const signupSchema = Yup.object().shape({
   email: Yup.string()
     .email('Please enter a valid email')
     .required('Email is required'),
+  image: Yup.string().optional().trim(),
   password: Yup.string()
     .min(3, ({ min }) => `Password must be at least ${min} characters`)
     .required('Password is required'),
@@ -74,6 +75,7 @@ const SignUpScreen = ({ navigation }) => {
           initialValues={{
             username: '',
             email: '',
+            image: '',
             password: '',
             confirmPassword: '',
           }}
@@ -117,6 +119,22 @@ const SignUpScreen = ({ navigation }) => {
                 />
                 <FormControl.ErrorMessage>
                   {errors.email}
+                </FormControl.ErrorMessage>
+              </FormControl>
+
+              <FormControl isInvalid={'image' in errors && touched.image}>
+                <FormControl.Label>Profile Pic</FormControl.Label>
+                <Input
+                  autoCapitalize="none"
+                  onBlur={handleBlur('image')}
+                  placeholder="Direct link, e.g. https://i.imgur.com/8BDXWCv.jpg"
+                  onChangeText={handleChange('image')}
+                  value={values.image}
+                  error={errors.image}
+                  touched={touched.image}
+                />
+                <FormControl.ErrorMessage>
+                  {errors.image}
                 </FormControl.ErrorMessage>
               </FormControl>
 

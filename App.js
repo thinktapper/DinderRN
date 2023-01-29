@@ -1,5 +1,6 @@
 import 'react-native-gesture-handler'
 import React from 'react'
+import { LogBox } from 'react-native'
 // import { StatusBar } from 'expo-status-bar'
 import 'react-native-url-polyfill/auto'
 import { QueryClientProvider } from '@tanstack/react-query'
@@ -12,7 +13,10 @@ import Navigation from './src/navigation'
 import { AppProvider } from './src/context/AppProvider'
 import { AuthProvider } from './src/context/AuthProvider'
 import { NativeBaseProvider } from 'native-base'
-// import { AuthContextProvider } from './src/context'
+
+LogBox.ignoreLogs([
+  'We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320',
+])
 
 // const queryClient = new QueryClient({
 //   defaultOptions: {
