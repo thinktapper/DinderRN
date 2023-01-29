@@ -22,37 +22,22 @@ const fetchFeastPulse = async (currentFeast, user) => {
 
 const useWinner = () => {
   const currentFeast = feastState.useValue()
-  // const [currentFeastWinner, setCurrentFeastWinner] = feastState.use()
+  const [currentFeastWinner, setCurrentFeastWinner] = feastState.use()
   const { user } = useAuthContext()
 
-  const fallback = {}
-  const { data: winner = fallback } = useQuery(
+  // const fallback = {}
+  const { data: winner } = useQuery(
     [queryKeys.winner, currentFeast?.name, user.username],
     () => fetchFeastPulse(currentFeast, user),
     {
-      refetchOnWindowFocus: false,
-      // retryOnMount: true,
-      // staleTime: 0, // ? minutes
-      // cacheTime: 1000 * 60 * 1, // 5 minutes
-      enabled: !!currentFeast,
-      retry: 1,
-      retryOnMount: false,
-      refetchIntervalInBackground: 1000 * 60 * 100,
+      onSuccess: (winner) => {
+        setCurrentFeastWinner(winner)
+        return winner
+      },
+      onError: (data, error) => {
+        console.warn(`ERROR in useWinner hook: ${error}, DATA: ${data}`)
+      },
     },
   )
-
-  // if (data.success && data.winningPlace) {
-  // setCurrentFeastWinner(winner)
-  feastState.set((prevState) => ({
-    ...prevState,
-    currentFeastWinner: {
-      winner,
-    },
-  }))
-
-  return winner
-  // } else {
-  // return {}
-  // }
 }
 export default useWinner

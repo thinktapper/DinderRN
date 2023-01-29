@@ -23,8 +23,10 @@ const useFeast = () => {
     () => fetchFeast(currentFeast, user),
     {
       enabled: !!currentFeast,
-      staleTime: 300000, // 5 minutes
-      cacheTime: Infinity,
+      staleTime: 1000 * 60 * 60 * 24 * 7, // 1 week
+      // staleTime: 1000 * 60 * 60 * 24, // 24 hours
+      // staleTime: 300000, // 5 minutes
+      // cacheTime: Infinity,
     },
   )
   return places

@@ -151,7 +151,7 @@ function CreateFeastForm({ props }) {
         console.log('error', error)
       },
       onSettled: () => {
-        navigation.goBack
+        navigation.goBack()
       },
     },
   )
