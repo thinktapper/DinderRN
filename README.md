@@ -150,7 +150,7 @@ This full-stack project was a great way to learn about React/React Native for th
 
 🏋️‍♂️ This project is still in progress ✨
 
-I plan to add the following features:
+With time, I plan to add the following features:
 
 - [x] Add a "Winner" screen to display winning restuarant after voting closes.
 - [x] Implement list of other users/friends to optionally add to new feasts.
