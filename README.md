@@ -43,13 +43,13 @@
     </li>
     <li><a href="#why-its-made">Why It's Made</a></li>
     <li><a href="#how-its-made">How It's Made</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li>
       <a href="#lessons-learned">Lessons Learned</a>
       <ul>
         <li><a href="#key-takeaways">Key Takeaways</a></li>
       </ul>
     </li>
+    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#license">License</a></li>
@@ -122,6 +122,28 @@ This project was made using React Native and Expo. I used TailwindCSS for stylin
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Lessons Learned:
+
+This full-stack project was a great way to learn about React/React Native for the frontend and building a Node + Express API server in TypeScript for the backend. I learned how to use Prisma to generate relational database models on the [backend](https://github.com/thinktapper/DinderIsServed), and how to use react-query for interactions between the client/server. I also learned how to use the Google Places API to autocomplete location searches and fetch restaurant data, and how to use Tailwind utility classes in a React Native mobile app.
+
+### Key Takeaways:
+
+<i>Coming soon...</i>
+
+<!-- <ul>
+  <li>Strengthened skills needed to plan, scope, research, and deploy a full-stack web app.</li>
+  <li>Practiced using TypeScript for better type safety and code quality.</li>
+  <li>Practiced using TailwindCSS to quickly build out a UI from a design spec.</li>
+  <li>Learned how to build out and deploy a serverless API.</li>
+  <li>Practiced utilizing middleware to protect my app from unauthenticated users.</li>
+  <li>Learned how and when to use React Server Components to render content server-side, and when client-side components are necessary.</li>
+  <li>Learned how to use the new React 18 Suspense component to render loading states.</li>
+  <li>Learned how to set up continuous deployment with CI.</li>
+  <li>Gained experience debugging and troubleshooting TypeScript and ESLint build errors and deployment issues.</li>
+</ul> -->
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 <!-- ROADMAP -->
 
 ## Roadmap
@@ -146,28 +168,6 @@ I plan to add the following features:
 - [ ] Add more detailed documentation
 
 See the [open issues](https://github.com/thinktapper/DinderRN/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Lessons Learned:
-
-This full-stack project was a great way to learn about React/React Native for the frontend and building a Node + Express API server in TypeScript for the backend. I learned how to use Prisma to generate relational database models on the [backend](https://github.com/thinktapper/DinderIsServed), and how to use react-query for interactions between the client/server. I also learned how to use the Google Places API to autocomplete location searches and fetch restaurant data, and how to use Tailwind utility classes in a React Native mobile app.
-
-### Key Takeaways:
-
-<i>Coming soon...</i>
-
-<!-- <ul>
-  <li>Strengthened skills needed to plan, scope, research, and deploy a full-stack web app.</li>
-  <li>Practiced using TypeScript for better type safety and code quality.</li>
-  <li>Practiced using TailwindCSS to quickly build out a UI from a design spec.</li>
-  <li>Learned how to build out and deploy a serverless API.</li>
-  <li>Practiced utilizing middleware to protect my app from unauthenticated users.</li>
-  <li>Learned how and when to use React Server Components to render content server-side, and when client-side components are necessary.</li>
-  <li>Learned how to use the new React 18 Suspense component to render loading states.</li>
-  <li>Learned how to set up continuous deployment with CI.</li>
-  <li>Gained experience debugging and troubleshooting TypeScript and ESLint build errors and deployment issues.</li>
-</ul> -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
