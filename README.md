@@ -142,8 +142,8 @@ I plan to add the following features:
 - [ ] Add a feature so users can save their favorite restaurants
 - [ ] Use 'react-native-haptic-feedback' to add a vibration effects
 - [ ] Refactor the code to use TypeScript for better type safety
-- [ ] Add more detailed documentation
 - [ ] Add Detox E2E testing
+- [ ] Add more detailed documentation
 
 See the [open issues](https://github.com/thinktapper/DinderRN/issues) for a full list of proposed features (and known issues).
 
