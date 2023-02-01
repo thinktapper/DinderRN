@@ -58,7 +58,6 @@ const WinnerScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={[tw`h-full bg-red-500 pt-20`, { opacity: 0.89 }]}>
       <Header />
-
       {winner ? (
         <>
           <View style={tw`justify-center px-10 pt-20`}>
@@ -92,20 +91,20 @@ const WinnerScreen = ({ navigation, route }) => {
       ) : (
         <Text>Not ready...</Text>
       )}
-
       <View>{isFetching ? <Text>Refreshing...</Text> : null}</View>
 
-      <Pressable
-        style={tw`bg-white m-5 px-10 py-8 rounded-full mt-20`}
-        onPress={() => refetch()}>
-        <Text style={tw`text-center`}>Check Feast Pulse</Text>
-      </Pressable>
+      {/* // probably don't need a check button? just go back to feasts ? */}
 
       {/* <Pressable
         style={tw`bg-white m-5 px-10 py-8 rounded-full mt-20`}
-        onPress={() => navigation.navigate('Feasts')}>
-        <Text style={tw`text-center`}>Share result</Text>
+        onPress={() => refetch()}>
+        <Text style={tw`text-center`}>Check Feast Pulse</Text>
       </Pressable> */}
+      <Pressable
+        style={tw`bg-white m-5 px-10 py-8 rounded-full mt-20`}
+        onPress={() => navigation.navigate('Feasts')}>
+        <Text style={tw`text-center`}>Your Feasts</Text>
+      </Pressable>
     </SafeAreaView>
   )
 }
