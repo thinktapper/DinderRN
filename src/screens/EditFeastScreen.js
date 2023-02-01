@@ -297,7 +297,7 @@ const EditFeastScreen = ({ navigation }) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <Center w="100%" padding={10}>
-        <EditFeastForm props={{ onFeastEdited }} />
+        <EditFeastForm props={{ onFeastEdited, navigation }} />
       </Center>
     </ScrollView>
   )
