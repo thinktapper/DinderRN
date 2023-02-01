@@ -18,12 +18,12 @@ const getFeastPulse = async (currentFeast, user) => {
     },
   )
 
-  console.warn(
-    'getFeastPulse result: STATUS =>',
-    JSON.stringify(response.status),
-    'DATA =>',
-    JSON.stringify(response.data),
-  )
+  // console.warn(
+  //   'getFeastPulse result: STATUS =>',
+  //   JSON.stringify(response.status),
+  //   'DATA =>',
+  //   JSON.stringify(response.data),
+  // )
 
   return response.data
 }

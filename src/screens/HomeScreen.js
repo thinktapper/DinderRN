@@ -39,7 +39,7 @@ const HomeScreen = ({ route, navigation }) => {
   const swipeRef = useRef(null)
   const { user } = useAuthContext()
   const feastId = route.params?.feast
-  // const feast = feastState.useValue()
+  const feast = feastState.useValue()
   // const feastId = feast.id
   const places = useFeast()
   const queryClient = useQueryClient()
@@ -115,7 +115,7 @@ const HomeScreen = ({ route, navigation }) => {
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
-          {feastId ? feastId.name : 'No Feast Selected'}
+          {feast ? feast.name : 'No Feast Selected'}
         </Text>
         {places.length > 0 ? (
           <Swiper
