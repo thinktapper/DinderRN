@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
+import { View, Text, TouchableOpacity, Pressable, Image } from 'react-native'
 import tw from 'twrnc'
 import {
   AntDesign,
@@ -9,28 +9,19 @@ import {
   Fontisto,
   MaterialCommunityIcons,
 } from '@expo/vector-icons'
-import { useAppContext } from '../context/AppProvider'
 import { useNavigation } from '@react-navigation/native'
+import { useAppContext } from '../context/AppProvider'
+import { useAuthContext } from '../context/AuthProvider'
 
 const Header = () => {
   const navigation = useNavigation()
+  const { user } = useAuthContext()
   const { color, activeColor } = useAppContext()
-  const [activeScreen, setActiveScreen] = React.useState('Feasts')
+  const [activeScreen, setActiveScreen] = React.useState('Home')
 
   return (
-    <View style={tw`flex-row justify-around w-full p-2.5`}>
-      <TouchableOpacity
-        onPress={() => {
-          setActiveScreen('Home')
-          navigation.navigate('Home')
-        }}>
-        <Fontisto
-          name="tinder"
-          size={30}
-          color={activeScreen === 'Home' ? activeColor : color}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity
+    <View style={tw`flex-row items-center justify-between mx-2 -mt-3 p-5`}>
+      <Pressable
         onPress={() => {
           setActiveScreen('Feasts')
           navigation.navigate('Feasts')
@@ -38,31 +29,39 @@ const Header = () => {
         <MaterialCommunityIcons
           name="star-four-points"
           size={30}
-          color={activeScreen === 'Feasts' ? activeColor : color}
+          // color={activeScreen === 'Feasts' ? activeColor : color}
+          color={activeColor}
         />
-      </TouchableOpacity>
-      <TouchableOpacity
+      </Pressable>
+      <Pressable
         onPress={() => {
-          setActiveScreen('Winner')
-          navigation.navigate('Winner')
-        }}>
-        <Ionicons
-          name="ios-chatbubbles"
-          size={30}
-          color={activeScreen === 'Winner' ? activeColor : color}
+          setActiveScreen('Home')
+          navigation.navigate('Home')
+        }}
+        style={tw`rounded-full`}>
+        <Image
+          style={tw`w-16 h-16`}
+          source={require('../../assets/images/flamelogo.png')}
         />
-      </TouchableOpacity>
-      <TouchableOpacity
+      </Pressable>
+      <Pressable
         onPress={() => {
           setActiveScreen('Profile')
           navigation.navigate('Profile')
         }}>
-        <FontAwesome
-          name="user"
-          size={30}
-          color={activeScreen === 'Profile' ? activeColor : color}
-        />
-      </TouchableOpacity>
+        {user?.image ? (
+          <Image
+            source={{ uri: user.image }}
+            style={tw`w-10 h-10 rounded-full`}
+          />
+        ) : (
+          <FontAwesome
+            name="user"
+            size={30}
+            color={activeScreen === 'Profile' ? activeColor : color}
+          />
+        )}
+      </Pressable>
     </View>
   )
 }

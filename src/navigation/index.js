@@ -51,13 +51,13 @@ const Navigation = () => {
           </>
         ) : (
           <>
+            <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Feasts" component={FeastScreen} />
             <Stack.Group screenOptions={{ presentation: 'modal' }}>
               <Stack.Screen name="NewFeast" component={NewFeastScreen} />
               <Stack.Screen name="EditFeast" component={EditFeastScreen} />
+              <Stack.Screen name="Winner" component={WinnerScreen} />
             </Stack.Group>
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Winner" component={WinnerScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
           </>
         )}

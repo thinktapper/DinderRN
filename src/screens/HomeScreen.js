@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
   Alert,
+  Pressable,
 } from 'react-native'
 // import Animated from 'react-native-reanimated'
 import tw from 'twrnc'
@@ -211,17 +212,22 @@ const HomeScreen = ({ route, navigation }) => {
         (yassMutation.isLoading && <Text>Submitting Vote...</Text>)}
 
       {/* Bottom Buttons */}
-      <View style={tw`flex flex-row justify-evenly`}>
-        <TouchableOpacity
+      <View style={tw`flex flex-row justify-evenly mb-1`}>
+        <Pressable
           onPress={() => swipeRef.current.swipeLeft()}
           style={tw`items-center justify-center rounded-full w-16 h-16 bg-red-200`}>
           <Entypo name="cross" size={24} color="red" />
-        </TouchableOpacity>
-        <TouchableOpacity
+        </Pressable>
+        <Pressable
+          onPress={() => navigation.navigate('Winner')}
+          style={tw`items-center justify-center rounded-full w-16 h-16 bg-purple-200`}>
+          <Ionicons name="flash" size={30} color="#A65CD2" />
+        </Pressable>
+        <Pressable
           onPress={() => swipeRef.current.swipeRight()}
           style={tw`items-center justify-center rounded-full w-16 h-16 bg-green-200`}>
           <AntDesign name="heart" size={24} color="green" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </SafeAreaView>
   )
