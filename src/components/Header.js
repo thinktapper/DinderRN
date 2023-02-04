@@ -7,6 +7,7 @@ import {
   Ionicons,
   FontAwesome,
   Fontisto,
+  MaterialIcons,
   MaterialCommunityIcons,
 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
@@ -26,12 +27,13 @@ const Header = () => {
           setActiveScreen('Feasts')
           navigation.navigate('Feasts')
         }}>
-        <MaterialCommunityIcons
+        <MaterialIcons name="restaurant-menu" size={33} color={activeColor} />
+        {/* <MaterialCommunityIcons
           name="star-four-points"
           size={30}
-          // color={activeScreen === 'Feasts' ? activeColor : color}
           color={activeColor}
-        />
+          // color={activeScreen === 'Feasts' ? activeColor : color}
+        /> */}
       </Pressable>
       <Pressable
         onPress={() => {
