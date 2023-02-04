@@ -65,7 +65,7 @@ const submitFeast = async (selectedFeast, formData, user) => {
 }
 
 function EditFeastForm({ props }) {
-  const { onFeastEdited } = props
+  const { onFeastEdited, navigation } = props
   const selectedFeast = feastState.useValue()
   const { user } = useAuthContext()
   const [showAlert, setShowAlert] = useState(false)
@@ -116,7 +116,7 @@ function EditFeastForm({ props }) {
           rounded="full"
           variant="ghost"
           colorScheme="rose"
-          // onPress={() => }
+          onPress={() => navigation.goBack()}
         />
         {editFeast.isLoading ? (
           <LoadingIndicator />
