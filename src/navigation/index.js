@@ -51,8 +51,8 @@ const Navigation = () => {
           </>
         ) : (
           <>
-            <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Feasts" component={FeastScreen} />
+            <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Group screenOptions={{ presentation: 'modal' }}>
               <Stack.Screen name="NewFeast" component={NewFeastScreen} />
               <Stack.Screen name="EditFeast" component={EditFeastScreen} />

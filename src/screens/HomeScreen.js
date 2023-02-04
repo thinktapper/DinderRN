@@ -36,19 +36,40 @@ import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
 // import { produce } from 'immer'
 
+const getFeastPulse = async (feastId, user) => {
+  const response = await axios(
+    `http://localhost:3000/api/feast/pulse/${feastId.id}`,
+    {
+      method: 'GET',
+      // prettier-ignore
+      headers: { 'authorization': `Bearer ${user?.token}` },
+    },
+  )
+
+  console.warn(
+    'getFeastPulse result: STATUS =>',
+    JSON.stringify(response.status),
+    'DATA =>',
+    JSON.stringify(response.data),
+  )
+
+  return response.data.filteredPlaces
+}
+
 const HomeScreen = ({ route, navigation }) => {
   const swipeRef = useRef(null)
   const { user } = useAuthContext()
   const feastId = route.params?.feast
-  const feast = feastState.useValue()
+  const currentFeast = feastState.useValue()
   // const feastId = feast.id
   const places = useFeast()
+  // const [places, setPlaces] = useState([])
+  const [filteredPlaces, setFilteredPlaces] = useState([])
   const queryClient = useQueryClient()
   // const mutate = useVote()
   const globalPadding = rs(12)
   const wrapperPadding = rs(12)
   // const [currentIndex, setCurrentIndex] = useState(0)
-  // const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
   // mutation to submit nah vote on left swipe
   const nahMutation = useMutation(
@@ -72,8 +93,8 @@ const HomeScreen = ({ route, navigation }) => {
   )
 
   // mutation to submit yass vote on right swipe
-  const yassMutation = useMutation({
-    mutationFn: (placeSwiped) => {
+  const yassMutation = useMutation(
+    (placeSwiped) => {
       return axios({
         url: `http://localhost:3000/api/vote`,
         method: 'post',
@@ -85,27 +106,81 @@ const HomeScreen = ({ route, navigation }) => {
         },
       })
     },
-    onSuccess: (data, variables, context) => {
-      console.log('yass mutation success:', JSON.stringify(data))
+    {
+      onSuccess: (data, variables, context) => {
+        console.log('yass mutation success:', JSON.stringify(data))
+      },
     },
-  })
+  )
 
   const swipeLeft = (cardIndex) => {
-    if (!places[cardIndex]) return
+    // if (!places[cardIndex]) return
+    if (!filteredPlaces[cardIndex]) return
 
-    const placeSwiped = places[cardIndex]
+    const placeSwiped = filteredPlaces[cardIndex]
 
     nahMutation.mutate(placeSwiped)
     // console.warn('swiped NAH on: ', places[cardIndex].name)
   }
 
   const swipeRight = (cardIndex) => {
-    if (!places[cardIndex]) return
+    // if (!places[cardIndex]) return
+    if (!filteredPlaces[cardIndex]) return
 
-    const placeSwiped = places[cardIndex]
+    // const placeSwiped = places[cardIndex]
+    const placeSwiped = filteredPlaces[cardIndex]
+
     yassMutation.mutate(placeSwiped)
     // console.warn('swiped YASS on: ', places[cardIndex].name)
   }
+
+  const onSwipedAll = () => {
+    Alert.alert({
+      title: 'All done!',
+      message: "Let's check for a winner..",
+    })
+    navigation.navigate('Winner')
+  }
+
+  // useEffect(() => {
+  //   // let unsub
+  //   if (places.length > 0) {
+  //     // filter out places that have already been voted on
+  //     const filteredPlaces = places.filter((place) => {
+  //       return !place.votes.some((vote) => vote.userId === user.id)
+  //     })
+  //     console.log('filtered places: ', filteredPlaces)
+
+  //     if (filteredPlaces.length === 0) {
+  //       Alert.alert({
+  //         title: 'All done!',
+  //         message: "Let's check for a winner..",
+  //       })
+  //       navigation.navigate('Winner')
+  //     } else {
+  //       setNonvotedPlaces(filteredPlaces)
+  //     }
+
+  //     console.log('nonvoted places: ', nonvotedPlaces)
+  //   }
+  // }, [feastId, feast])
+
+  useEffect(() => {
+    async function fetchPlaces() {
+      const result = await getFeastPulse(feastId, user)
+      setFilteredPlaces(result)
+    }
+    fetchPlaces()
+  }, [feastId, currentFeast])
+
+  // useEffect(() => {
+  //   setFilteredPlaces(
+  //     places.filter((place) => {
+  //       return !place.votes.some((vote) => vote.userId === user.id)
+  //     }),
+  //   )
+  // }, [places, user])
+  // create a useEffect to filter out places that have already been voted on
 
   // if (isLoading) return <LoadingIndicator />
 
@@ -116,16 +191,16 @@ const HomeScreen = ({ route, navigation }) => {
       {/* Cards */}
       <View style={tw`flex-1 -mt-6`}>
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
-          {feast ? feast.name : 'No Feast Selected'}
+          {currentFeast ? currentFeast.name : 'No Feast Selected'}
         </Text>
-        {places.length > 0 ? (
+        {filteredPlaces.length > 0 ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={places}
-            stackSize={places.length}
+            cards={filteredPlaces}
+            stackSize={filteredPlaces.length}
             cardIndex={0}
-            key={places.id}
+            key={filteredPlaces.id}
             animateCardOpacity
             animateOverlayLabelsOpacity
             swipeBackCard
@@ -133,12 +208,13 @@ const HomeScreen = ({ route, navigation }) => {
             backgroundColor={'#4FD0E9'}
             onSwipedLeft={(cardIndex) => swipeLeft(cardIndex)}
             onSwipedRight={(cardIndex) => swipeRight(cardIndex)}
+            // onSwipedAll={() => onSwipedAll()}
             onSwipedAll={() => {
-              Alert.alert({
-                title: 'All done!',
-                message: "Let's check for a winner..",
-              })
-              navigation.navigate('Winner')
+              // Alert.alert({
+              //   title: 'All done!',
+              //   message: "Let's check for a winner..",
+              // })
+              navigation.navigate('Winner', { feast: feastId })
             }}
             // onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
             renderCard={(card) => {
@@ -152,14 +228,13 @@ const HomeScreen = ({ route, navigation }) => {
                 />
               )
             }}
-            // onTapCard={cardIndex => swipeLeft(cardIndex)}
             overlayLabels={{
               left: {
                 element: (
                   <Image
                     source={require('../../assets/images/nope.png')}
-                    width={40}
-                    height={40}
+                    width={10}
+                    height={5}
                   />
                 ),
                 title: 'NOPE',
@@ -168,29 +243,41 @@ const HomeScreen = ({ route, navigation }) => {
                     textAlign: 'right',
                     color: 'red',
                   },
+                  wrapper: {
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    justifyContent: 'flex-start',
+                    marginTop: 3,
+                    marginLeft: -3,
+                  },
                 },
               },
               right: {
                 element: (
                   <Image
                     source={require('../../assets/images/yass.png')}
-                    width={40}
-                    height={40}
+                    width={15}
+                    height={10}
                   />
                 ),
                 title: 'LIKE',
                 style: {
                   label: {
+                    // textAlign: 'left',
                     color: '#4DED30',
+                  },
+                  wrapper: {
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    justifyContent: 'flex-start',
+                    marginTop: 3,
+                    marginLeft: 3,
                   },
                 },
               },
             }}
           />
         ) : (
-          // <View>
-          //   <Text>Loading...</Text>
-          // </View>
           <View
             style={[
               tw`relative bg-white h-3/4 rounded-xl justify-center items-center`,
@@ -219,7 +306,7 @@ const HomeScreen = ({ route, navigation }) => {
           <Entypo name="cross" size={24} color="red" />
         </Pressable>
         <Pressable
-          onPress={() => navigation.navigate('Winner')}
+          onPress={() => navigation.navigate('Winner', { feast: feastId })}
           style={tw`items-center justify-center rounded-full w-16 h-16 bg-purple-200`}>
           <Ionicons name="flash" size={30} color="#A65CD2" />
         </Pressable>

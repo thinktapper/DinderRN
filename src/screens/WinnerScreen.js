@@ -9,9 +9,9 @@ import { useAuthContext } from '../context/AuthProvider'
 import axios from 'axios'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 
-const getFeastPulse = async (currentFeast, user) => {
+const getFeastPulse = async (feastId, user) => {
   const response = await axios(
-    `http://localhost:3000/api/feast/pulse/${currentFeast.id}`,
+    `http://localhost:3000/api/feast/pulse/${feastId.id}`,
     {
       method: 'GET',
       // prettier-ignore
@@ -19,12 +19,12 @@ const getFeastPulse = async (currentFeast, user) => {
     },
   )
 
-  // console.warn(
-  //   'getFeastPulse result: STATUS =>',
-  //   JSON.stringify(response.status),
-  //   'DATA =>',
-  //   JSON.stringify(response.data),
-  // )
+  console.warn(
+    'getFeastPulse result: STATUS =>',
+    JSON.stringify(response.status),
+    'DATA =>',
+    JSON.stringify(response.data),
+  )
 
   return response.data
 }
@@ -43,15 +43,20 @@ const WinnerScreen = ({ navigation, route }) => {
     error,
     data: winner,
   } = useQuery(
-    [queryKeys.winner, currentFeast.name],
+    [queryKeys.winner, feastId.id],
     async () => {
-      const response = await getFeastPulse(currentFeast, user)
+      const response = await getFeastPulse(feastId, user)
       if (!response.success) {
         console.error(`Network response was not ok -> ${response}`)
       }
-      return response.winningPlace
+      if (response.winnerPlace) {
+        return response.winnerPlace
+      } else {
+        return null
+      }
     },
-    { enabled: !!currentFeast },
+    { enabled: !!feastId },
+    // { enabled: !!currentFeast },
   )
 
   return (

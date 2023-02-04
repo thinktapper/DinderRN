@@ -57,7 +57,7 @@ const submitFeast = async (formData, user) => {
       'authorization': `Bearer ${user?.token}`,
     },
   })
-  // console.warn('submitFeast:', JSON.stringify(response))
+  console.warn('submitFeast:', JSON.stringify(response))
   return response.data
 }
 
@@ -75,7 +75,7 @@ function CreateFeastForm({ props }) {
     endDate: new Date(),
     location: { lat: 0, long: 0 },
     radius: 1,
-    guests: guestArr,
+    guests: [],
   })
 
   const handleChange = (name, value) => {
@@ -107,35 +107,35 @@ function CreateFeastForm({ props }) {
 
   const handleCreateFeast = () => {
     // handleChange('guests', guestArr)
-    let guestsArrData = []
+    // let guestsArrData = []
     try {
-      if (guestArr.length > 0) {
-        guestArr.forEach((val) => guestsArrData.push(val))
-      }
+      // if (guestArr.length > 0) {
+      //   guestArr.forEach((val) => guestsArrData.push(val))
+      // }
       // setGuestArr(...guestsArrData)
-      // setFormData({ ...formData, guests: guestsArr })
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [guests]: guestsArrData,
-      }))
+      setFormData({ ...formData, guests: guestArr })
+      // setFormData((prevFormData) => ({
+      //   ...prevFormData,
+      //   [guests]: guestsArrData,
+      // }))
       console.log(
         guestArr.length,
         formData.guests.length,
-        guestsArrData.length,
+        // guestsArrData.length,
         JSON.stringify(formData.guests),
         {
           ...formData.guests,
         },
       )
-      if (formData.guests.length) {
-        createFeast.mutate({ formData, user })
-      } else {
-        console.debug(
-          `Did not send mutation bc formData.guests.length fail, see: ${JSON.stringify(
-            formData.guests,
-          )}}`,
-        )
-      }
+      // if (formData.guests.length) {
+      createFeast.mutate({ formData, user })
+      // } else {
+      //   console.debug(
+      //     `Did not send mutation bc formData.guests.length fail, see: ${JSON.stringify(
+      //       formData.guests,
+      //     )}}`,
+      //   )
+      // }
     } catch (err) {
       console.debug(`ERROR setting guests array in formData: ${err}`)
     }

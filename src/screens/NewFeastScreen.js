@@ -296,7 +296,8 @@ const FeastScreen = ({ navigation }) => {
 
     queryClient.invalidateQueries('feasts')
     console.debug('Feast info saved successfully')
-    navigation.goBack()
+    // navigation.goBack()
+    navigation.navigate('Feasts')
     // }
   }
 

@@ -69,7 +69,6 @@ const FeastScreen = ({ navigation }) => {
   const [isEditing, setIsEditing] = useState(false)
   const queryClient = useQueryClient()
   const { user } = useAuthContext()
-  // const feastsArr = useFeasts()
   const feasts = useFeasts()
 
   const deleteItem = useMutation(
@@ -109,10 +108,20 @@ const FeastScreen = ({ navigation }) => {
 
   // if (!data) return <LoadingIndicator />
 
+  const handlePlaceSelect = (item) => {
+    // setCurrentFeast(item)
+    setSelectedFeast(item)
+
+    if (item.closed) {
+      navigation.push('Winner', { feast: item })
+    } else {
+      navigation.push('Home', { feast: item })
+    }
+  }
+
   const getHeader = () => {
     return (
       <>
-        {/* <Header /> */}
         <Text style={styles.title}>Your Feasts</Text>
         <Box>
           <Pressable
@@ -136,6 +145,16 @@ const FeastScreen = ({ navigation }) => {
       </Box>
     )
   }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    setCurrentFeast(selectedFeast)
+    if (selectedFeast.closed) {
+      navigation.push('Winner', { feast: selectedFeast })
+    } else {
+      navigation.navigate('Home', { feast: selectedFeast })
+    }
+  }, [selectedFeast])
 
   return (
     <SafeAreaView style={styles.root}>
@@ -161,10 +180,7 @@ const FeastScreen = ({ navigation }) => {
                   py="2">
                   <Pressable
                     onPress={() => {
-                      setCurrentFeast(item)
                       setSelectedFeast(item)
-                      // setIsEditing(true)
-                      navigation.push('Home', { feast: item })
                     }}>
                     <HStack space={[2, 3]} justifyContent="space-between">
                       {item.image && (
