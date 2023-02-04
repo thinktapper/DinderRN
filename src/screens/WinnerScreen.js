@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, Pressable, Image, SafeAreaView } from 'react-native'
-import { Center } from 'native-base'
+import { Center, IconButton, CloseIcon, Box } from 'native-base'
 import tw from 'twrnc'
 import { useQuery } from '@tanstack/react-query'
 import { queryKeys } from '../lib/constants'
@@ -8,7 +8,6 @@ import { feastState } from '../context/FeastState'
 import { useAuthContext } from '../context/AuthProvider'
 import axios from 'axios'
 import { LoadingIndicator } from '../components/LoadingIndicator'
-import Header from '../components/Header'
 
 const getFeastPulse = async (currentFeast, user) => {
   const response = await axios(
@@ -57,32 +56,43 @@ const WinnerScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={[tw`h-full bg-red-500 pt-20`, { opacity: 0.89 }]}>
-      <Header />
       {winner ? (
         <>
-          <View style={tw`justify-center px-10 pt-20`}>
-            <Image
-              style={tw`h-20 w-full`}
-              source={{ uri: 'https://links.papareact.com/mg9' }}
+          <Box safeArea flex={1} w="100%">
+            <IconButton
+              icon={<CloseIcon size="sm" color="white" />}
+              position="absolute"
+              top={3}
+              right={3}
+              rounded="full"
+              variant="ghost"
+              colorScheme="white"
+              onPress={() => navigation.goBack()}
             />
-          </View>
+            <View style={tw`justify-center px-10 pt-20`}>
+              <Image
+                style={tw`h-20 w-full`}
+                source={{ uri: 'https://links.papareact.com/mg9' }}
+              />
+            </View>
 
-          <Text style={tw`text-white text-center text-xl m-5`}>
-            {winner
-              ? `${winner.name} wins best place to eat for the ${currentFeast.name} feast!`
-              : `The winning place will be determined after ${currentFeast.name}'s voting closes.`}
-          </Text>
+            <Text style={tw`text-white text-center text-xl m-5`}>
+              {winner
+                ? `${winner.name} wins best place to eat for the ${currentFeast.name} feast!`
+                : `The winning place will be determined after ${currentFeast.name}'s voting closes.`}
+            </Text>
 
-          <Center>
-            <Image
-              style={tw`h-50 w-50 rounded-full`}
-              source={{
-                uri: winner.photos
-                  ? winner.photos[0]
-                  : 'https://loremflickr.com/640/480/food',
-              }}
-            />
-          </Center>
+            <Center>
+              <Image
+                style={tw`h-50 w-50 rounded-full`}
+                source={{
+                  uri: winner.photos
+                    ? winner.photos[0]
+                    : 'https://loremflickr.com/640/480/food',
+                }}
+              />
+            </Center>
+          </Box>
         </>
       ) : isError ? (
         <Text>Error: {error.message}</Text>
