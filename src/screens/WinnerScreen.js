@@ -19,12 +19,12 @@ const getFeastPulse = async (feastId, user) => {
     },
   )
 
-  console.warn(
-    'getFeastPulse result: STATUS =>',
-    JSON.stringify(response.status),
-    'DATA =>',
-    JSON.stringify(response.data),
-  )
+  // console.warn(
+  //   'getFeastPulse result: STATUS =>',
+  //   JSON.stringify(response.status),
+  //   'DATA =>',
+  //   JSON.stringify(response.data),
+  // )
 
   return response.data
 }
@@ -49,8 +49,8 @@ const WinnerScreen = ({ navigation, route }) => {
       if (!response.success) {
         console.error(`Network response was not ok -> ${response}`)
       }
-      if (response.winnerPlace) {
-        return response.winnerPlace
+      if (response.winningPlace) {
+        return response.winningPlace
       } else {
         return null
       }
@@ -61,8 +61,8 @@ const WinnerScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={[tw`h-full bg-red-500 pt-20`, { opacity: 0.89 }]}>
-      {winner ? (
-        <>
+      <>
+        {winner ? (
           <Box safeArea flex={1} w="100%">
             <IconButton
               icon={<CloseIcon size="sm" color="white" />}
@@ -97,29 +97,21 @@ const WinnerScreen = ({ navigation, route }) => {
                 }}
               />
             </Center>
+            <Pressable
+              style={tw`bg-white m-10 py-6 rounded-full`}
+              onPress={() => navigation.navigate('Feasts')}>
+              <Text style={tw`text-center text-lg`}>Your Feasts</Text>
+            </Pressable>
           </Box>
-        </>
-      ) : isError ? (
-        <Text>Error: {error.message}</Text>
-      ) : isInitialLoading ? (
-        <LoadingIndicator />
-      ) : (
-        <Text>Not ready...</Text>
-      )}
-      <View>{isFetching ? <Text>Refreshing...</Text> : null}</View>
-
-      {/* // probably don't need a check button? just go back to feasts ? */}
-
-      {/* <Pressable
-        style={tw`bg-white m-5 px-10 py-8 rounded-full mt-20`}
-        onPress={() => refetch()}>
-        <Text style={tw`text-center`}>Check Feast Pulse</Text>
-      </Pressable> */}
-      <Pressable
-        style={tw`bg-white m-5 px-10 py-8 rounded-full mt-20`}
-        onPress={() => navigation.navigate('Feasts')}>
-        <Text style={tw`text-center`}>Your Feasts</Text>
-      </Pressable>
+        ) : isError ? (
+          <Text>Error: {error.message}</Text>
+        ) : isInitialLoading ? (
+          <LoadingIndicator />
+        ) : (
+          <Text>Not ready...</Text>
+        )}
+        <View>{isFetching ? <Text>Refreshing...</Text> : null}</View>
+      </>
     </SafeAreaView>
   )
 }

@@ -214,6 +214,7 @@ const HomeScreen = ({ route, navigation }) => {
               //   title: 'All done!',
               //   message: "Let's check for a winner..",
               // })
+              queryClient.invalidateQueries('feasts')
               navigation.navigate('Winner', { feast: feastId })
             }}
             // onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
