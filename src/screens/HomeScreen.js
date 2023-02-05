@@ -46,12 +46,12 @@ const getFeastPulse = async (feastId, user) => {
     },
   )
 
-  console.warn(
-    'getFeastPulse result: STATUS =>',
-    JSON.stringify(response.status),
-    'DATA =>',
-    JSON.stringify(response.data),
-  )
+  // console.warn(
+  //   'getFeastPulse result: STATUS =>',
+  //   JSON.stringify(response.status),
+  //   'DATA =>',
+  //   JSON.stringify(response.data),
+  // )
 
   return response.data.filteredPlaces
 }
@@ -165,13 +165,13 @@ const HomeScreen = ({ route, navigation }) => {
   //   }
   // }, [feastId, feast])
 
-  useEffect(() => {
-    async function fetchPlaces() {
-      const result = await getFeastPulse(feastId, user)
-      setFilteredPlaces(result)
-    }
-    fetchPlaces()
-  }, [feastId, currentFeast])
+  // useEffect(() => {
+  //   async function fetchPlaces() {
+  //     const result = await getFeastPulse(feastId, user)
+  //     setFilteredPlaces(result)
+  //   }
+  //   fetchPlaces()
+  // }, [feastId])
 
   // useEffect(() => {
   //   setFilteredPlaces(

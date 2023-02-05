@@ -82,22 +82,63 @@ function CreateFeastForm({ props }) {
     setFormData({ ...formData, [name]: value })
   }
 
+  const getPhotoUri = async (photoRef) => {
+    let imageUrl
+    // const response = await axios.get(
+    //   `https://maps.googleapis.com/maps/api/place/photo`,
+    //   {
+    //     responseType: 'blob',
+    //     params: {
+    //       key: GOOGLE_API,
+    //       photoreference: photoRef,
+    //       maxwidth: 400,
+    //     },
+    //   },
+    // )
+    // const imageUrl = URL.createObjectURL(response.data.request._url)
+    const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
+
+    const imgageUrlQuery = await fetch(imageLookupUrl)
+      .then((res) => res.blob())
+      .catch((err) => console.error(err))
+      .finally(() => {
+        imageUrl = imgageUrlQuery
+      })
+    imageUrl = URL.createObjectURL(imgageUrlQuery)
+    handleChange('image', JSON.stringify(imageUrl))
+
+    console.debug(
+      'getPhotoUri:',
+      imgageUrlQuery,
+      // JSON.stringify(response),
+      'imageUrl obj:',
+      JSON.stringify(imageUrl),
+    )
+
+    return imageUrl
+    // return response.data.request._url
+  }
+
   async function handlePlaceSelect(data, details) {
-    // console.debug('data:', data, 'details:', details)
+    console.debug('details:', JSON.stringify(details))
     const photoRef = details.photos?.[0]?.photo_reference
-    let imageUrl = ''
-    if (photoRef) {
-      const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
-      const imgageUrlQuery = await fetch(imageLookupUrl)
-        .then((res) => res.blob())
-        .catch((err) => console.error(err))
-        .finally(() => {
-          imageUrl = imgageUrlQuery
-          handleChange('image', imageUrl)
-        })
-      // const imageUrl = URL.createObjectURL(imgageUrlQuery)
-      // handleChange('image', imageUrl)
-    }
+    const photoUri = await getPhotoUri(photoRef)
+
+    console.debug('photoUri:', JSON.stringify(photoUri))
+    // handleChange('image', photoUri)
+    // let imageUrl = ''
+    // if (photoRef) {
+    //   const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
+    //   const imgageUrlQuery = await fetch(imageLookupUrl)
+    //     .then((res) => res.blob())
+    //     .catch((err) => console.error(err))
+    //     .finally(() => {
+    //       imageUrl = imgageUrlQuery
+    //       handleChange('image', imageUrl)
+    //     })
+    // const imageUrl = URL.createObjectURL(imgageUrlQuery)
+    // handleChange('image', imageUrl)
+    // }
 
     handleChange('location', {
       lat: details.geometry.location.lat,
@@ -120,12 +161,12 @@ function CreateFeastForm({ props }) {
       // }))
       console.log(
         guestArr.length,
-        formData.guests.length,
+        // formData.guests.length,
         // guestsArrData.length,
-        JSON.stringify(formData.guests),
-        {
-          ...formData.guests,
-        },
+        JSON.stringify(formData),
+        // {
+        //   ...formData.guests,
+        // },
       )
       // if (formData.guests.length) {
       createFeast.mutate({ formData, user })
@@ -149,9 +190,6 @@ function CreateFeastForm({ props }) {
       },
       onError: (error) => {
         console.log('error', error)
-      },
-      onSettled: () => {
-        navigation.goBack()
       },
     },
   )
