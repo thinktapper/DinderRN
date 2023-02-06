@@ -71,9 +71,9 @@ function EditFeastForm({ props }) {
   const [showAlert, setShowAlert] = useState(false)
   const [formData, setFormData] = useState({
     name: selectedFeast?.name,
-    image: selectedFeast?.image || 'https://loremflickr.com/640/480/food',
-    startDate: new Date(),
-    endDate: new Date(),
+    image: selectedFeast?.image || '',
+    startDate: new Date(selectedFeast?.startDate),
+    endDate: new Date(selectedFeast?.endDate),
     // location: selectedFeast.location,
     radius: selectedFeast?.radius,
   })
@@ -94,7 +94,7 @@ function EditFeastForm({ props }) {
         return onFeastEdited(response)
       },
       onError: (error) => {
-        console.log('error', error)
+        console.warn('error', error)
       },
       // onSettled: () => {
       // navigation.goBack()
@@ -128,6 +128,17 @@ function EditFeastForm({ props }) {
                   placeholder={selectedFeast?.name}
                   value={formData.name}
                   onChangeText={(text) => handleChange('name', text)}
+                  variant="rounded"
+                  size="xl"
+                  bgColor="white"
+                />
+              </Center>
+
+              <Center w="100%" h="20" rounded="lg" shadow={3}>
+                <Input
+                  placeholder={selectedFeast?.image}
+                  value={formData.image}
+                  onChangeText={(text) => handleChange('image', text)}
                   variant="rounded"
                   size="xl"
                   bgColor="white"

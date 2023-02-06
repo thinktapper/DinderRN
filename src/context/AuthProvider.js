@@ -192,6 +192,7 @@ export const AuthProvider = ({ children }) => {
     // logout()
 
     // const reset = async () => {
+    //   queryClient.clear()
     //   const message = await clearStoredUser()
     //   if (message.includes('Success')) {
     //     // === 'Success, User logged out') {

@@ -11,15 +11,15 @@ export const feastState = newRidgeState(
     selectedFeast: null,
     currentFeastWinner: null,
   },
-  {
-    onSet: async (newState) => {
-      try {
-        await AsyncStorage.setItem(appStorageKey, JSON.stringify(newState))
-      } catch (e) {
-        console.warn('Error saving state', e)
-      }
-    },
-  },
+  // {
+  //   onSet: async (newState) => {
+  //     try {
+  //       await AsyncStorage.setItem(appStorageKey, JSON.stringify(newState))
+  //     } catch (e) {
+  //       console.warn('Error saving state', e)
+  //     }
+  //   },
+  // },
 )
 
 // setInitialState fetches data from localStorage
@@ -36,4 +36,4 @@ async function setInitialState() {
 }
 
 // run function as application starts
-setInitialState()
+// setInitialState()

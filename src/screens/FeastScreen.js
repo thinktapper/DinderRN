@@ -41,6 +41,7 @@ import Feast from '../components/Feast'
 import { ListItem } from '../components/ListItem'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { useAuthContext } from '../context/AuthProvider'
+import { apiURL, queryKeys } from '../lib/constants'
 // import { useAppContext } from '../context/AppProvider'
 import axios from 'axios'
 import EditFeastModal from '../components/EditFeastModal'
@@ -48,17 +49,15 @@ import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
 import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { queryKeys } from '../lib/constants'
 
 const deleteFeast = async (feastId, token) => {
   // Add JWT to headers
   const headers = { authorization: `Bearer ${token}` }
 
-  // Make DELETE request to server to delete the poll
-  const { data } = await axios.delete(
-    `http:localhost:3000/api/feast/${feastId}`,
-    { headers },
-  )
+  // Make DELETE request to server to delete the feast
+  const { data } = await axios.delete(`${apiURL.local}/api/feast/${feastId}`, {
+    headers,
+  })
 
   return data
 }
@@ -76,22 +75,26 @@ const FeastScreen = ({ navigation }) => {
     {
       onSuccess: (data) => {
         console.warn('deleteFeast success:', data)
-        queryClient.invalidateQueries(queryKeys.feasts)
+        queryClient.invalidateQueries([queryKeys.feasts])
       },
       onError: (error) => {
-        console.log('deleteFeast error:', error)
+        console.warn('deleteFeast error:', error)
       },
     },
   )
 
-  // const onEditPress = (freshFeast) => {
-  //   // console.warn(`Edit pressed for ${feast}`)
-  //   const feastId = selectedFeast.id
-  //   // const updatedFeast = feast
-  //   const token = user.token
+  const onEditPress = (item) => {
+    console.warn(`Edit pressed for ${item.name}`)
 
-  //   updateFeast.mutate({ feastId, freshFeast, token })
-  // }
+    setSelectedFeast(item)
+    // setIsEditing(true)
+    navigation.push('EditFeast')
+    // const feastId = selectedFeast.id
+    // const updatedFeast = feast
+    // const token = user.token
+
+    // updateFeast.mutate({ feastId, freshFeast, token })
+  }
 
   const onDeletePress = (feast) => {
     // console.warn(`Delete pressed for ${feast.name}`)
@@ -109,13 +112,13 @@ const FeastScreen = ({ navigation }) => {
   // if (!data) return <LoadingIndicator />
 
   const handlePlaceSelect = (item) => {
-    // setCurrentFeast(item)
+    setCurrentFeast(item)
     setSelectedFeast(item)
 
     if (item.closed) {
       navigation.push('Winner', { feast: item })
     } else {
-      navigation.push('Home', { feast: item })
+      navigation.navigate('Home', { feast: item })
     }
   }
 
@@ -147,14 +150,14 @@ const FeastScreen = ({ navigation }) => {
   }
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    setCurrentFeast(selectedFeast)
-    if (selectedFeast.closed) {
-      navigation.push('Winner', { feast: selectedFeast })
-    } else {
-      navigation.navigate('Home', { feast: selectedFeast })
-    }
-  }, [selectedFeast])
+  // useEffect(() => {
+  //   setCurrentFeast(selectedFeast)
+  //   if (selectedFeast.closed) {
+  //     navigation.push('Winner', { feast: selectedFeast })
+  //   } else {
+  //     navigation.navigate('Home', { feast: selectedFeast })
+  //   }
+  // }, [selectedFeast])
 
   return (
     <SafeAreaView style={styles.root}>
@@ -178,15 +181,16 @@ const FeastScreen = ({ navigation }) => {
                   pl={['0', '4']}
                   pr={['0', '5']}
                   py="2">
-                  <Pressable
-                    onPress={() => {
-                      setSelectedFeast(item)
-                    }}>
+                  <Pressable onPress={() => handlePlaceSelect(item)}>
                     <HStack space={[2, 3]} justifyContent="space-between">
                       {item.image && (
                         <Avatar
                           size="md"
-                          source={{ uri: item.image }}
+                          source={{
+                            uri: item.image
+                              ? item.image
+                              : 'https://loremflickr.com/640/480/city',
+                          }}
                           alignSelf="center"
                         />
                       )}
@@ -199,13 +203,11 @@ const FeastScreen = ({ navigation }) => {
                           bold>
                           {item.name}
                         </Text>
-                        <Text
-                          color="coolGray.600"
-                          _dark={{
-                            color: 'warmGray.200',
-                          }}>
-                          {item.closed ? 'Closed' : 'Open'}
-                        </Text>
+                        {item.closed ? (
+                          <Text color="rose.400">Closed</Text>
+                        ) : (
+                          <Text color="green.600">Open</Text>
+                        )}
                       </VStack>
                       {/* <Spacer /> */}
                       <Text
@@ -218,12 +220,7 @@ const FeastScreen = ({ navigation }) => {
                         {item.places?.length}
                       </Text>
                       {/* <HStack> */}
-                      <Pressable
-                        onPress={() => {
-                          setSelectedFeast(item)
-                          setIsEditing(true)
-                          navigation.push('EditFeast')
-                        }}>
+                      <Pressable onPress={() => onEditPress(item)}>
                         <FontAwesome name="edit" size={24} color="black" />
                       </Pressable>
                       <Pressable onPress={() => onDeletePress(item)}>

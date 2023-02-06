@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { queryKeys } from '../lib/constants'
+import { queryKeys, apiURL } from '../lib/constants'
 import axios from 'axios'
 import { useAuthContext } from '../context/AuthProvider'
 
 const fetchFeasts = async (user) => {
   const { data } = await axios({
-    url: 'http://localhost:3000/api/user/feasts',
+    url: `${apiURL.local}/api/user/feasts`,
     method: 'get',
     headers: { authorization: `Bearer ${user?.token}` },
   })
@@ -25,8 +25,6 @@ export function useFeasts() {
       // cacheTime: Infinity,
     },
   )
-  // let feastsArr = []
-  // feastsArr.concat(feasts.organizedFeasts, feasts.joinedFeasts)
 
   return feasts
 }

@@ -42,6 +42,7 @@ import {
 } from '@tanstack/react-query'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
+import { apiURL } from '../lib/constants'
 import { PickerIOS, Picker } from '@react-native-picker/picker'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useAuthContext } from '../context/AuthProvider'
@@ -49,7 +50,7 @@ import axios from 'axios'
 import useUsers from '../hooks/useUsers'
 
 const submitFeast = async (formData, user) => {
-  const response = await axios('http:localhost:3000/api/feast', {
+  const response = await axios(`${apiURL.local}/api/feast`, {
     method: 'POST',
     data: { ...formData },
     headers: {
@@ -105,7 +106,7 @@ function CreateFeastForm({ props }) {
         imageUrl = imgageUrlQuery
       })
     imageUrl = URL.createObjectURL(imgageUrlQuery)
-    handleChange('image', JSON.stringify(imageUrl))
+    // handleChange('image', JSON.stringify(imageUrl))
 
     console.debug(
       'getPhotoUri:',
@@ -115,7 +116,7 @@ function CreateFeastForm({ props }) {
       JSON.stringify(imageUrl),
     )
 
-    return imageUrl
+    return JSON.stringify(imageUrl)
     // return response.data.request._url
   }
 
@@ -125,7 +126,7 @@ function CreateFeastForm({ props }) {
     const photoUri = await getPhotoUri(photoRef)
 
     console.debug('photoUri:', JSON.stringify(photoUri))
-    // handleChange('image', photoUri)
+    handleChange('image', photoUri)
     // let imageUrl = ''
     // if (photoRef) {
     //   const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`

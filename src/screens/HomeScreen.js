@@ -114,21 +114,22 @@ const HomeScreen = ({ route, navigation }) => {
   )
 
   const swipeLeft = (cardIndex) => {
-    // if (!places[cardIndex]) return
-    if (!filteredPlaces[cardIndex]) return
+    if (!places[cardIndex]) return
+    // if (!filteredPlaces[cardIndex]) return
 
-    const placeSwiped = filteredPlaces[cardIndex]
+    const placeSwiped = places[cardIndex]
+    // const placeSwiped = filteredPlaces[cardIndex]
 
     nahMutation.mutate(placeSwiped)
     // console.warn('swiped NAH on: ', places[cardIndex].name)
   }
 
   const swipeRight = (cardIndex) => {
-    // if (!places[cardIndex]) return
-    if (!filteredPlaces[cardIndex]) return
+    if (!places[cardIndex]) return
+    // if (!filteredPlaces[cardIndex]) return
 
-    // const placeSwiped = places[cardIndex]
-    const placeSwiped = filteredPlaces[cardIndex]
+    const placeSwiped = places[cardIndex]
+    // const placeSwiped = filteredPlaces[cardIndex]
 
     yassMutation.mutate(placeSwiped)
     // console.warn('swiped YASS on: ', places[cardIndex].name)
@@ -139,7 +140,7 @@ const HomeScreen = ({ route, navigation }) => {
       title: 'All done!',
       message: "Let's check for a winner..",
     })
-    navigation.navigate('Winner')
+    navigation.push('Winner')
   }
 
   // useEffect(() => {
@@ -193,14 +194,14 @@ const HomeScreen = ({ route, navigation }) => {
         <Text style={tw`text-2xl text-center mt-4 font-bold`}>
           {currentFeast ? currentFeast.name : 'No Feast Selected'}
         </Text>
-        {filteredPlaces.length > 0 ? (
+        {places.length > 0 ? (
           <Swiper
             ref={swipeRef}
             containerStyle={{ backgroundColor: 'transparent' }}
-            cards={filteredPlaces}
-            stackSize={filteredPlaces.length}
+            cards={places}
+            stackSize={places.length}
             cardIndex={0}
-            key={filteredPlaces.id}
+            key={places.id}
             animateCardOpacity
             animateOverlayLabelsOpacity
             swipeBackCard
@@ -214,8 +215,8 @@ const HomeScreen = ({ route, navigation }) => {
               //   title: 'All done!',
               //   message: "Let's check for a winner..",
               // })
-              queryClient.invalidateQueries('feasts')
-              navigation.navigate('Winner', { feast: feastId })
+              queryClient.invalidateQueries([queryKeys.feasts])
+              navigation.push('Winner', { feast: feastId })
             }}
             // onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
             renderCard={(card) => {
@@ -307,7 +308,7 @@ const HomeScreen = ({ route, navigation }) => {
           <Entypo name="cross" size={24} color="red" />
         </Pressable>
         <Pressable
-          onPress={() => navigation.navigate('Winner', { feast: feastId })}
+          onPress={() => navigation.push('Winner', { feast: feastId })}
           style={tw`items-center justify-center rounded-full w-16 h-16 bg-purple-200`}>
           <Ionicons name="flash" size={30} color="#A65CD2" />
         </Pressable>

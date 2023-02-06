@@ -54,6 +54,7 @@ import EditFeastForm from '../components/EditFeastForm'
 
 const EditFeastScreen = ({ navigation }) => {
   const queryClient = useQueryClient()
+  const [selectedFeast, setSelectedFeast] = feastState.use()
   // const createFeast = useCreateFeast()
   // const queryClient = useQueryClient()
   // const { user } = useAuthContext()
@@ -289,7 +290,9 @@ const EditFeastScreen = ({ navigation }) => {
       console.log('success, you edited a feast: ', response.data)
 
       queryClient.invalidateQueries('feasts')
-      Alert.alert('Feast info saved successfully')
+      setSelectedFeast(null)
+      console.warn('Feast info saved successfully')
+      // Alert.alert('Feast info saved successfully')
     }
     navigation.goBack()
   }
