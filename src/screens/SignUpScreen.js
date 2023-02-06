@@ -1,5 +1,12 @@
 import React from 'react'
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  SafeAreaView,
+} from 'react-native'
 import {
   VStack,
   Input,
@@ -67,138 +74,142 @@ const SignUpScreen = ({ navigation }) => {
   }
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.root}>
-        <Text style={styles.title}>Create an account</Text>
+    <SafeAreaView>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.root}>
+          <Text style={styles.title}>Create an account</Text>
 
-        <Formik
-          initialValues={{
-            username: '',
-            email: '',
-            image: '',
-            password: '',
-            confirmPassword: '',
-          }}
-          onSubmit={onRegisterPressed}
-          validationSchema={signupSchema}>
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            touched,
-            errors,
-          }) => (
-            <VStack width="80%" space={4}>
-              <FormControl isInvalid={'username' in errors && touched.username}>
-                <FormControl.Label>Username</FormControl.Label>
-                <Input
-                  autoCapitalize="none"
-                  onBlur={handleBlur('username')}
-                  placeholder="Username"
-                  onChangeText={handleChange('username')}
-                  value={values.username}
-                  error={errors.username}
-                  touched={touched.username}
+          <Formik
+            initialValues={{
+              username: '',
+              email: '',
+              image: '',
+              password: '',
+              confirmPassword: '',
+            }}
+            onSubmit={onRegisterPressed}
+            validationSchema={signupSchema}>
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              touched,
+              errors,
+            }) => (
+              <VStack width="80%" space={4}>
+                <FormControl
+                  isInvalid={'username' in errors && touched.username}>
+                  <FormControl.Label>Username</FormControl.Label>
+                  <Input
+                    autoCapitalize="none"
+                    onBlur={handleBlur('username')}
+                    placeholder="Username"
+                    onChangeText={handleChange('username')}
+                    value={values.username}
+                    error={errors.username}
+                    touched={touched.username}
+                  />
+                  <FormControl.ErrorMessage>
+                    {errors.username}
+                  </FormControl.ErrorMessage>
+                </FormControl>
+
+                <FormControl isInvalid={'email' in errors && touched.email}>
+                  <FormControl.Label>Email</FormControl.Label>
+                  <Input
+                    autoCapitalize="none"
+                    onBlur={handleBlur('email')}
+                    placeholder="tim@apple.com"
+                    onChangeText={handleChange('email')}
+                    value={values.email}
+                    error={errors.email}
+                    touched={touched.email}
+                  />
+                  <FormControl.ErrorMessage>
+                    {errors.email}
+                  </FormControl.ErrorMessage>
+                </FormControl>
+
+                <FormControl isInvalid={'image' in errors && touched.image}>
+                  <FormControl.Label>Profile Pic</FormControl.Label>
+                  <Input
+                    autoCapitalize="none"
+                    onBlur={handleBlur('image')}
+                    placeholder="Direct link, e.g. https://i.imgur.com/8BDXWCv.jpg"
+                    onChangeText={handleChange('image')}
+                    value={values.image}
+                    error={errors.image}
+                    touched={touched.image}
+                  />
+                  <FormControl.ErrorMessage>
+                    {errors.image}
+                  </FormControl.ErrorMessage>
+                </FormControl>
+
+                <FormControl
+                  isInvalid={'password' in errors && touched.password}>
+                  <FormControl.Label>Password</FormControl.Label>
+                  <Input
+                    autoCapitalize="none"
+                    secureTextEntry
+                    type="password"
+                    onBlur={handleBlur('password')}
+                    placeholder="Enter password"
+                    onChangeText={handleChange('password')}
+                    value={values.password}
+                    error={errors.password}
+                    touched={touched.password}
+                  />
+                  <FormControl.ErrorMessage>
+                    {errors.password}
+                  </FormControl.ErrorMessage>
+                </FormControl>
+
+                <FormControl
+                  isInvalid={
+                    'confirmPassword' in errors && touched.confirmPassword
+                  }>
+                  <FormControl.Label>Confirm Password</FormControl.Label>
+                  <Input
+                    autoCapitalize="none"
+                    secureTextEntry
+                    type="password"
+                    onBlur={handleBlur('confirmPassword')}
+                    placeholder="Confirm password"
+                    onChangeText={handleChange('confirmPassword')}
+                    value={values.confirmPassword}
+                    error={errors.confirmPassword}
+                    touched={touched.confirmPassword}
+                  />
+                  <FormControl.ErrorMessage>
+                    {errors.confirmPassword}
+                  </FormControl.ErrorMessage>
+                </FormControl>
+
+                <CustomButton
+                  text={loading ? 'Loading...' : 'Sign Up'}
+                  onPress={handleSubmit}
                 />
-                <FormControl.ErrorMessage>
-                  {errors.username}
-                </FormControl.ErrorMessage>
-              </FormControl>
+              </VStack>
+            )}
+          </Formik>
 
-              <FormControl isInvalid={'email' in errors && touched.email}>
-                <FormControl.Label>Email</FormControl.Label>
-                <Input
-                  autoCapitalize="none"
-                  onBlur={handleBlur('email')}
-                  placeholder="tim@apple.com"
-                  onChangeText={handleChange('email')}
-                  value={values.email}
-                  error={errors.email}
-                  touched={touched.email}
-                />
-                <FormControl.ErrorMessage>
-                  {errors.email}
-                </FormControl.ErrorMessage>
-              </FormControl>
-
-              <FormControl isInvalid={'image' in errors && touched.image}>
-                <FormControl.Label>Profile Pic</FormControl.Label>
-                <Input
-                  autoCapitalize="none"
-                  onBlur={handleBlur('image')}
-                  placeholder="Direct link, e.g. https://i.imgur.com/8BDXWCv.jpg"
-                  onChangeText={handleChange('image')}
-                  value={values.image}
-                  error={errors.image}
-                  touched={touched.image}
-                />
-                <FormControl.ErrorMessage>
-                  {errors.image}
-                </FormControl.ErrorMessage>
-              </FormControl>
-
-              <FormControl isInvalid={'password' in errors && touched.password}>
-                <FormControl.Label>Password</FormControl.Label>
-                <Input
-                  autoCapitalize="none"
-                  secureTextEntry
-                  type="password"
-                  onBlur={handleBlur('password')}
-                  placeholder="Enter password"
-                  onChangeText={handleChange('password')}
-                  value={values.password}
-                  error={errors.password}
-                  touched={touched.password}
-                />
-                <FormControl.ErrorMessage>
-                  {errors.password}
-                </FormControl.ErrorMessage>
-              </FormControl>
-
-              <FormControl
-                isInvalid={
-                  'confirmPassword' in errors && touched.confirmPassword
-                }>
-                <FormControl.Label>Confirm Password</FormControl.Label>
-                <Input
-                  autoCapitalize="none"
-                  secureTextEntry
-                  type="password"
-                  onBlur={handleBlur('confirmPassword')}
-                  placeholder="Confirm password"
-                  onChangeText={handleChange('confirmPassword')}
-                  value={values.confirmPassword}
-                  error={errors.confirmPassword}
-                  touched={touched.confirmPassword}
-                />
-                <FormControl.ErrorMessage>
-                  {errors.confirmPassword}
-                </FormControl.ErrorMessage>
-              </FormControl>
-
-              <CustomButton
-                text={loading ? 'Loading...' : 'Sign Up'}
-                onPress={handleSubmit}
-              />
-            </VStack>
-          )}
-        </Formik>
-
-        {/* <CustomButton
+          {/* <CustomButton
           text="Register"
           onPress={handleSubmit(onRegisterPressed)}
         /> */}
 
-        {/* <SocialSignInButtons /> */}
+          {/* <SocialSignInButtons /> */}
 
-        <CustomButton
-          text="Have an account? Sign in"
-          onPress={onSignInPress}
-          type="TERTIARY"
-        />
-      </View>
-    </ScrollView>
+          <CustomButton
+            text="Have an account? Sign in"
+            onPress={onSignInPress}
+            type="TERTIARY"
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   )
 }
 
