@@ -54,19 +54,15 @@ const SignUpScreen = ({ navigation }) => {
     if (loading) {
       return
     }
-    const { password, username, email } = values
-    // const username = data.username.toLowerCase()
+    const { password, username, image, email } = values
 
     setLoading(true)
     try {
-      // auth.signup(email, username, password)
-      authContext.signup(email, username, password)
+      authContext.signup(email, username, image, password)
     } catch (e) {
       Alert.alert('Oops', e.message)
     }
     setLoading(false)
-    // navigation.navigate('SignIn')
-    // navigation.navigate('Home')
   }
 
   const onSignInPress = () => {

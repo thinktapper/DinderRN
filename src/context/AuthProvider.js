@@ -9,6 +9,7 @@ import * as SecureStore from 'expo-secure-store'
 // import { queryClient } from '../lib/queryClient'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
+import { apiURL, apiUrL } from '../lib/constants'
 import { SECURE_SECRET } from '@env'
 
 // const SECURE_AUTH_STORAGE_KEY = SECURE_SECRET
@@ -86,26 +87,24 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  async function signup(email, username, password) {
+  async function signup(email, username, image, password) {
     setSplashLoading(true)
     try {
       const { data, status } = await axios({
-        url: 'http://localhost:3000/signup',
+        url: `${apiURL.local}/signup`,
         method: 'post',
         data: {
           email,
           username,
+          image,
           password,
         },
       })
 
-      // if (status === 400) {
-      //   console.warn('Error: ', data.message)
-      //   return
-      // }
       if ('user' in data && 'token' in data.user) {
         // setIsSignOut(false)
         setUser(data.user)
+
         // update stored user data
         await setStoredUser(data.user)
         console.debug(`User ${data.user.username} signed up`)
