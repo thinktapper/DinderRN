@@ -121,13 +121,13 @@ function CreateFeastForm({ props }) {
   }
 
   async function handlePlaceSelect(data, details) {
-    console.debug('details:', JSON.stringify(details))
-    const photoRef = details.photos?.[0]?.photo_reference
-    console.debug('photoRef:', JSON.stringify(photoRef))
-    const photoUri = await getPhotoUri(photoRef)
+    // console.debug('details:', JSON.stringify(details))
+    // const photoRef = details.photos?.[0]?.photo_reference
+    // console.debug('photoRef:', JSON.stringify(photoRef))
+    // const photoUri = await getPhotoUri(photoRef)
 
-    console.debug('photoUri:', JSON.stringify(photoUri))
-    handleChange('image', photoUri)
+    // console.debug('photoUri:', JSON.stringify(photoUri))
+    // handleChange('image', photoUri)
     // let imageUrl = ''
     // if (photoRef) {
     //   const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
@@ -197,7 +197,8 @@ function CreateFeastForm({ props }) {
   )
 
   return (
-    <Box safeArea flex={1} w="100%">
+    <ScrollView style={tw`flex-1 w-full`}>
+      {/* <Box safeArea flex={1} w="100%"> */}
       <Heading size="lg" color="coolGray.800" fontWeight="bold">
         Create a Feast
       </Heading>
@@ -356,7 +357,7 @@ function CreateFeastForm({ props }) {
               </View>
             </ScrollView>
 
-            <ScrollView style={styles.container}>
+            <ScrollView>
               <Box alignItems="center">
                 <VStack space={2}>
                   <HStack alignItems="baseline">
@@ -453,7 +454,8 @@ function CreateFeastForm({ props }) {
           </VStack>
         </>
       )}
-    </Box>
+      {/* </Box> */}
+    </ScrollView>
   )
 }
 

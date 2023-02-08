@@ -29,12 +29,12 @@ const getFeastPulse = async (currentFeast, user) => {
     },
   )
 
-  console.warn(
-    'getFeastPulse from winner screen: STATUS =>',
-    JSON.stringify(response.status),
-    'DATA =>',
-    JSON.stringify(response.data),
-  )
+  // console.warn(
+  //   'getFeastPulse from winner screen: STATUS =>',
+  //   JSON.stringify(response.status),
+  //   'DATA =>',
+  //   JSON.stringify(response.data),
+  // )
   // if (!response.success) {
   //   console.error(`Network response was not ok -> ${response}`)
   // }

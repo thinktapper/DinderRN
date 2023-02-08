@@ -308,6 +308,7 @@ const HomeScreen = ({ route, navigation }) => {
           <Entypo name="cross" size={24} color="red" />
         </Pressable>
         <Pressable
+          disabled={!currentFeast.closed}
           onPress={() => navigation.push('Winner', { feast: feastId })}
           style={tw`items-center justify-center rounded-full w-16 h-16 bg-purple-200`}>
           <Ionicons name="flash" size={30} color="#A65CD2" />
