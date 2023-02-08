@@ -32,7 +32,9 @@ import {
   Spacer,
   Center,
   Container,
+  Card,
   Icon,
+  Flex,
 } from 'native-base'
 // import Flame from '../../assets/images/flame-square.png'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
@@ -124,8 +126,8 @@ const FeastScreen = ({ navigation }) => {
   const getHeader = () => {
     return (
       <>
-        <Text style={styles.title}>Your Feasts</Text>
         <Center>
+          <Text style={styles.title}>Your Feasts</Text>
           <Pressable
             onPress={() => navigation.navigate('NewFeast')}
             style={tw`w-60 bg-rose-500 my-5 rounded-full`}>
@@ -181,35 +183,33 @@ const FeastScreen = ({ navigation }) => {
                     borderColor: 'muted.50',
                   }}
                   borderColor="muted.800"
+                  borderRadius="md"
                   pl={['0', '4']}
                   pr={['0', '5']}
                   py="2"
                   mx="2">
                   <Pressable onPress={() => handlePlaceSelect(item)}>
-                    <HStack space={'3'} justifyContent="space-between" px="3">
-                      <Icon
-                        as={MaterialIcons}
-                        name={item.closed ? 'where-to-vote' : 'how-to-vote'}
-                        size="4xl"
-                        color={item.closed ? 'rose.400' : 'green.600'}
-                      />
-                      <VStack>
-                        <Text
-                          _dark={{
-                            color: 'warmGray.50',
-                          }}
-                          color="coolGray.800"
-                          bold>
-                          {item.name}
-                        </Text>
-                        <Moment
-                          date={item.startDate}
-                          element={Text}
-                          format="MM/DD/YYYY"
+                    <HStack space={'1'} justifyContent="space-between" px="3">
+                      <Flex direction="row" mb="2.5" mt="1.5">
+                        <Icon
+                          as={MaterialIcons}
+                          name={item.closed ? 'where-to-vote' : 'how-to-vote'}
+                          size="4xl"
+                          color={item.closed ? 'rose.400' : 'green.600'}
                         />
-                      </VStack>
-                      {/* <Spacer /> */}
-
+                        {/* <Spacer /> */}
+                        <VStack ml="1">
+                          <Text bold style={styles.feastName}>
+                            {item.name}
+                          </Text>
+                          <Moment
+                            date={item.startDate}
+                            element={Text}
+                            format="MM/DD/YYYY"
+                            style={styles.date}
+                          />
+                        </VStack>
+                      </Flex>
                       <HStack space={'3'}>
                         <Pressable onPress={() => onEditPress(item)}>
                           <FontAwesome name="edit" size={24} color="black" />
@@ -224,13 +224,76 @@ const FeastScreen = ({ navigation }) => {
                       </HStack>
                     </HStack>
                   </Pressable>
+                  {/* </Card> */}
                 </Box>
-                // />
               )
             }}
           />
         </VStack>
       ) : (
+        // <VStack px="3" mx="4">
+        //   <FlatList
+        //     data={feasts}
+        //     ListHeaderComponent={getHeader}
+        //     ListFooterComponent={getFooter}
+        //     keyExtractor={(item) => item.id}
+        //     renderItem={({ item }) => {
+        //       return (
+        //         <Box
+        //           borderBottomWidth="1"
+        //           _dark={{
+        //             borderColor: 'muted.50',
+        //           }}
+        //           borderColor="muted.800"
+        //           pl={['0', '4']}
+        //           pr={['0', '5']}
+        //           py="2"
+        //           mx="2">
+        //           <Pressable onPress={() => handlePlaceSelect(item)}>
+        //             <HStack space={'3'} justifyContent="space-between" px="3">
+        //               <Icon
+        //                 as={MaterialIcons}
+        //                 name={item.closed ? 'where-to-vote' : 'how-to-vote'}
+        //                 size="4xl"
+        //                 color={item.closed ? 'rose.400' : 'green.600'}
+        //               />
+        //               <VStack>
+        //                 <Text
+        //                   _dark={{
+        //                     color: 'warmGray.50',
+        //                   }}
+        //                   color="coolGray.800"
+        //                   bold>
+        //                   {item.name}
+        //                 </Text>
+        //                 <Moment
+        //                   date={item.startDate}
+        //                   element={Text}
+        //                   format="MM/DD/YYYY"
+        //                 />
+        //               </VStack>
+        //               {/* <Spacer /> */}
+
+        //               <HStack space={'3'}>
+        //                 <Pressable onPress={() => onEditPress(item)}>
+        //                   <FontAwesome name="edit" size={24} color="black" />
+        //                 </Pressable>
+        //                 <Pressable onPress={() => onDeletePress(item)}>
+        //                   <MaterialIcons
+        //                     name="delete"
+        //                     size={24}
+        //                     color="black"
+        //                   />
+        //                 </Pressable>
+        //               </HStack>
+        //             </HStack>
+        //           </Pressable>
+        //         </Box>
+        //         // />
+        //       )
+        //     }}
+        //   />
+        // </VStack>
         <Box>
           <Text style={[tw`text-center mt-8`, styles.title]}>
             You don't have any feasts yet 😲
@@ -283,6 +346,27 @@ const styles = StyleSheet.create({
     margin: 10,
     borderBottomColor: 'lightgray',
     borderBottomWidth: 1,
+  },
+  cardContainer: {
+    margin: 8,
+    padding: 16,
+    borderRadius: 10,
+    bottomBorderWidth: 1,
+    bottomBorderColor: 'gray',
+    elevation: 2,
+    shadowColor: '#212121',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  feastName: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginBottom: 8,
+  },
+  date: {
+    fontSize: 14,
+    color: '#777',
   },
 })
 
