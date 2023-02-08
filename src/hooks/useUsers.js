@@ -18,12 +18,12 @@ const useUsers = () => {
 
   const fallback = []
   const { data: guests = fallback } = useQuery(
-    [queryKeys.guests, user.id],
+    [queryKeys.guests],
     () => fetchUsers(user),
     {
       enabled: !!user,
-      staleTime: 6000, //  min
-      cacheTime: 300000, // 5 minutes
+      // staleTime: 6000, //  min
+      // cacheTime: 300000, // 5 minutes
     },
   )
   return guests

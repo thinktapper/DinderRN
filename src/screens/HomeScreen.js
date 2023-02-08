@@ -36,25 +36,25 @@ import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
 // import { produce } from 'immer'
 
-const getFeastPulse = async (feastId, user) => {
-  const response = await axios(
-    `http://localhost:3000/api/feast/pulse/${feastId.id}`,
-    {
-      method: 'GET',
-      // prettier-ignore
-      headers: { 'authorization': `Bearer ${user?.token}` },
-    },
-  )
+// const getFeastPulse = async (feastId, user) => {
+//   const response = await axios(
+//     `http://localhost:3000/api/feast/pulse/${feastId.id}`,
+//     {
+//       method: 'GET',
+//       // prettier-ignore
+//       headers: { 'authorization': `Bearer ${user?.token}` },
+//     },
+//   )
 
-  // console.warn(
-  //   'getFeastPulse result: STATUS =>',
-  //   JSON.stringify(response.status),
-  //   'DATA =>',
-  //   JSON.stringify(response.data),
-  // )
+//   // console.warn(
+//   //   'getFeastPulse result: STATUS =>',
+//   //   JSON.stringify(response.status),
+//   //   'DATA =>',
+//   //   JSON.stringify(response.data),
+//   // )
 
-  return response.data.filteredPlaces
-}
+//   return response.data.filteredPlaces
+// }
 
 const HomeScreen = ({ route, navigation }) => {
   const swipeRef = useRef(null)

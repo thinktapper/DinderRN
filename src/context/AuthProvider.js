@@ -9,7 +9,7 @@ import * as SecureStore from 'expo-secure-store'
 // import { queryClient } from '../lib/queryClient'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { apiURL, apiUrL } from '../lib/constants'
+import { apiURL } from '../lib/constants'
 import { SECURE_SECRET } from '@env'
 
 // const SECURE_AUTH_STORAGE_KEY = SECURE_SECRET

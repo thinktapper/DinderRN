@@ -21,13 +21,6 @@ import CustomButton from '../components/CustomButton'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useAuthContext } from '../context/AuthProvider'
-// import { useMutation, useQuery } from '@tanstack/react-query'
-// import { useUser } from '../hooks/user/useUser'
-// import { login } from '../utils/authApi'
-// import { getMe } from '../utils/useApi'
-// import { useAuth } from '../hooks/useAuth'
-// import { setStoredUser } from '../lib/user-storage'
-// import FormInput from '../components/FormInput'
 
 const loginSchema = Yup.object().shape({
   username: Yup.string().required('Username is required'),

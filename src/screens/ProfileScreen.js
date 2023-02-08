@@ -151,7 +151,7 @@ const ProfileScreen = ({ navigation }) => {
               </Pressable>
 
               <Pressable
-                onPress={() => navigation.navigate('Home')}
+                onPress={() => navigation.goBack()}
                 style={styles.button}>
                 <Text>Cancel</Text>
               </Pressable>

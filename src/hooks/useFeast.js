@@ -23,17 +23,17 @@ const getFeastPulse = async (currentFeast, user) => {
     },
   )
 
-  console.warn(
-    'getFeastPulse result: STATUS =>',
-    JSON.stringify(response.status),
-    'DATA =>',
-    JSON.stringify(response.data),
-  )
+  // console.warn(
+  //   'getFeastPulse result: STATUS =>',
+  //   JSON.stringify(response.status),
+  //   'DATA =>',
+  //   JSON.stringify(response.data),
+  // )
   // if (!response.success) {
   //   console.error(`Network response was not ok -> ${response}`)
   // }
 
-  return response.data.filteredPlaces ?? null
+  return response.data.places
 }
 
 const useFeast = () => {
@@ -42,10 +42,10 @@ const useFeast = () => {
 
   const fallback = []
   const { data: places = fallback } = useQuery(
-    [queryKeys.places, currentFeast?.id],
+    [queryKeys.places, currentFeast?.name],
     () => getFeastPulse(currentFeast, user),
     {
-      enabled: !!currentFeast,
+      enabled: !!currentFeast.id,
       // staleTime: 1000 * 60 * 60 * 24 * 7, // 1 week
       // staleTime: 1000 * 60 * 60 * 24, // 24 hours
       // staleTime: 300000, // 5 minutes
@@ -53,13 +53,6 @@ const useFeast = () => {
     },
   )
 
-  // filter out places that have already been voted on
-  // const filteredPlaces = places.filter((place) => {
-  //   return !place.votes.some((vote) => vote.userId === user.id)
-  // })
-  // console.log('filtered places: ', filteredPlaces)
-
-  // return filteredPlaces
   return places
 }
 export default useFeast

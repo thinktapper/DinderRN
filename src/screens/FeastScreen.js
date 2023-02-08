@@ -32,6 +32,7 @@ import {
   Spacer,
   Center,
   Container,
+  Icon,
 } from 'native-base'
 // import Flame from '../../assets/images/flame-square.png'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
@@ -49,6 +50,8 @@ import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
 import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import Moment from 'react-moment'
+import moment from 'moment'
 
 const deleteFeast = async (feastId, token) => {
   // Add JWT to headers
@@ -68,6 +71,7 @@ const FeastScreen = ({ navigation }) => {
   const [isEditing, setIsEditing] = useState(false)
   const queryClient = useQueryClient()
   const { user } = useAuthContext()
+  // if new user or no feasts, don't call useFeasts
   const feasts = useFeasts()
 
   const deleteItem = useMutation(
@@ -89,11 +93,6 @@ const FeastScreen = ({ navigation }) => {
     setSelectedFeast(item)
     // setIsEditing(true)
     navigation.push('EditFeast')
-    // const feastId = selectedFeast.id
-    // const updatedFeast = feast
-    // const token = user.token
-
-    // updateFeast.mutate({ feastId, freshFeast, token })
   }
 
   const onDeletePress = (feast) => {
@@ -126,26 +125,30 @@ const FeastScreen = ({ navigation }) => {
     return (
       <>
         <Text style={styles.title}>Your Feasts</Text>
-        <Box>
+        <Center>
           <Pressable
             onPress={() => navigation.navigate('NewFeast')}
-            style={styles.button}>
-            <Text>Create new</Text>
+            style={tw`w-60 bg-rose-500 my-5 rounded-full`}>
+            <Text style={tw`text-white p-3 text-center text-lg`}>
+              Create new
+            </Text>
           </Pressable>
-        </Box>
+        </Center>
       </>
     )
   }
 
   const getFooter = () => {
     return (
-      <Box>
+      <Center>
         <Pressable
           onPress={() => navigation.navigate('Home')}
-          style={styles.button}>
-          <Text>Back to deck</Text>
+          style={tw`w-60 bg-rose-500 mt-5 rounded-full`}>
+          <Text style={tw`text-white p-3 text-center text-lg`}>
+            Back to deck
+          </Text>
         </Pressable>
-      </Box>
+      </Center>
     )
   }
 
@@ -164,7 +167,7 @@ const FeastScreen = ({ navigation }) => {
       <Header />
 
       {feasts.length > 0 ? (
-        <VStack px="3">
+        <VStack px="3" mx="4">
           <FlatList
             data={feasts}
             ListHeaderComponent={getHeader}
@@ -180,20 +183,16 @@ const FeastScreen = ({ navigation }) => {
                   borderColor="muted.800"
                   pl={['0', '4']}
                   pr={['0', '5']}
-                  py="2">
+                  py="2"
+                  mx="2">
                   <Pressable onPress={() => handlePlaceSelect(item)}>
-                    <HStack space={[2, 3]} justifyContent="space-between">
-                      {item.image && (
-                        <Avatar
-                          size="md"
-                          source={{
-                            uri: item.image
-                              ? item.image
-                              : 'https://loremflickr.com/640/480/city',
-                          }}
-                          alignSelf="center"
-                        />
-                      )}
+                    <HStack space={'3'} justifyContent="space-between" px="3">
+                      <Icon
+                        as={MaterialIcons}
+                        name={item.closed ? 'where-to-vote' : 'how-to-vote'}
+                        size="4xl"
+                        color={item.closed ? 'rose.400' : 'green.600'}
+                      />
                       <VStack>
                         <Text
                           _dark={{
@@ -203,30 +202,26 @@ const FeastScreen = ({ navigation }) => {
                           bold>
                           {item.name}
                         </Text>
-                        {item.closed ? (
-                          <Text color="rose.400">Closed</Text>
-                        ) : (
-                          <Text color="green.600">Open</Text>
-                        )}
+                        <Moment
+                          date={item.startDate}
+                          element={Text}
+                          format="MM/DD/YYYY"
+                        />
                       </VStack>
                       {/* <Spacer /> */}
-                      <Text
-                        fontSize="xs"
-                        _dark={{
-                          color: 'warmGray.50',
-                        }}
-                        color="coolGray.800"
-                        alignSelf="flex-start">
-                        {item.places?.length}
-                      </Text>
-                      {/* <HStack> */}
-                      <Pressable onPress={() => onEditPress(item)}>
-                        <FontAwesome name="edit" size={24} color="black" />
-                      </Pressable>
-                      <Pressable onPress={() => onDeletePress(item)}>
-                        <MaterialIcons name="delete" size={24} color="black" />
-                      </Pressable>
-                      {/* </HStack> */}
+
+                      <HStack space={'3'}>
+                        <Pressable onPress={() => onEditPress(item)}>
+                          <FontAwesome name="edit" size={24} color="black" />
+                        </Pressable>
+                        <Pressable onPress={() => onDeletePress(item)}>
+                          <MaterialIcons
+                            name="delete"
+                            size={24}
+                            color="black"
+                          />
+                        </Pressable>
+                      </HStack>
                     </HStack>
                   </Pressable>
                 </Box>

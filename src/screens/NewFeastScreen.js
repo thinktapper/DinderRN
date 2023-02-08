@@ -18,28 +18,9 @@ import {
   Center,
 } from 'native-base'
 import { LoadingIndicator } from '../components/LoadingIndicator'
-import { Formik } from 'formik'
-import * as Yup from 'yup'
 import tw from 'twrnc'
-import { Picker } from '@react-native-picker/picker'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-// import DateTimePicker from '@react-native-community/datetimepicker'
-// import SearchBarWithAutocomplete from '../components/SearchBarAutocomplete'
-// import { useDebounce } from '../utils/useDebounce'
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
-import { GOOGLE_API } from '@env'
-import RNDateTimePicker from '@react-native-community/datetimepicker'
-import axios from 'axios'
-import { useAppContext } from '../context/AppProvider'
-import { useAuthContext } from '../context/AuthProvider'
-import {
-  KeyboardAwareSectionList,
-  KeyboardAwareScrollView,
-} from 'react-native-keyboard-aware-scroll-view'
-import Header from '../components/Header'
-import { feastState } from '../context/FeastState'
-// import { useCreateFeast } from '../hooks/useCreateFeast'
-// import { queryClient } from '../lib/queryClient'
+import useFeasts from '../hooks/useFeasts'
 import CreateFeastForm from '../components/CreateFeastForm'
 
 // const feastSchema = Yup.object().shape({
@@ -58,8 +39,9 @@ import CreateFeastForm from '../components/CreateFeastForm'
 //     .required('Location JSON object is required'),
 // })
 
-const FeastScreen = ({ navigation }) => {
+const NewFeastScreen = ({ navigation }) => {
   const queryClient = useQueryClient()
+  const { refetch } = useFeasts()
   // const createFeast = useCreateFeast()
   // const queryClient = useQueryClient()
   // const { user } = useAuthContext()
@@ -295,6 +277,7 @@ const FeastScreen = ({ navigation }) => {
     console.log('success, you created a feast: ', response.data)
 
     queryClient.invalidateQueries('feasts')
+    // refetch()
     console.debug('Feast info saved successfully')
     // navigation.goBack()
     navigation.navigate('Feasts')
@@ -390,4 +373,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default FeastScreen
+export default NewFeastScreen
