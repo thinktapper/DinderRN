@@ -1,32 +1,41 @@
 {
   "expo": {
     "name": "DinderRN",
-    "slug": "DinderRN",
+    "slug": "dinder",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/dinder-splash.png",
-      // "image": "./assets/images/splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.thinktapper.dinder"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.thinktapper.dinder"
     },
     "web": {
       "favicon": "./assets/images/favicon-32x32.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9a8d4dc4-0f50-49bf-a432-cb0540b72035"
+      }
+    },
+    "owner": "tapper"
   }
 }

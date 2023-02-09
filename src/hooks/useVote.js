@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query'
-import { queryKeys } from '../lib/constants'
+import { queryKeys, apiURL } from '../lib/constants'
 import axios from 'axios'
 import { feastState } from '../context/FeastState'
 import { useAuthContext } from '../context/AuthProvider'
@@ -7,7 +7,7 @@ import { useAuthContext } from '../context/AuthProvider'
 // for when we need a query function for useQuery
 async function addVoteOnServer(voteData, user) {
   const { data } = await axios({
-    url: `http://localhost:3000/api/vote`,
+    url: `${apiURL.remote}/api/vote`,
     method: 'post',
     data: { ...voteData },
     headers: { authorization: `Bearer ${user?.token}` },
@@ -37,20 +37,8 @@ export default function useVote() {
         // Optimistically update to the new value
         queryClient.setQueryData(
           [queryKeys.votes, queryKeys.places, currentFeast?.id],
-          (old) => [...old, vote],
+          (old) => [...old, vote]
         )
-        //   const newPlaces = old.map((place) => {
-        //     if (place.id === vote.placeId) {
-        //       return {
-        //         ...place,
-        //         votes: [...place.votes, vote.voteType],
-        //       }
-        //     }
-        //     return place
-        //   })
-        //   return newPlaces
-        // })
-
         // Return a context object with the snapshotted value
         return { previousPlaces }
       },
@@ -58,7 +46,7 @@ export default function useVote() {
       onError: (err, newVote, context) => {
         queryClient.setQueryData(
           [queryKeys.votes, queryKeys.places, currentFeast?.id],
-          context.previousPlaces,
+          context.previousPlaces
         )
       },
       // Always refetch after error or success:
@@ -69,7 +57,7 @@ export default function useVote() {
           currentFeast?.id,
         ])
       },
-    },
+    }
   )
 
   return mutate

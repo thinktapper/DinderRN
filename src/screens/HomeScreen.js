@@ -9,179 +9,77 @@ import {
   Alert,
   Pressable,
 } from 'react-native'
-// import Animated from 'react-native-reanimated'
 import tw from 'twrnc'
-import {
-  AntDesign,
-  Entypo,
-  Ionicons,
-  FontAwesome,
-  Fontisto,
-  MaterialCommunityIcons,
-} from '@expo/vector-icons'
-// import users from '../../assets/data/users'
+import { AntDesign, Entypo, Ionicons } from '@expo/vector-icons'
 import Swiper from 'react-native-deck-swiper'
 import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
 import { useAppContext } from '../context/AppProvider'
 import { useAuthContext } from '../context/AuthProvider'
-// import { queryClient } from '../lib/queryClient'
 import useFeast from '../hooks/useFeast'
-// import useVote from '../hooks/useVote'
 import axios from 'axios'
 import { useQueryClient, useMutation } from '@tanstack/react-query'
-import { queryKeys, VOTE } from '../lib/constants'
+import { apiURL, queryKeys, VOTE } from '../lib/constants'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
-// import { produce } from 'immer'
-
-// const getFeastPulse = async (feastId, user) => {
-//   const response = await axios(
-//     `http://localhost:3000/api/feast/pulse/${feastId.id}`,
-//     {
-//       method: 'GET',
-//       // prettier-ignore
-//       headers: { 'authorization': `Bearer ${user?.token}` },
-//     },
-//   )
-
-//   // console.warn(
-//   //   'getFeastPulse result: STATUS =>',
-//   //   JSON.stringify(response.status),
-//   //   'DATA =>',
-//   //   JSON.stringify(response.data),
-//   // )
-
-//   return response.data.filteredPlaces
-// }
 
 const HomeScreen = ({ route, navigation }) => {
-  const swipeRef = useRef(null)
+  const queryClient = useQueryClient()
+  const currentFeast = feastState.useValue()
   const { user } = useAuthContext()
   const feastId = route.params?.feast
-  const currentFeast = feastState.useValue()
-  // const feastId = feast.id
+  const swipeRef = useRef(null)
   const places = useFeast()
-  // const [places, setPlaces] = useState([])
-  const [filteredPlaces, setFilteredPlaces] = useState([])
-  const queryClient = useQueryClient()
-  // const mutate = useVote()
-  const globalPadding = rs(12)
-  const wrapperPadding = rs(12)
-  // const [currentIndex, setCurrentIndex] = useState(0)
 
   // mutation to submit nah vote on left swipe
-  const nahMutation = useMutation(
-    (placeSwiped) => {
-      return axios({
-        url: `http://localhost:3000/api/vote`,
-        method: 'post',
-        headers: { authorization: `Bearer ${user.token}` },
-        data: {
-          feastId: feastId.id,
-          placeId: placeSwiped.id,
-          voteType: VOTE.nah,
-        },
-      })
-    },
-    {
-      onSuccess: (data, variables, context) => {
-        console.log('nah mutation success:', JSON.stringify(data))
+  const nahMutation = useMutation((placeSwiped) => {
+    return axios({
+      url: `${apiURL.remote}/api/vote`,
+      method: 'post',
+      headers: { authorization: `Bearer ${user.token}` },
+      data: {
+        feastId: feastId.id,
+        placeId: placeSwiped.id,
+        voteType: VOTE.nah,
       },
-    },
-  )
+    })
+  })
 
   // mutation to submit yass vote on right swipe
-  const yassMutation = useMutation(
-    (placeSwiped) => {
-      return axios({
-        url: `http://localhost:3000/api/vote`,
-        method: 'post',
-        headers: { authorization: `Bearer ${user.token}` },
-        data: {
-          feastId: feastId.id,
-          placeId: placeSwiped.id,
-          voteType: VOTE.yass,
-        },
-      })
-    },
-    {
-      onSuccess: (data, variables, context) => {
-        console.log('yass mutation success:', JSON.stringify(data))
+  const yassMutation = useMutation((placeSwiped) => {
+    return axios({
+      url: `${apiURL.remote}/api/vote`,
+      method: 'post',
+      headers: { authorization: `Bearer ${user.token}` },
+      data: {
+        feastId: feastId.id,
+        placeId: placeSwiped.id,
+        voteType: VOTE.yass,
       },
-    },
-  )
+    })
+  })
 
   const swipeLeft = (cardIndex) => {
     if (!places[cardIndex]) return
-    // if (!filteredPlaces[cardIndex]) return
-
     const placeSwiped = places[cardIndex]
-    // const placeSwiped = filteredPlaces[cardIndex]
 
     nahMutation.mutate(placeSwiped)
-    // console.warn('swiped NAH on: ', places[cardIndex].name)
   }
 
   const swipeRight = (cardIndex) => {
     if (!places[cardIndex]) return
-    // if (!filteredPlaces[cardIndex]) return
-
     const placeSwiped = places[cardIndex]
-    // const placeSwiped = filteredPlaces[cardIndex]
 
     yassMutation.mutate(placeSwiped)
-    // console.warn('swiped YASS on: ', places[cardIndex].name)
   }
 
+  // check if voting is done and navigate to winner screen
   const onSwipedAll = () => {
-    Alert.alert({
-      title: 'All done!',
-      message: "Let's check for a winner..",
-    })
+    queryClient.invalidateQueries([queryKeys.feasts])
+
     navigation.push('Winner')
   }
-
-  // useEffect(() => {
-  //   // let unsub
-  //   if (places.length > 0) {
-  //     // filter out places that have already been voted on
-  //     const filteredPlaces = places.filter((place) => {
-  //       return !place.votes.some((vote) => vote.userId === user.id)
-  //     })
-  //     console.log('filtered places: ', filteredPlaces)
-
-  //     if (filteredPlaces.length === 0) {
-  //       Alert.alert({
-  //         title: 'All done!',
-  //         message: "Let's check for a winner..",
-  //       })
-  //       navigation.navigate('Winner')
-  //     } else {
-  //       setNonvotedPlaces(filteredPlaces)
-  //     }
-
-  //     console.log('nonvoted places: ', nonvotedPlaces)
-  //   }
-  // }, [feastId, feast])
-
-  // useEffect(() => {
-  //   async function fetchPlaces() {
-  //     const result = await getFeastPulse(feastId, user)
-  //     setFilteredPlaces(result)
-  //   }
-  //   fetchPlaces()
-  // }, [feastId])
-
-  // useEffect(() => {
-  //   setFilteredPlaces(
-  //     places.filter((place) => {
-  //       return !place.votes.some((vote) => vote.userId === user.id)
-  //     }),
-  //   )
-  // }, [places, user])
-  // create a useEffect to filter out places that have already been voted on
 
   // if (isLoading) return <LoadingIndicator />
 
@@ -284,7 +182,8 @@ const HomeScreen = ({ route, navigation }) => {
             style={[
               tw`relative bg-white h-3/4 rounded-xl justify-center items-center`,
               styles.cardShadow,
-            ]}>
+            ]}
+          >
             <Text style={tw`font-bold pb-5`}>No more places</Text>
             <Image
               style={tw`h-20 w-full`}
@@ -304,18 +203,21 @@ const HomeScreen = ({ route, navigation }) => {
       <View style={tw`flex flex-row justify-evenly mb-1`}>
         <Pressable
           onPress={() => swipeRef.current.swipeLeft()}
-          style={tw`items-center justify-center rounded-full w-16 h-16 bg-red-200`}>
+          style={tw`items-center justify-center rounded-full w-16 h-16 bg-red-200`}
+        >
           <Entypo name="cross" size={24} color="red" />
         </Pressable>
         <Pressable
           disabled={!currentFeast.closed}
           onPress={() => navigation.push('Winner', { feast: feastId })}
-          style={tw`items-center justify-center rounded-full w-16 h-16 bg-purple-200`}>
+          style={tw`items-center justify-center rounded-full w-16 h-16 bg-purple-200`}
+        >
           <Ionicons name="flash" size={30} color="#A65CD2" />
         </Pressable>
         <Pressable
           onPress={() => swipeRef.current.swipeRight()}
-          style={tw`items-center justify-center rounded-full w-16 h-16 bg-green-200`}>
+          style={tw`items-center justify-center rounded-full w-16 h-16 bg-green-200`}
+        >
           <AntDesign name="heart" size={24} color="green" />
         </Pressable>
       </View>

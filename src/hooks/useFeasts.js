@@ -20,14 +20,14 @@ function useFeasts() {
   const { user } = useAuthContext()
 
   const fallback = []
-  const { data: feasts = fallback, refetch } = useQuery(
+  const { data: feasts = fallback } = useQuery(
     [queryKeys.feasts],
     () => fetchFeasts(user),
     {
       enabled: !!user,
       // staleTime: 1000 * 60 * 60 * 24,
       // cacheTime: Infinity,
-    },
+    }
   )
 
   return feasts
