@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
-// import { View, ActivityIndicator } from 'react-native'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-// import { useAuthContext } from '../context'
 import { useAuthContext } from '../context/AuthProvider'
 
 import SignInScreen from '../screens/SignInScreen'
@@ -17,7 +15,6 @@ import NewFeastScreen from '../screens/NewFeastScreen'
 import EditFeastScreen from '../screens/EditFeastScreen'
 import WinnerScreen from '../screens/WinnerScreen'
 import ProfileScreen from '../screens/ProfileScreen'
-// import { useQuery } from '@tanstack/react-query'
 
 const Stack = createNativeStackNavigator()
 

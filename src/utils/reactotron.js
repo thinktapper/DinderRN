@@ -10,7 +10,7 @@ const queryClientManager = new QueryClientManager({
   queryClient,
 })
 
-// Reactotron.setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either come from `react-native` or `@react-native-community/async-storage` depending on where you get it from
+// Reactotron.setAsyncStorageHandler(AsyncStorage)
 
 Reactotron.use(reactotronReactQuery(queryClientManager))
   .configure({
