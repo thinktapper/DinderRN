@@ -37,3 +37,251 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+ios/.gitignore
+ios/.xcode.env
+ios/Podfile
+ios/Podfile.properties.json
+ios/DinderRN/AppDelegate.h
+ios/DinderRN/AppDelegate.mm
+ios/DinderRN/DinderRN.entitlements
+ios/DinderRN/Info.plist
+ios/DinderRN/main.m
+ios/DinderRN/noop-file.swift
+ios/DinderRN/SplashScreen.storyboard
+ios/DinderRN/Images.xcassets/Contents.json
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-20x20@1x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-20x20@2x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-20x20@3x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-29x29@1x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-29x29@2x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-29x29@3x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-40x40@1x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-40x40@2x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-40x40@3x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-60x60@2x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-60x60@3x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-76x76@1x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-76x76@2x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/App-Icon-83.5x83.5@2x.png
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/Contents.json
+ios/DinderRN/Images.xcassets/AppIcon.appiconset/ItunesArtwork@2x.png
+ios/DinderRN/Images.xcassets/SplashScreen.imageset/Contents.json
+ios/DinderRN/Images.xcassets/SplashScreen.imageset/image.png
+ios/DinderRN/Images.xcassets/SplashScreenBackground.imageset/Contents.json
+ios/DinderRN/Images.xcassets/SplashScreenBackground.imageset/image.png
+ios/DinderRN/Supporting/Expo.plist
+ios/DinderRN.xcodeproj/project.pbxproj
+ios/DinderRN.xcodeproj/xcshareddata/xcschemes/DinderRN.xcscheme
+android/.gitignore
+android/build.gradle
+android/gradle.properties
+android/gradlew
+android/gradlew.bat
+android/settings.gradle
+android/app/BUCK
+android/app/build_defs.bzl
+android/app/build.gradle
+android/app/debug.keystore
+android/app/proguard-rules.pro
+android/app/src/debug/AndroidManifest.xml
+android/app/src/debug/java/com/thinktapper/dinder/ReactNativeFlipper.java
+android/app/src/main/AndroidManifest.xml
+android/app/src/main/java/com/thinktapper/dinder/MainActivity.java
+android/app/src/main/java/com/thinktapper/dinder/MainApplication.java
+android/app/src/main/java/com/thinktapper/dinder/newarchitecture/MainApplicationReactNativeHost.java
+android/app/src/main/java/com/thinktapper/dinder/newarchitecture/components/MainComponentsRegistry.java
+android/app/src/main/java/com/thinktapper/dinder/newarchitecture/modules/MainApplicationTurboModuleManagerDelegate.java
+android/app/src/main/jni/Android.mk
+android/app/src/main/jni/MainApplicationModuleProvider.cpp
+android/app/src/main/jni/MainApplicationModuleProvider.h
+android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.cpp
+android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.h
+android/app/src/main/jni/MainComponentsRegistry.cpp
+android/app/src/main/jni/MainComponentsRegistry.h
+android/app/src/main/jni/OnLoad.cpp
+android/app/src/main/res/drawable/rn_edit_text_material.xml
+android/app/src/main/res/drawable/splashscreen.xml
+android/app/src/main/res/drawable-hdpi/splashscreen_image.png
+android/app/src/main/res/drawable-mdpi/splashscreen_image.png
+android/app/src/main/res/drawable-xhdpi/splashscreen_image.png
+android/app/src/main/res/drawable-xxhdpi/splashscreen_image.png
+android/app/src/main/res/drawable-xxxhdpi/splashscreen_image.png
+android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png
+android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png
+android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png
+android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png
+android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png
+android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png
+android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png
+android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png
+android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png
+android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png
+android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
+android/app/src/main/res/values/colors.xml
+android/app/src/main/res/values/strings.xml
+android/app/src/main/res/values/styles.xml
+android/app/src/main/res/values-night/colors.xml
+android/gradle/wrapper/gradle-wrapper.jar
+android/gradle/wrapper/gradle-wrapper.properties
+# Expo
+.expo
+__generated__
+web-build
+bare-apps
+
+# macOS
+.DS_Store
+
+# Node
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Ruby
+.direnv
+
+# Env
+.envrc.local
+
+# Emacs
+*~
+
+# Vim
+.*.swp
+.*.swo
+.*.swn
+.*.swm
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Xcode
+*.pbxuser
+!default.pbxuser
+*.xccheckout
+*.xcscmblueprint
+xcuserdata
+
+# IDEA / Android Studio
+*.iml
+.gradle
+.idea
+
+# Eclipse
+.project
+.settings
+
+# VSCode
+.history/
+
+# Android
+*.apk
+*.hprof
+/android/**/build
+/android/**/.cxx
+/android/**/local.properties
+/android/captures
+/android/expoview/libs/ReactAndroid-temp
+/android/versioned-react-native/ReactAndroid
+/android/versioned-react-native/ReactCommon
+/android/versioned-react-native/codegen
+/android/versioned-react-native/sdks
+ReactAndroid-temp.aar
+/android/prebuiltHermes
+/android/versioned-abis/**/*.aar
+
+# Tools
+jarjar-rules.txt
+
+# Dynamic Macros
+/ios/Exponent/Supporting/EXBuildConstants.plist.bak
+/ios/Exponent/Supporting/EXBuildConstants.plist.json
+/ios/Exponent/Supporting/EXBuildConstants.plist
+/ios/Exponent/Supporting/GoogleService-Info.plist
+/ios/Exponent/Supporting/Info.plist.bak
+/ios/Exponent/Supporting/Info.plist.json
+/android/expoview/src/main/java/host/exp/exponent/generated/ExponentBuildConstants.java
+/android/app/src/androidTest/java/host/exp/exponent/generated/TestBuildConstants.java
+.kernel-ngrok-url
+
+# Template files
+/android/app/src/main/AndroidManifest.xml
+/android/app/google-services.json
+/android/expoview/src/main/java/host/exp/exponent/generated/ExponentKeys.java
+/apps/bare-expo/android/app/google-services.json
+/apps/bare-expo/ios/BareExpo/GoogleService-Info.plist
+/ios/Exponent/Generated/EXKeys.h
+/ios/ExponentIntegrationTests/EXTestEnvironment.plist
+/exponent-view-template/ios/Podfile
+
+# Template projects
+templates/**/android/**/generated/*
+templates/**/android/app/build
+templates/**/Pods/**
+templates/**/Podfile.lock
+templates/**/yarn.lock
+
+# EYW template
+/packages/expo-yarn-workspaces/workspace-template/yarn.lock
+
+# Codemod
+.codemod.bookmark
+
+# Fastlane
+/*.cer
+/fastlane/report.xml
+/fastlane/Preview.html
+/fastlane/Deployment
+/fastlane/test_output
+/Preview.html
+/gc_keys.json
+/fastlane/gc_keys.json
+
+# CI
+/android/logcat.txt
+
+# Shell apps
+android-shell-app
+shellAppBase-*
+shellAppIntermediates
+shellAppWorkspaces
+/artifacts/*
+
+# Expo Client builds
+/client-builds
+
+# Expo web env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+apps/bare-expo/deploy-url.txt
+
+# Temporary files created by Metro to check the health of the file watcher
+.metro-health-check*
+
+# Expo Doc merging
+docs/pages/versions/*/react-native/ADDED_*.md
+docs/pages/versions/*/react-native/REMOVED_*.md
+docs/pages/versions/*/react-native/*.diff
+
+# Home
+/home/dist
+
+# Prebuilds
+/packages/**/*.xcframework
+/packages/**/*.spec.json
+/packages/**/Info-generated.plist
+
+# iOS
+/ios/Pods
+/ios/build
+**/ios/.xcode.env.local
+/ios/versioned-react-native/*/ReactNative/sdks/hermes-engine/destroot

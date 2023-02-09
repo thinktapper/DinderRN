@@ -21,13 +21,6 @@ import CustomButton from '../components/CustomButton'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useAuthContext } from '../context/AuthProvider'
-// import { useMutation, useQuery } from '@tanstack/react-query'
-// import { useUser } from '../hooks/user/useUser'
-// import { login } from '../utils/authApi'
-// import { getMe } from '../utils/useApi'
-// import { useAuth } from '../hooks/useAuth'
-// import { setStoredUser } from '../lib/user-storage'
-// import FormInput from '../components/FormInput'
 
 const loginSchema = Yup.object().shape({
   username: Yup.string().required('Username is required'),
@@ -49,13 +42,8 @@ const validate = (values) => {
 
 const SignInScreen = ({ navigation }) => {
   const authContext = useAuthContext()
-  // const auth = useAuth()
   const { height } = useWindowDimensions()
   const [loading, setLoading] = useState(false)
-  // const { updateUser } = useUser()
-  // const [username, setUsername] = useState('')
-  // const [password, setPassword] = useState('')
-  // const [confirm, setConfirm] = useState('')
 
   // Get current logged-in user
   // const query = useQuery(['authUser'], getMe, {
@@ -102,35 +90,12 @@ const SignInScreen = ({ navigation }) => {
     setLoading(true)
     try {
       authContext.login(values)
-      // const response = await login(values)
-      // if ('user' in response && 'token' in response.user) {
-      //   console.debug(`User ${response.user.username} logged in`)
-      //   // update stored user data
-      //   authContext.dispatch({ type: 'SET_USER', payload: response.user })
-      //   setStoredUser(response.user)
-      //   Alert.alert('You successfully logged in')
-      // }
     } catch (error) {
       console.log('Error', error)
       setLoading(false)
     }
     setLoading(false)
   }
-
-  // const onSignInPressed = async (data) => {
-  //   if (loading) {
-  //     return
-  //   }
-  //   setLoading(true)
-  //   try {
-  //     // auth.login(data.username, data.password)
-  //     authContext.login(data.username, data.password)
-  //   } catch (error) {
-  //     Alert.alert('Oops!', error.message)
-  //   }
-  //   setLoading(false)
-  //   // navigation.navigate('Home')
-  // }
 
   const onSignUpPressed = () => {
     navigation.navigate('SignUp')

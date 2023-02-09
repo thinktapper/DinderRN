@@ -42,6 +42,7 @@ import {
 } from '@tanstack/react-query'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
+import { apiURL } from '../lib/constants'
 import { PickerIOS, Picker } from '@react-native-picker/picker'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useAuthContext } from '../context/AuthProvider'
@@ -49,7 +50,7 @@ import axios from 'axios'
 import useUsers from '../hooks/useUsers'
 
 const submitFeast = async (formData, user) => {
-  const response = await axios('http:localhost:3000/api/feast', {
+  const response = await axios(`${apiURL.local}/api/feast`, {
     method: 'POST',
     data: { ...formData },
     headers: {
@@ -57,7 +58,7 @@ const submitFeast = async (formData, user) => {
       'authorization': `Bearer ${user?.token}`,
     },
   })
-  // console.warn('submitFeast:', JSON.stringify(response))
+  console.warn('submitFeast:', JSON.stringify(response))
   return response.data
 }
 
@@ -75,29 +76,71 @@ function CreateFeastForm({ props }) {
     endDate: new Date(),
     location: { lat: 0, long: 0 },
     radius: 1,
-    guests: guestArr,
+    guests: [],
   })
 
   const handleChange = (name, value) => {
     setFormData({ ...formData, [name]: value })
   }
 
+  const getPhotoUri = async (photoRef) => {
+    let imageUrl
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/photo`,
+      {
+        responseType: 'blob',
+        params: {
+          key: GOOGLE_API,
+          photoreference: photoRef,
+          maxwidth: 400,
+        },
+      },
+    )
+    // const imageUrl = URL.createObjectURL(response.data.request._url)
+    const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
+
+    const imgageUrlQuery = await fetch(imageLookupUrl)
+      .then((res) => res.blob())
+      .catch((err) => console.error(err))
+      .finally(() => {
+        imageUrl = imgageUrlQuery
+      })
+    imageUrl = URL.createObjectURL(imgageUrlQuery)
+    // handleChange('image', JSON.stringify(imageUrl))
+
+    console.debug(
+      'getPhotoUri:',
+      imgageUrlQuery,
+      // JSON.stringify(response),
+      'imageUrl obj:',
+      JSON.stringify(imageUrl),
+    )
+
+    return JSON.stringify(imageUrl)
+    // return response.data.request._url
+  }
+
   async function handlePlaceSelect(data, details) {
-    // console.debug('data:', data, 'details:', details)
-    const photoRef = details.photos?.[0]?.photo_reference
-    let imageUrl = ''
-    if (photoRef) {
-      const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
-      const imgageUrlQuery = await fetch(imageLookupUrl)
-        .then((res) => res.blob())
-        .catch((err) => console.error(err))
-        .finally(() => {
-          imageUrl = imgageUrlQuery
-          handleChange('image', imageUrl)
-        })
-      // const imageUrl = URL.createObjectURL(imgageUrlQuery)
-      // handleChange('image', imageUrl)
-    }
+    // console.debug('details:', JSON.stringify(details))
+    // const photoRef = details.photos?.[0]?.photo_reference
+    // console.debug('photoRef:', JSON.stringify(photoRef))
+    // const photoUri = await getPhotoUri(photoRef)
+
+    // console.debug('photoUri:', JSON.stringify(photoUri))
+    // handleChange('image', photoUri)
+    // let imageUrl = ''
+    // if (photoRef) {
+    //   const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
+    //   const imgageUrlQuery = await fetch(imageLookupUrl)
+    //     .then((res) => res.blob())
+    //     .catch((err) => console.error(err))
+    //     .finally(() => {
+    //       imageUrl = imgageUrlQuery
+    //       handleChange('image', imageUrl)
+    //     })
+    // const imageUrl = URL.createObjectURL(imgageUrlQuery)
+    // handleChange('image', imageUrl)
+    // }
 
     handleChange('location', {
       lat: details.geometry.location.lat,
@@ -107,35 +150,35 @@ function CreateFeastForm({ props }) {
 
   const handleCreateFeast = () => {
     // handleChange('guests', guestArr)
-    let guestsArrData = []
+    // let guestsArrData = []
     try {
-      if (guestArr.length > 0) {
-        guestArr.forEach((val) => guestsArrData.push(val))
-      }
+      // if (guestArr.length > 0) {
+      //   guestArr.forEach((val) => guestsArrData.push(val))
+      // }
       // setGuestArr(...guestsArrData)
-      // setFormData({ ...formData, guests: guestsArr })
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        [guests]: guestsArrData,
-      }))
+      setFormData({ ...formData, guests: guestArr })
+      // setFormData((prevFormData) => ({
+      //   ...prevFormData,
+      //   [guests]: guestsArrData,
+      // }))
       console.log(
         guestArr.length,
-        formData.guests.length,
-        guestsArrData.length,
-        JSON.stringify(formData.guests),
-        {
-          ...formData.guests,
-        },
+        // formData.guests.length,
+        // guestsArrData.length,
+        JSON.stringify(formData),
+        // {
+        //   ...formData.guests,
+        // },
       )
-      if (formData.guests.length) {
-        createFeast.mutate({ formData, user })
-      } else {
-        console.debug(
-          `Did not send mutation bc formData.guests.length fail, see: ${JSON.stringify(
-            formData.guests,
-          )}}`,
-        )
-      }
+      // if (formData.guests.length) {
+      createFeast.mutate({ formData, user })
+      // } else {
+      //   console.debug(
+      //     `Did not send mutation bc formData.guests.length fail, see: ${JSON.stringify(
+      //       formData.guests,
+      //     )}}`,
+      //   )
+      // }
     } catch (err) {
       console.debug(`ERROR setting guests array in formData: ${err}`)
     }
@@ -150,14 +193,12 @@ function CreateFeastForm({ props }) {
       onError: (error) => {
         console.log('error', error)
       },
-      onSettled: () => {
-        navigation.goBack()
-      },
     },
   )
 
   return (
-    <Box safeArea flex={1} w="100%">
+    <ScrollView style={tw`flex-1 w-full`}>
+      {/* <Box safeArea flex={1} w="100%"> */}
       <Heading size="lg" color="coolGray.800" fontWeight="bold">
         Create a Feast
       </Heading>
@@ -224,7 +265,7 @@ function CreateFeastForm({ props }) {
                       // color: '#212121',
                       height: 44,
                       borderRadius: 20,
-                      paddingVertical: 16,
+                      paddingVertical: 10,
                       paddingHorizontal: 16,
                       fontSize: 16,
                       flex: 1,
@@ -316,36 +357,38 @@ function CreateFeastForm({ props }) {
               </View>
             </ScrollView>
 
-            <Box alignItems="center">
-              <VStack space={2}>
-                <HStack alignItems="baseline">
-                  <Heading fontSize="md">Guests</Heading>
-                </HStack>
-                <VStack>
-                  <Box>
-                    <Text>
-                      Selected: (
-                      {guestArr.length ? guestArr.length : 'None yet 😏'})
-                    </Text>
-                  </Box>
+            <ScrollView>
+              <Box alignItems="center">
+                <VStack space={2}>
+                  <HStack alignItems="baseline">
+                    <Heading fontSize="md">Guests</Heading>
+                  </HStack>
+                  <VStack>
+                    <Box>
+                      <Text>
+                        Selected: (
+                        {guestArr.length ? guestArr.length : 'None yet 😏'})
+                      </Text>
+                    </Box>
+                  </VStack>
+                  <Checkbox.Group
+                    colorScheme="rose"
+                    defaultValue={guestArr}
+                    accessibilityLabel="invite guests"
+                    onChange={setGuestArr}>
+                    {guests.map((guest) => (
+                      <Checkbox key={guest.id} value={guest.username} my="1">
+                        <Image
+                          style={tw`h-8 w-8 rounded-full py-1`}
+                          source={{ uri: guest.image }}
+                        />
+                        <Text>{guest.username}</Text>
+                      </Checkbox>
+                    ))}
+                  </Checkbox.Group>
                 </VStack>
-                <Checkbox.Group
-                  colorScheme="rose"
-                  defaultValue={guestArr}
-                  accessibilityLabel="invite guests"
-                  onChange={setGuestArr}>
-                  {guests.map((guest) => (
-                    <Checkbox key={guest.id} value={guest.username} my="1">
-                      <Image
-                        style={tw`h-8 w-8 rounded-full py-1`}
-                        source={{ uri: guest.image }}
-                      />
-                      <Text>{guest.username}</Text>
-                    </Checkbox>
-                  ))}
-                </Checkbox.Group>
-              </VStack>
-            </Box>
+              </Box>
+            </ScrollView>
 
             <Button
               mt="5"
@@ -411,7 +454,8 @@ function CreateFeastForm({ props }) {
           </VStack>
         </>
       )}
-    </Box>
+      {/* </Box> */}
+    </ScrollView>
   )
 }
 

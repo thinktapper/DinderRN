@@ -47,10 +47,11 @@ import moment from 'moment'
 import { useAuthContext } from '../context/AuthProvider'
 import { feastState } from '../context/FeastState'
 import axios from 'axios'
+import { apiURL } from '../lib/constants'
 
 const submitFeast = async (selectedFeast, formData, user) => {
   const response = await axios(
-    `http:localhost:3000/api/feast/${selectedFeast.id}`,
+    `${apiURL.remote}/api/feast/${selectedFeast.id}`,
     {
       method: 'PUT',
       data: { ...formData },
@@ -58,7 +59,7 @@ const submitFeast = async (selectedFeast, formData, user) => {
         // prettier-ignore
         'authorization': `Bearer ${user?.token}`,
       },
-    },
+    }
   )
   // console.warn('submitFeast:', JSON.stringify(response))
   return response.data
@@ -71,9 +72,9 @@ function EditFeastForm({ props }) {
   const [showAlert, setShowAlert] = useState(false)
   const [formData, setFormData] = useState({
     name: selectedFeast?.name,
-    image: selectedFeast?.image || 'https://loremflickr.com/640/480/food',
-    startDate: new Date(),
-    endDate: new Date(),
+    image: selectedFeast?.image || '',
+    startDate: new Date(selectedFeast?.startDate),
+    endDate: new Date(selectedFeast?.endDate),
     // location: selectedFeast.location,
     radius: selectedFeast?.radius,
   })
@@ -94,12 +95,12 @@ function EditFeastForm({ props }) {
         return onFeastEdited(response)
       },
       onError: (error) => {
-        console.log('error', error)
+        console.warn('error', error)
       },
       // onSettled: () => {
       // navigation.goBack()
       // },
-    },
+    }
   )
 
   return (
@@ -128,6 +129,17 @@ function EditFeastForm({ props }) {
                   placeholder={selectedFeast?.name}
                   value={formData.name}
                   onChangeText={(text) => handleChange('name', text)}
+                  variant="rounded"
+                  size="xl"
+                  bgColor="white"
+                />
+              </Center>
+
+              <Center w="100%" h="20" rounded="lg" shadow={3}>
+                <Input
+                  placeholder={selectedFeast?.image}
+                  value={formData.image}
+                  onChangeText={(text) => handleChange('image', text)}
                   variant="rounded"
                   size="xl"
                   bgColor="white"
@@ -189,7 +201,8 @@ function EditFeastForm({ props }) {
                     selectedValue={formData.radius}
                     onValueChange={(itemValue) =>
                       handleChange('radius', itemValue)
-                    }>
+                    }
+                  >
                     <PickerIOS.Item label="1 Mile" value={1} />
                     <PickerIOS.Item label="2 Miles" value={2} />
                     <PickerIOS.Item label="3 Miles" value={3} />
@@ -202,7 +215,8 @@ function EditFeastForm({ props }) {
               <Button
                 mt="5"
                 colorScheme="rose"
-                onPress={() => handleEditFeast()}>
+                onPress={() => handleEditFeast()}
+              >
                 <Text>Edit Feast</Text>
               </Button>
               {editFeast.isLoading && (
@@ -222,7 +236,8 @@ function EditFeastForm({ props }) {
                           flexShrink={1}
                           space={2}
                           alignItems="center"
-                          justifyContent="space-between">
+                          justifyContent="space-between"
+                        >
                           <HStack flexShrink={1} space={2} alignItems="center">
                             <Alert.Icon />
                             <Text
@@ -230,7 +245,8 @@ function EditFeastForm({ props }) {
                               fontWeight="medium"
                               _dark={{
                                 color: 'coolGray.800',
-                              }}>
+                              }}
+                            >
                               Failed to edit feast
                             </Text>
                           </HStack>
@@ -252,7 +268,8 @@ function EditFeastForm({ props }) {
                             _text: {
                               color: 'coolGray.600',
                             },
-                          }}>
+                          }}
+                        >
                           {editFeast.error.message}
                         </Box>
                       </VStack>

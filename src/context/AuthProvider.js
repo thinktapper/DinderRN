@@ -9,11 +9,8 @@ import * as SecureStore from 'expo-secure-store'
 // import { queryClient } from '../lib/queryClient'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
+import { apiURL } from '../lib/constants'
 import { SECURE_SECRET } from '@env'
-
-// const SECURE_AUTH_STORAGE_KEY = SECURE_SECRET
-
-const authClient = axios.create({ baseURL: 'http://localhost:3000' })
 
 const AuthContext = createContext({})
 
@@ -30,7 +27,6 @@ export const AuthProvider = ({ children }) => {
     logout,
     signup,
     updateUser,
-    authRequest,
   }
 
   async function getStoredUser() {
@@ -49,35 +45,21 @@ export const AuthProvider = ({ children }) => {
     return 'Success, User logged out'
   }
 
-  async function authRequest({ ...options }) {
-    authClient.defaults.headers.common['authorization'] = `Bearer ${user.token}`
-    // const onSuccess = (response) => response
-    // const onError = (error) => {
-    //   return error
-    // }
-
-    try {
-      const response = await authClient(options)
-      return response
-    } catch (error) {
-      return error
-    }
-  }
-
   async function login(values) {
-    // authServerCall('/login', username, password)
     const { username, password } = values
+
     setSplashLoading(true)
     try {
-      const response = await axios.post('http://localhost:3000/login', {
+      const response = await axios.post(`${apiURL.remote}/login`, {
         username,
         password,
       })
+
+      // update stored user data
       if ('user' in response.data && 'token' in response.data.user) {
-        // update stored user data
         await setStoredUser(response.data.user)
         setUser(response.data.user)
-        console.debug(`User ${response.data.user.username} logged in`)
+        // console.debug(`User ${response.data.user.username} logged in`)
       }
       setSplashLoading(false)
     } catch (err) {
@@ -86,26 +68,23 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  async function signup(email, username, password) {
+  async function signup(email, username, image, password) {
     setSplashLoading(true)
     try {
       const { data, status } = await axios({
-        url: 'http://localhost:3000/signup',
+        url: `${apiURL.remote}/signup`,
         method: 'post',
         data: {
           email,
           username,
+          image,
           password,
         },
       })
 
-      // if (status === 400) {
-      //   console.warn('Error: ', data.message)
-      //   return
-      // }
       if ('user' in data && 'token' in data.user) {
-        // setIsSignOut(false)
         setUser(data.user)
+
         // update stored user data
         await setStoredUser(data.user)
         console.debug(`User ${data.user.username} signed up`)
@@ -119,10 +98,9 @@ export const AuthProvider = ({ children }) => {
   }
 
   async function updateUser(values) {
-    // setIsSignOut(true)
     try {
       const response = await axios({
-        url: 'http://localhost:3000/api/user/update',
+        url: `${apiURL.remote}/api/user/update`,
         method: 'put',
         data: { ...values },
         headers: {
@@ -130,13 +108,11 @@ export const AuthProvider = ({ children }) => {
           'authorization': `Bearer ${user.token}`,
         },
       })
-      // console.log(JSON.stringify(response))
+
+      // update stored user data
       if ('user' in response.data && 'token' in response.data.user) {
-        // setIsSignOut(false)
         setUser(response.data.user)
-        // update stored user data
         await setStoredUser(response.data.user)
-        console.debug(`User ${response.data.user.username} updated`)
       }
       return response
     } catch (err) {
@@ -145,26 +121,20 @@ export const AuthProvider = ({ children }) => {
   }
 
   async function logout() {
-    // setIsSignOut(true)
     try {
       const response = await axios({
-        url: 'http://localhost:3000/logout',
+        url: `${apiURL.remote}/logout`,
         method: 'post',
         headers: {
           // prettier-ignore
           'authorization': `Bearer ${user.token}`,
         },
       })
-      // console.log(JSON.stringify(response))
+      // remove stored user data
       if (response.data.success) {
         setUser(null)
-        // remove stored user data
         await clearStoredUser()
-        // if (message === 'Success, User logged out') {
-        //   console.debug(message)
-        // }
       } else {
-        console.log('Error logging out')
         throw new Error('Error logging out')
       }
     } catch (err) {
@@ -176,7 +146,6 @@ export const AuthProvider = ({ children }) => {
     try {
       setSplashLoading(true)
       const userInfo = await getStoredUser()
-      // userInfo = JSON.parse(userInfo)
       if (userInfo) {
         setUser(userInfo)
       }
@@ -192,9 +161,9 @@ export const AuthProvider = ({ children }) => {
     // logout()
 
     // const reset = async () => {
+    //   queryClient.clear()
     //   const message = await clearStoredUser()
     //   if (message.includes('Success')) {
-    //     // === 'Success, User logged out') {
     //     console.debug(message)
     //   } else {
     //     console.log('Error logging out')
@@ -204,21 +173,6 @@ export const AuthProvider = ({ children }) => {
 
     // reset()
   }, [])
-
-  // const authContext = useMemo(
-  //   () => ({
-  //     user,
-  //     login,
-  //     updateUser,
-  //     signup,
-  //     logout,
-  //     splashLoading,
-  //     isSignOut,
-  //     setIsSignOut,
-  //   }),
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [login, updateUser, signup, logout],
-  // )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
