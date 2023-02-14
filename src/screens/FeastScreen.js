@@ -36,21 +36,16 @@ import {
   Icon,
   Flex,
 } from 'native-base'
-// import Flame from '../../assets/images/flame-square.png'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import tw from 'twrnc'
 import useFeasts from '../hooks/useFeasts'
-import Feast from '../components/Feast'
-import { ListItem } from '../components/ListItem'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { useAuthContext } from '../context/AuthProvider'
 import { apiURL, queryKeys } from '../lib/constants'
-// import { useAppContext } from '../context/AppProvider'
 import axios from 'axios'
-import EditFeastModal from '../components/EditFeastModal'
 import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
-import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
+// import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import Moment from 'react-moment'
 import moment from 'moment'
@@ -60,7 +55,7 @@ const deleteFeast = async (feastId, token) => {
   const headers = { authorization: `Bearer ${token}` }
 
   // Make DELETE request to server to delete the feast
-  const { data } = await axios.delete(`${apiURL.local}/api/feast/${feastId}`, {
+  const { data } = await axios.delete(`${apiURL.remote}/api/feast/${feastId}`, {
     headers,
   })
 
@@ -86,7 +81,7 @@ const FeastScreen = ({ navigation }) => {
       onError: (error) => {
         console.warn('deleteFeast error:', error)
       },
-    },
+    }
   )
 
   const onEditPress = (item) => {
@@ -130,7 +125,8 @@ const FeastScreen = ({ navigation }) => {
           <Text style={styles.title}>Your Feasts</Text>
           <Pressable
             onPress={() => navigation.navigate('NewFeast')}
-            style={tw`w-60 bg-rose-500 my-5 rounded-full`}>
+            style={tw`w-60 bg-rose-500 my-5 rounded-full`}
+          >
             <Text style={tw`text-white p-3 text-center text-lg`}>
               Create new
             </Text>
@@ -145,7 +141,8 @@ const FeastScreen = ({ navigation }) => {
       <Center>
         <Pressable
           onPress={() => navigation.navigate('Home')}
-          style={tw`w-60 bg-rose-500 mt-5 rounded-full`}>
+          style={tw`w-60 bg-rose-500 mt-5 rounded-full`}
+        >
           <Text style={tw`text-white p-3 text-center text-lg`}>
             Back to deck
           </Text>
@@ -187,7 +184,8 @@ const FeastScreen = ({ navigation }) => {
                   pl={['0', '4']}
                   pr={['0', '5']}
                   py="2"
-                  mx="2">
+                  mx="2"
+                >
                   <Pressable onPress={() => handlePlaceSelect(item)}>
                     <HStack space={'1'} justifyContent="space-between" px="3">
                       <Flex direction="row" mb="2.5" mt="1.5">
@@ -300,7 +298,8 @@ const FeastScreen = ({ navigation }) => {
           </Text>
           <Pressable
             style={styles.button}
-            onPress={() => navigation.navigate('NewFeast')}>
+            onPress={() => navigation.navigate('NewFeast')}
+          >
             <Text>Create one!</Text>
           </Pressable>
         </Box>

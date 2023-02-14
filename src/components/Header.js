@@ -11,13 +11,12 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
-import { useAppContext } from '../context/AppProvider'
 import { useAuthContext } from '../context/AuthProvider'
+import { color, activeColor } from '../lib/constants'
 
 const Header = () => {
   const navigation = useNavigation()
   const { user } = useAuthContext()
-  const { color, activeColor } = useAppContext()
   const [activeScreen, setActiveScreen] = React.useState('Home')
 
   return (
@@ -26,7 +25,8 @@ const Header = () => {
         onPress={() => {
           setActiveScreen('Feasts')
           navigation.navigate('Feasts')
-        }}>
+        }}
+      >
         <MaterialIcons name="restaurant-menu" size={33} color={activeColor} />
         {/* <MaterialCommunityIcons
           name="star-four-points"
@@ -40,7 +40,8 @@ const Header = () => {
           setActiveScreen('Home')
           navigation.navigate('Home')
         }}
-        style={tw`rounded-full`}>
+        style={tw`rounded-full`}
+      >
         <Image
           style={tw`w-16 h-16`}
           source={require('../../assets/images/flamelogo.png')}
@@ -50,7 +51,8 @@ const Header = () => {
         onPress={() => {
           setActiveScreen('Profile')
           navigation.navigate('Profile')
-        }}>
+        }}
+      >
         {user?.image ? (
           <Image
             source={{ uri: user.image }}

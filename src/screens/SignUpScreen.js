@@ -15,10 +15,7 @@ import {
   NativeBaseProvider,
   Center,
 } from 'native-base'
-import CustomInput from '../components/CustomInput'
 import CustomButton from '../components/CustomButton'
-// import SocialSignInButtons from '../components/SocialSignInButtons'
-// import { useForm } from 'react-hook-form'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useAuthContext } from '../context/AuthProvider'
@@ -84,7 +81,8 @@ const SignUpScreen = ({ navigation }) => {
               confirmPassword: '',
             }}
             onSubmit={onRegisterPressed}
-            validationSchema={signupSchema}>
+            validationSchema={signupSchema}
+          >
             {({
               handleChange,
               handleBlur,
@@ -95,7 +93,8 @@ const SignUpScreen = ({ navigation }) => {
             }) => (
               <VStack width="80%" space={4}>
                 <FormControl
-                  isInvalid={'username' in errors && touched.username}>
+                  isInvalid={'username' in errors && touched.username}
+                >
                   <FormControl.Label>Username</FormControl.Label>
                   <Input
                     autoCapitalize="none"
@@ -144,7 +143,8 @@ const SignUpScreen = ({ navigation }) => {
                 </FormControl>
 
                 <FormControl
-                  isInvalid={'password' in errors && touched.password}>
+                  isInvalid={'password' in errors && touched.password}
+                >
                   <FormControl.Label>Password</FormControl.Label>
                   <Input
                     autoCapitalize="none"
@@ -165,7 +165,8 @@ const SignUpScreen = ({ navigation }) => {
                 <FormControl
                   isInvalid={
                     'confirmPassword' in errors && touched.confirmPassword
-                  }>
+                  }
+                >
                   <FormControl.Label>Confirm Password</FormControl.Label>
                   <Input
                     autoCapitalize="none"

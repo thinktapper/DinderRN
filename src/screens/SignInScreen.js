@@ -85,7 +85,7 @@ const SignInScreen = ({ navigation }) => {
   // }
 
   const onSubmit = async (values) => {
-    console.log('submitting with', values)
+    // console.log('submitting with', values)
     // loginUser(values)
     setLoading(true)
     try {
@@ -120,7 +120,8 @@ const SignInScreen = ({ navigation }) => {
             password: '',
           }}
           onSubmit={onSubmit}
-          validationSchema={loginSchema}>
+          validationSchema={loginSchema}
+        >
           {({
             handleChange,
             handleBlur,

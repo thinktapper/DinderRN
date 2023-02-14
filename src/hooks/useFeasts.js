@@ -5,7 +5,7 @@ import { useAuthContext } from '../context/AuthProvider'
 
 const fetchFeasts = async (user) => {
   const { data, status } = await axios({
-    url: `${apiURL.local}/api/user/feasts`,
+    url: `${apiURL.remote}/api/user/feasts`,
     method: 'get',
     headers: { authorization: `Bearer ${user?.token}` },
   })

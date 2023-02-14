@@ -12,9 +12,12 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/9a8d4dc4-0f50-49bf-a432-cb0540b72035"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.thinktapper.dinder"
@@ -34,6 +37,9 @@
         "projectId": "9a8d4dc4-0f50-49bf-a432-cb0540b72035"
       }
     },
-    "owner": "tapper"
+    "owner": "tapper",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
   }
 }

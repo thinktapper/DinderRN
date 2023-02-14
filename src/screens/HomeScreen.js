@@ -14,7 +14,6 @@ import { AntDesign, Entypo, Ionicons } from '@expo/vector-icons'
 import Swiper from 'react-native-deck-swiper'
 import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
-import { useAppContext } from '../context/AppProvider'
 import { useAuthContext } from '../context/AuthProvider'
 import useFeast from '../hooks/useFeast'
 import axios from 'axios'
@@ -25,6 +24,8 @@ import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
 
 const HomeScreen = ({ route, navigation }) => {
+  const globalPadding = rs(12)
+  const wrapperPadding = rs(12)
   const queryClient = useQueryClient()
   const currentFeast = feastState.useValue()
   const { user } = useAuthContext()

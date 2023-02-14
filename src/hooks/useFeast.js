@@ -6,7 +6,7 @@ import { useAuthContext } from '../context/AuthProvider'
 
 const fetchFeast = async (currentFeast, user) => {
   const { data } = await axios({
-    url: `${apiURL.local}/api/feast/${currentFeast.id}`,
+    url: `${apiURL.remote}/api/feast/${currentFeast.id}`,
     method: 'get',
     headers: { authorization: `Bearer ${user?.token}` },
   })
@@ -15,12 +15,12 @@ const fetchFeast = async (currentFeast, user) => {
 
 const getFeastPulse = async (currentFeast, user) => {
   const response = await axios(
-    `${apiURL.local}/api/feast/pulse/${currentFeast.id}`,
+    `${apiURL.remote}/api/feast/pulse/${currentFeast.id}`,
     {
       method: 'GET',
       // prettier-ignore
       headers: { 'authorization': `Bearer ${user?.token}` },
-    },
+    }
   )
 
   // console.warn(
@@ -50,7 +50,7 @@ const useFeast = () => {
       // staleTime: 1000 * 60 * 60 * 24, // 24 hours
       // staleTime: 300000, // 5 minutes
       // cacheTime: Infinity,
-    },
+    }
   )
 
   return places

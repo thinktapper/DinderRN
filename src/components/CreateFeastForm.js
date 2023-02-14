@@ -50,7 +50,7 @@ import axios from 'axios'
 import useUsers from '../hooks/useUsers'
 
 const submitFeast = async (formData, user) => {
-  const response = await axios(`${apiURL.local}/api/feast`, {
+  const response = await axios(`${apiURL.remote}/api/feast`, {
     method: 'POST',
     data: { ...formData },
     headers: {
@@ -94,7 +94,7 @@ function CreateFeastForm({ props }) {
           photoreference: photoRef,
           maxwidth: 400,
         },
-      },
+      }
     )
     // const imageUrl = URL.createObjectURL(response.data.request._url)
     const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
@@ -113,7 +113,7 @@ function CreateFeastForm({ props }) {
       imgageUrlQuery,
       // JSON.stringify(response),
       'imageUrl obj:',
-      JSON.stringify(imageUrl),
+      JSON.stringify(imageUrl)
     )
 
     return JSON.stringify(imageUrl)
@@ -165,7 +165,7 @@ function CreateFeastForm({ props }) {
         guestArr.length,
         // formData.guests.length,
         // guestsArrData.length,
-        JSON.stringify(formData),
+        JSON.stringify(formData)
         // {
         //   ...formData.guests,
         // },
@@ -193,7 +193,7 @@ function CreateFeastForm({ props }) {
       onError: (error) => {
         console.log('error', error)
       },
-    },
+    }
   )
 
   return (
@@ -231,7 +231,8 @@ function CreateFeastForm({ props }) {
               <ScrollView
                 keyboardShouldPersistTaps="handled"
                 contentContainerStyle={{ flexGrow: 1 }}
-                horizontal>
+                horizontal
+              >
                 <GooglePlacesAutocomplete
                   enablePoweredByContainer={false}
                   placeholder="Type a location"
@@ -346,7 +347,8 @@ function CreateFeastForm({ props }) {
                     selectedValue={formData.radius}
                     onValueChange={(itemValue) =>
                       handleChange('radius', itemValue)
-                    }>
+                    }
+                  >
                     <PickerIOS.Item label="1 Mile" value={1} />
                     <PickerIOS.Item label="2 Miles" value={2} />
                     <PickerIOS.Item label="3 Miles" value={3} />
@@ -375,7 +377,8 @@ function CreateFeastForm({ props }) {
                     colorScheme="rose"
                     defaultValue={guestArr}
                     accessibilityLabel="invite guests"
-                    onChange={setGuestArr}>
+                    onChange={setGuestArr}
+                  >
                     {guests.map((guest) => (
                       <Checkbox key={guest.id} value={guest.username} my="1">
                         <Image
@@ -393,7 +396,8 @@ function CreateFeastForm({ props }) {
             <Button
               mt="5"
               colorScheme="rose"
-              onPress={() => handleCreateFeast()}>
+              onPress={() => handleCreateFeast()}
+            >
               <Text>Create Feast</Text>
             </Button>
             {createFeast.isLoading && (
@@ -413,7 +417,8 @@ function CreateFeastForm({ props }) {
                         flexShrink={1}
                         space={2}
                         alignItems="center"
-                        justifyContent="space-between">
+                        justifyContent="space-between"
+                      >
                         <HStack flexShrink={1} space={2} alignItems="center">
                           <Alert.Icon />
                           <Text
@@ -421,7 +426,8 @@ function CreateFeastForm({ props }) {
                             fontWeight="medium"
                             _dark={{
                               color: 'coolGray.800',
-                            }}>
+                            }}
+                          >
                             Failed to create feast
                           </Text>
                         </HStack>
@@ -443,7 +449,8 @@ function CreateFeastForm({ props }) {
                           _text: {
                             color: 'coolGray.600',
                           },
-                        }}>
+                        }}
+                      >
                         {createFeast.error.message}
                       </Box>
                     </VStack>

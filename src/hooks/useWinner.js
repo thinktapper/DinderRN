@@ -6,7 +6,7 @@ import { useAuthContext } from '../context/AuthProvider'
 
 const getFeastPulse = async (currentFeast, user) => {
   const response = await axios(
-    `${apiURL.local}/api/feast/pulse/${currentFeast.id}`,
+    `${apiURL.remote}/api/feast/pulse/${currentFeast.id}`,
     {
       method: 'GET',
       // prettier-ignore

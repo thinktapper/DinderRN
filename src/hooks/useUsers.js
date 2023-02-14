@@ -6,7 +6,7 @@ import { useAuthContext } from '../context/AuthProvider'
 
 const fetchUsers = async (user) => {
   const { data } = await axios({
-    url: `${apiURL.local}/api/user/all`,
+    url: `${apiURL.remote}/api/user/all`,
     method: 'get',
     headers: { authorization: `Bearer ${user?.token}` },
   })
@@ -24,7 +24,7 @@ const useUsers = () => {
       enabled: !!user,
       // staleTime: 6000, //  min
       // cacheTime: 300000, // 5 minutes
-    },
+    }
   )
   return guests
 }

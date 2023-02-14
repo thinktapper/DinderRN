@@ -6,8 +6,6 @@ import { useAuthContext } from '../context/AuthProvider'
 
 import SignInScreen from '../screens/SignInScreen'
 import SignUpScreen from '../screens/SignUpScreen'
-import ForgotPasswordScreen from '../screens/ForgotPasswordScreen'
-import NewPasswordScreen from '../screens/NewPasswordScreen'
 import HomeScreen from '../screens/HomeScreen'
 import FeastScreen from '../screens/FeastScreen'
 import NewFeastScreen from '../screens/NewFeastScreen'
@@ -38,11 +36,6 @@ const Navigation = () => {
               }}
             />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
-            <Stack.Screen
-              name="ForgotPassword"
-              component={ForgotPasswordScreen}
-            />
-            <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
           </>
         ) : (
           <>

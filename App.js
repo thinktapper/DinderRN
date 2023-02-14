@@ -1,3 +1,4 @@
+import 'expo-dev-client'
 import 'react-native-gesture-handler'
 import React from 'react'
 import { LogBox } from 'react-native'
@@ -13,17 +14,17 @@ import Navigation from './src/navigation'
 import { AuthProvider } from './src/context/AuthProvider'
 import { NativeBaseProvider } from 'native-base'
 
-// LogBox.ignoreLogs([
-//   'We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320',
-// ])
+LogBox.ignoreLogs([
+  'We can not support a function callback. See Github Issues for details https://github.com/adobe/react-spectrum/issues/2320',
+])
 
 const asyncPersister = createAsyncStoragePersister({
   storage: AsyncStorage,
 })
 
-if (__DEV__) {
-  import('./src/utils/reactotron')
-}
+// if (__DEV__) {
+//   import('./src/utils/reactotron')
+// }
 
 const App = ({ navigation }) => {
   return (

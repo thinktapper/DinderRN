@@ -12,7 +12,7 @@ import { LoadingIndicator } from '../components/LoadingIndicator'
 
 // const getFeastPulse = async (feastId, user) => {
 //   const response = await axios(
-//     `${apiURL.local}/api/feast/pulse/${feastId.id}`,
+//     `${apiURL.remote}/api/feast/pulse/${feastId.id}`,
 //     {
 //       method: 'GET',
 //       // prettier-ignore
@@ -109,7 +109,8 @@ const WinnerScreen = ({ navigation, route }) => {
             </Center>
             <Pressable
               style={tw`bg-white m-10 py-6 rounded-full`}
-              onPress={() => navigation.navigate('Feasts')}>
+              onPress={() => navigation.navigate('Feasts')}
+            >
               <Text style={tw`text-center text-lg`}>Your Feasts</Text>
             </Pressable>
           </Box>
