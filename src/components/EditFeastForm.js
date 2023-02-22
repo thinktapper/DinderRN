@@ -48,6 +48,7 @@ import { useAuthContext } from '../context/AuthProvider'
 import { feastState } from '../context/FeastState'
 import axios from 'axios'
 import { apiURL } from '../lib/constants'
+import CustomButton from './CustomButton'
 
 const submitFeast = async (selectedFeast, formData, user) => {
   const response = await axios(
@@ -76,7 +77,7 @@ function EditFeastForm({ props }) {
     startDate: new Date(selectedFeast?.startDate),
     endDate: new Date(selectedFeast?.endDate),
     // location: selectedFeast.location,
-    radius: selectedFeast?.radius,
+    // radius: selectedFeast?.radius,
   })
 
   const handleChange = (name, value) => {
@@ -106,8 +107,17 @@ function EditFeastForm({ props }) {
   return (
     <>
       <Box safeArea flex={1} w="100%">
-        <Heading size="lg" color="coolGray.800" fontWeight="bold">
-          {` Edit ${selectedFeast?.name} Feast`}
+        <Heading
+          alignSelf={'center'}
+          size="lg"
+          color="coolGray.800"
+          fontWeight="bold"
+        >
+          Edit{' '}
+          <Text style={tw`text-rose-500 text-2xl font-extrabold`}>
+            {selectedFeast?.name}
+          </Text>{' '}
+          feast
         </Heading>
         <IconButton
           icon={<CloseIcon size="sm" />}
@@ -124,159 +134,188 @@ function EditFeastForm({ props }) {
         ) : (
           <>
             <VStack space={3} mt="5">
-              <Center w="100%" h="20" rounded="lg" shadow={3}>
-                <Input
-                  placeholder={selectedFeast?.name}
-                  value={formData.name}
-                  onChangeText={(text) => handleChange('name', text)}
-                  variant="rounded"
-                  size="xl"
-                  bgColor="white"
-                />
-              </Center>
-
-              <Center w="100%" h="20" rounded="lg" shadow={3}>
-                <Input
-                  placeholder={selectedFeast?.image}
-                  value={formData.image}
-                  onChangeText={(text) => handleChange('image', text)}
-                  variant="rounded"
-                  size="xl"
-                  bgColor="white"
-                />
-              </Center>
-
-              <Box flex={1} w="100%" rounded="lg" shadow={3} alignSelf="center">
-                <HStack alignItems="center">
-                  <Center size="20" w="50%" py="3" flex={1}>
-                    <Text fontWeight="semibold" fontSize="md">
-                      Voting start
-                    </Text>
-                    <Moment
-                      date={selectedFeast?.startDate}
-                      element={Text}
-                      format="MM/DD/YYYY"
-                    />
-                    <RNDateTimePicker
-                      // display="inline"
-                      mode="date"
-                      value={formData.startDate}
-                      minimumDate={new Date()}
-                      style={tw`flex-1 w-full mt-2`}
-                      onChange={(e, selectedDate) => {
-                        handleChange('startDate', selectedDate)
-                      }}
+              <Box>
+                <FormControl my={'5'}>
+                  <FormControl.Label>Feast Name</FormControl.Label>
+                  <Center w="100%" h="20" rounded="lg" shadow={3}>
+                    <Input
+                      placeholder={selectedFeast?.name}
+                      value={formData.name}
+                      onChangeText={(text) => handleChange('name', text)}
+                      variant="rounded"
+                      size="xl"
+                      bgColor="white"
                     />
                   </Center>
-                  <Center size="20" w="50%" py="3" flex={1}>
-                    <Text fontWeight="semibold" fontSize="md">
-                      Voting end
-                    </Text>
-                    <Moment
-                      date={selectedFeast?.endDate}
-                      element={Text}
-                      format="MM/DD/YYYY"
-                    />
-                    <RNDateTimePicker
-                      // display="inline"
-                      mode="date"
-                      value={formData.endDate}
-                      minimumDate={new Date()}
-                      style={tw`flex-1 w-full mt-2`}
-                      onChange={(e, selectedDate) => {
-                        handleChange('endDate', selectedDate)
-                      }}
+
+                  <FormControl.Label>Feast Image</FormControl.Label>
+                  <Center w="100%" h="20" rounded="lg" shadow={3}>
+                    <Input
+                      placeholder="Direct link, e.g. https://i.imgur.com/8BDXWCv.jpg"
+                      value={formData.image}
+                      onChangeText={(text) => handleChange('image', text)}
+                      variant="rounded"
+                      size="xl"
+                      bgColor="white"
                     />
                   </Center>
-                </HStack>
-              </Box>
 
-              <ScrollView style={styles.elementContainer}>
-                <Text textAlign="center" fontWeight="bold">
-                  {`${selectedFeast?.radius} mile radius`}
-                </Text>
-                <View style={styles.container}>
-                  <Picker
-                    label="Radius"
-                    selectedValue={formData.radius}
-                    onValueChange={(itemValue) =>
-                      handleChange('radius', itemValue)
-                    }
+                  <Box
+                    flex={1}
+                    w="100%"
+                    rounded="lg"
+                    shadow={3}
+                    alignSelf="center"
                   >
-                    <PickerIOS.Item label="1 Mile" value={1} />
-                    <PickerIOS.Item label="2 Miles" value={2} />
-                    <PickerIOS.Item label="3 Miles" value={3} />
-                    <PickerIOS.Item label="4 Miles" value={4} />
-                    <PickerIOS.Item label="5 Miles" value={5} />
-                  </Picker>
-                </View>
-              </ScrollView>
-
-              <Button
-                mt="5"
-                colorScheme="rose"
-                onPress={() => handleEditFeast()}
-              >
-                <Text>Edit Feast</Text>
-              </Button>
-              {editFeast.isLoading && (
-                <HStack space={2} justifyContent="center">
-                  <Spinner accessibilityLabel="Submitting feast" />
-                  <Heading color="primary.500" fontSize="md">
-                    Submitting update...
-                  </Heading>
-                </HStack>
-              )}
-              {editFeast.error && (
-                <Box w="100%" alignItems="center">
-                  <Collapse isOpen={showAlert}>
-                    <Alert maxW="400" status="error">
-                      <VStack space={1} flexShrink={1} w="100%">
-                        <HStack
-                          flexShrink={1}
-                          space={2}
-                          alignItems="center"
-                          justifyContent="space-between"
-                        >
-                          <HStack flexShrink={1} space={2} alignItems="center">
-                            <Alert.Icon />
-                            <Text
-                              fontSize="md"
-                              fontWeight="medium"
-                              _dark={{
-                                color: 'coolGray.800',
-                              }}
-                            >
-                              Failed to edit feast
-                            </Text>
-                          </HStack>
-                          <IconButton
-                            variant="unstyled"
-                            _focus={{
-                              borderWidth: 0,
-                            }}
-                            icon={<CloseIcon size="3" />}
-                            _icon={{
-                              color: 'coolGray.600',
-                            }}
-                            onPress={() => setShowAlert(false)}
-                          />
-                        </HStack>
-                        <Box
-                          pl="6"
-                          _dark={{
-                            _text: {
-                              color: 'coolGray.600',
-                            },
+                    <HStack alignItems="center">
+                      <Center size="20" w="50%" py="3" flex={1}>
+                        <Text fontWeight="semibold" fontSize="md">
+                          Voting start
+                        </Text>
+                        {/* <Moment
+                          date={selectedFeast?.startDate}
+                          element={Text}
+                          format="MM/DD/YYYY"
+                        /> */}
+                        <RNDateTimePicker
+                          // display="inline"
+                          mode="date"
+                          value={formData.startDate}
+                          minimumDate={new Date()}
+                          style={tw`mt-2`}
+                          onChange={(e, selectedDate) => {
+                            handleChange('startDate', selectedDate)
                           }}
-                        >
-                          {editFeast.error.message}
-                        </Box>
-                      </VStack>
-                    </Alert>
-                  </Collapse>
-                </Box>
-              )}
+                        />
+                      </Center>
+                      <Center size="20" w="50%" py="3" flex={1}>
+                        <Text fontWeight="semibold" fontSize="md">
+                          Voting end
+                        </Text>
+                        {/* <Moment
+                          date={selectedFeast?.endDate}
+                          element={Text}
+                          format="MM/DD/YYYY"
+                        /> */}
+                        <RNDateTimePicker
+                          // display="inline"
+                          mode="date"
+                          value={formData.endDate}
+                          minimumDate={new Date()}
+                          style={tw`mt-2`}
+                          onChange={(e, selectedDate) => {
+                            handleChange('endDate', selectedDate)
+                          }}
+                        />
+                      </Center>
+                    </HStack>
+                  </Box>
+
+                  {/* <Box mt={'1'}>
+                    <Text
+                      textAlign="center"
+                      fontWeight="semibold"
+                      fontSize="md"
+                    >
+                      {`${selectedFeast?.radius} mile radius`}
+                    </Text>
+                    <Box top={'-60'}>
+                      <Picker
+                        label="Radius"
+                        selectedValue={formData.radius}
+                        onValueChange={
+                          (itemValue) => handleChange('radius', itemValue)
+                          // setRadius(itemValue)
+                        }
+                      >
+                        <PickerIOS.Item label="1 Mile" value={1} />
+                        <PickerIOS.Item label="2 Miles" value={2} />
+                        <PickerIOS.Item label="3 Miles" value={3} />
+                        <PickerIOS.Item label="4 Miles" value={4} />
+                        <PickerIOS.Item label="5 Miles" value={5} />
+                      </Picker>
+                    </Box>
+                  </Box> */}
+
+                  {/* <Button
+                    mt="5"
+                    colorScheme="rose"
+                    onPress={() => handleEditFeast()}
+                  >
+                    <Text>Edit Feast</Text>
+                  </Button> */}
+
+                  <Center mt={'3'}>
+                    <CustomButton
+                      text={'Edit Feast'}
+                      onPress={() => handleEditFeast()}
+                    />
+                  </Center>
+                </FormControl>
+
+                {editFeast.isLoading && (
+                  <HStack space={2} justifyContent="center">
+                    <Spinner accessibilityLabel="Submitting feast" />
+                    <Heading color="primary.500" fontSize="md">
+                      Submitting update...
+                    </Heading>
+                  </HStack>
+                )}
+                {editFeast.error && (
+                  <Box w="100%" alignItems="center">
+                    <Collapse isOpen={showAlert}>
+                      <Alert maxW="400" status="error">
+                        <VStack space={1} flexShrink={1} w="100%">
+                          <HStack
+                            flexShrink={1}
+                            space={2}
+                            alignItems="center"
+                            justifyContent="space-between"
+                          >
+                            <HStack
+                              flexShrink={1}
+                              space={2}
+                              alignItems="center"
+                            >
+                              <Alert.Icon />
+                              <Text
+                                fontSize="md"
+                                fontWeight="medium"
+                                _dark={{
+                                  color: 'coolGray.800',
+                                }}
+                              >
+                                Failed to edit feast
+                              </Text>
+                            </HStack>
+                            <IconButton
+                              variant="unstyled"
+                              _focus={{
+                                borderWidth: 0,
+                              }}
+                              icon={<CloseIcon size="3" />}
+                              _icon={{
+                                color: 'coolGray.600',
+                              }}
+                              onPress={() => setShowAlert(false)}
+                            />
+                          </HStack>
+                          <Box
+                            pl="6"
+                            _dark={{
+                              _text: {
+                                color: 'coolGray.600',
+                              },
+                            }}
+                          >
+                            {editFeast.error.message}
+                          </Box>
+                        </VStack>
+                      </Alert>
+                    </Collapse>
+                  </Box>
+                )}
+              </Box>
             </VStack>
           </>
         )}
