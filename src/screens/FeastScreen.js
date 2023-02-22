@@ -72,7 +72,7 @@ const FeastScreen = ({ navigation }) => {
 
   useEffect(() => {
     refetch()
-  }, [])
+  }, [feasts, currentFeast])
 
   const deleteItem = useMutation(
     ({ feastId, token }) => deleteFeast(feastId, token),

@@ -13,7 +13,7 @@ const fetchFeasts = async (user) => {
   // if (status !== 200) {
   //   return []
   // }
-  return data.feasts
+  return data.sortedFeasts
 }
 
 function useFeasts() {
