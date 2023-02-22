@@ -205,7 +205,7 @@ const FeastScreen = ({ navigation }) => {
                             {item.name}
                           </Text>
                           <Moment
-                            date={item.startDate}
+                            date={item.endDate}
                             element={Text}
                             format="MM/DD/YYYY"
                             style={styles.date}
@@ -238,79 +238,17 @@ const FeastScreen = ({ navigation }) => {
           />
         </VStack>
       ) : (
-        // <VStack px="3" mx="4">
-        //   <FlatList
-        //     data={feasts}
-        //     ListHeaderComponent={getHeader}
-        //     ListFooterComponent={getFooter}
-        //     keyExtractor={(item) => item.id}
-        //     renderItem={({ item }) => {
-        //       return (
-        //         <Box
-        //           borderBottomWidth="1"
-        //           _dark={{
-        //             borderColor: 'muted.50',
-        //           }}
-        //           borderColor="muted.800"
-        //           pl={['0', '4']}
-        //           pr={['0', '5']}
-        //           py="2"
-        //           mx="2">
-        //           <Pressable onPress={() => handlePlaceSelect(item)}>
-        //             <HStack space={'3'} justifyContent="space-between" px="3">
-        //               <Icon
-        //                 as={MaterialIcons}
-        //                 name={item.closed ? 'where-to-vote' : 'how-to-vote'}
-        //                 size="4xl"
-        //                 color={item.closed ? 'rose.400' : 'green.600'}
-        //               />
-        //               <VStack>
-        //                 <Text
-        //                   _dark={{
-        //                     color: 'warmGray.50',
-        //                   }}
-        //                   color="coolGray.800"
-        //                   bold>
-        //                   {item.name}
-        //                 </Text>
-        //                 <Moment
-        //                   date={item.startDate}
-        //                   element={Text}
-        //                   format="MM/DD/YYYY"
-        //                 />
-        //               </VStack>
-        //               {/* <Spacer /> */}
-
-        //               <HStack space={'3'}>
-        //                 <Pressable onPress={() => onEditPress(item)}>
-        //                   <FontAwesome name="edit" size={24} color="black" />
-        //                 </Pressable>
-        //                 <Pressable onPress={() => onDeletePress(item)}>
-        //                   <MaterialIcons
-        //                     name="delete"
-        //                     size={24}
-        //                     color="black"
-        //                   />
-        //                 </Pressable>
-        //               </HStack>
-        //             </HStack>
-        //           </Pressable>
-        //         </Box>
-        //         // />
-        //       )
-        //     }}
-        //   />
-        // </VStack>
         <Box>
           <Text style={[tw`text-center mt-8`, styles.title]}>
             You don't have any feasts yet 😲
           </Text>
-          <Pressable
-            style={styles.button}
-            onPress={() => navigation.navigate('NewFeast')}
-          >
-            <Text>Create one!</Text>
-          </Pressable>
+
+          <Center>
+            <CustomButton
+              onPress={() => navigation.navigate('NewFeast')}
+              text={'Create one!'}
+            />
+          </Center>
         </Box>
       )}
     </SafeAreaView>

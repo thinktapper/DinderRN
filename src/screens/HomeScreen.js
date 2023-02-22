@@ -40,8 +40,6 @@ const HomeScreen = ({ route, navigation }) => {
   const { places, refetch } = useFeast()
 
   useEffect(() => {
-    console.log('useEffect')
-
     // update feast places
     refetch()
   }, [])

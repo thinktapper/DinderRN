@@ -12,11 +12,13 @@ import {
 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { useAuthContext } from '../context/AuthProvider'
+import { feastState } from '../context/FeastState'
 import { color, activeColor } from '../lib/constants'
 
 const Header = () => {
   const navigation = useNavigation()
   const { user } = useAuthContext()
+  const currentFeast = feastState.useValue()
   const [activeScreen, setActiveScreen] = React.useState('Home')
 
   return (
@@ -28,12 +30,6 @@ const Header = () => {
         }}
       >
         <MaterialIcons name="restaurant-menu" size={33} color={activeColor} />
-        {/* <MaterialCommunityIcons
-          name="star-four-points"
-          size={30}
-          color={activeColor}
-          // color={activeScreen === 'Feasts' ? activeColor : color}
-        /> */}
       </Pressable>
       <Pressable
         onPress={() => {
@@ -41,6 +37,7 @@ const Header = () => {
           navigation.navigate('Home')
         }}
         style={tw`rounded-full`}
+        // disabled={currentFeast === null}
       >
         <Image
           style={tw`w-16 h-16`}

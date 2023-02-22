@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
 
         // update stored user data
         await setStoredUser(data.user)
-        console.debug(`User ${data.user.username} signed up`)
+        // console.debug(`User ${data.user.username} signed up`)
       }
 
       setSplashLoading(false)

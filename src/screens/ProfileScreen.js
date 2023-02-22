@@ -162,7 +162,11 @@ const ProfileScreen = ({ navigation }) => {
                 <Text>Sign out</Text>
               </Pressable> */}
               <Center>
-                <CustomButton onPress={handleSubmit} text="Save" />
+                <CustomButton
+                  onPress={handleSubmit}
+                  text="Save"
+                  // bgColor={'cornflowerblue'}
+                />
                 <CustomButton
                   onPress={() => navigation.goBack()}
                   text="Cancel"
