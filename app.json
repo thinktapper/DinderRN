@@ -12,9 +12,6 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "requestHeaders": {
-        "expo-channel-name": "demo"
-      },
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/9a8d4dc4-0f50-49bf-a432-cb0540b72035"
     },
