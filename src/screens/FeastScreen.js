@@ -48,7 +48,6 @@ import { feastState } from '../context/FeastState'
 // import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import Moment from 'react-moment'
-import moment from 'moment'
 import CustomButton from '../components/CustomButton'
 
 const deleteFeast = async (feastId, token) => {
