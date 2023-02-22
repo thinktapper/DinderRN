@@ -31,15 +31,9 @@ import {
   Text,
   Flex,
 } from 'native-base'
-import { EvilIcons } from '@expo/vector-icons'
 import tw from 'twrnc'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { LoadingIndicator } from '../components/LoadingIndicator'
-import {
-  useMutation,
-  useAsyncMutation,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
 import { apiURL } from '../lib/constants'

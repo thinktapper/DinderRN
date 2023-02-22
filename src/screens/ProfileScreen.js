@@ -24,7 +24,6 @@ import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { EMAIL_REGEX } from '../lib/constants'
 import { useAuthContext } from '../context/AuthProvider'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Header from '../components/Header'
 
 const ProfileScreen = ({ navigation }) => {
@@ -68,7 +67,7 @@ const ProfileScreen = ({ navigation }) => {
     }
   }
 
-  loading && <LoadingIndicator />
+  if (loading) return <LoadingIndicator />
 
   return (
     <SafeAreaView style={styles.root}>
