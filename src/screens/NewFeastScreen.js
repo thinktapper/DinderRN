@@ -27,10 +27,10 @@ const NewFeastScreen = ({ navigation }) => {
   const queryClient = useQueryClient()
 
   const onFeastCreated = (response) => {
-    console.log('success, you created a feast: ', response.data)
+    // console.log('success, you created a feast: ', response.data)
 
     // @ts-ignore
-    queryClient.invalidateQueries(queryKeys.feasts)
+    queryClient.invalidateQueries([queryKeys.feasts])
 
     navigation.navigate('Feasts')
   }

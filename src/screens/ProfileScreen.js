@@ -18,6 +18,8 @@ import {
   Center,
 } from 'native-base'
 import tw from 'twrnc'
+import CustomButton from '../components/CustomButton'
+import { LoadingIndicator } from '../components/LoadingIndicator'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { EMAIL_REGEX } from '../lib/constants'
@@ -65,6 +67,8 @@ const ProfileScreen = ({ navigation }) => {
       setLoading(false)
     }
   }
+
+  loading && <LoadingIndicator />
 
   return (
     <SafeAreaView style={styles.root}>
@@ -143,7 +147,7 @@ const ProfileScreen = ({ navigation }) => {
                 </FormControl.ErrorMessage>
               </FormControl>
 
-              <Pressable onPress={handleSubmit} style={styles.button}>
+              {/* <Pressable onPress={handleSubmit} style={styles.button}>
                 <Text>{loading ? 'Loading...' : 'Save'}</Text>
               </Pressable>
 
@@ -156,7 +160,15 @@ const ProfileScreen = ({ navigation }) => {
 
               <Pressable onPress={onLogoutHandler} style={styles.button}>
                 <Text>Sign out</Text>
-              </Pressable>
+              </Pressable> */}
+              <Center>
+                <CustomButton onPress={handleSubmit} text="Save" />
+                <CustomButton
+                  onPress={() => navigation.goBack()}
+                  text="Cancel"
+                />
+                <CustomButton onPress={onLogoutHandler} text="Sign out" />
+              </Center>
             </VStack>
           )}
         </Formik>

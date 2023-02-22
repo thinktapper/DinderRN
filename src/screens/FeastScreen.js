@@ -49,6 +49,7 @@ import { feastState } from '../context/FeastState'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import Moment from 'react-moment'
 import moment from 'moment'
+import CustomButton from '../components/CustomButton'
 
 const deleteFeast = async (feastId, token) => {
   // Add JWT to headers
@@ -75,7 +76,7 @@ const FeastScreen = ({ navigation }) => {
     ({ feastId, token }) => deleteFeast(feastId, token),
     {
       onSuccess: (data) => {
-        console.warn('deleteFeast success:', data)
+        // console.warn('deleteFeast success:', data)
         queryClient.invalidateQueries([queryKeys.feasts])
       },
       onError: (error) => {
@@ -85,7 +86,7 @@ const FeastScreen = ({ navigation }) => {
   )
 
   const onEditPress = (item) => {
-    console.warn(`Edit pressed for ${item.name}`)
+    // console.warn(`Edit pressed for ${item.name}`)
 
     setSelectedFeast(item)
     // setIsEditing(true)
@@ -123,14 +124,14 @@ const FeastScreen = ({ navigation }) => {
       <>
         <Center>
           <Text style={styles.title}>Your Feasts</Text>
-          <Pressable
+          {/* <Pressable
             onPress={() => navigation.navigate('NewFeast')}
             style={tw`w-60 bg-rose-500 my-5 rounded-full`}
           >
             <Text style={tw`text-white p-3 text-center text-lg`}>
               Create new
             </Text>
-          </Pressable>
+          </Pressable> */}
         </Center>
       </>
     )
@@ -139,14 +140,17 @@ const FeastScreen = ({ navigation }) => {
   const getFooter = () => {
     return (
       <Center>
-        <Pressable
-          onPress={() => navigation.navigate('Home')}
-          style={tw`w-60 bg-rose-500 mt-5 rounded-full`}
+        {/* <Pressable
+          onPress={() => navigation.navigate('NewFeast')}
+          style={tw`w-60 h-10 justify-center items-center bg-rose-500 my-5 rounded-full`}
         >
-          <Text style={tw`text-white p-3 text-center text-lg`}>
-            Back to deck
-          </Text>
-        </Pressable>
+          <Text style={tw`text-white text-base font-medium`}>Create new</Text>
+        </Pressable> */}
+
+        <CustomButton
+          text={'Create new'}
+          onPress={() => navigation.navigate('NewFeast')}
+        />
       </Center>
     )
   }
@@ -166,7 +170,7 @@ const FeastScreen = ({ navigation }) => {
       <Header />
 
       {feasts.length > 0 ? (
-        <VStack px="3" mx="4">
+        <VStack px="3" mx="4" mt="4">
           <FlatList
             data={feasts}
             ListHeaderComponent={getHeader}
@@ -196,7 +200,7 @@ const FeastScreen = ({ navigation }) => {
                           color={item.closed ? 'rose.400' : 'green.600'}
                         />
                         {/* <Spacer /> */}
-                        <VStack ml="1">
+                        <VStack ml="3">
                           <Text bold style={styles.feastName}>
                             {item.name}
                           </Text>
@@ -208,8 +212,12 @@ const FeastScreen = ({ navigation }) => {
                           />
                         </VStack>
                       </Flex>
-                      <HStack space={'3'}>
-                        <Pressable onPress={() => onEditPress(item)}>
+                      {/* <HStack space={'3'}> */}
+                      <Flex direction="row" m={'3'}>
+                        <Pressable
+                          onPress={() => onEditPress(item)}
+                          style={tw`pr-3`}
+                        >
                           <FontAwesome name="edit" size={24} color="black" />
                         </Pressable>
                         <Pressable onPress={() => onDeletePress(item)}>
@@ -219,7 +227,8 @@ const FeastScreen = ({ navigation }) => {
                             color="black"
                           />
                         </Pressable>
-                      </HStack>
+                      </Flex>
+                      {/* </HStack> */}
                     </HStack>
                   </Pressable>
                   {/* </Card> */}

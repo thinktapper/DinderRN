@@ -53,7 +53,7 @@ const Header = () => {
           navigation.navigate('Profile')
         }}
       >
-        {user?.image ? (
+        {user.image ? (
           <Image
             source={{ uri: user.image }}
             style={tw`w-10 h-10 rounded-full`}

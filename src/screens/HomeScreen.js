@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react'
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useLayoutEffect,
+} from 'react'
 import {
   View,
   Text,
@@ -31,7 +37,14 @@ const HomeScreen = ({ route, navigation }) => {
   const { user } = useAuthContext()
   const feastId = route.params?.feast
   const swipeRef = useRef(null)
-  const places = useFeast()
+  const { places, refetch } = useFeast()
+
+  useEffect(() => {
+    console.log('useEffect')
+
+    // update feast places
+    refetch()
+  }, [])
 
   // mutation to submit nah vote on left swipe
   const nahMutation = useMutation((placeSwiped) => {

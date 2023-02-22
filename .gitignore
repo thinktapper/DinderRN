@@ -10,6 +10,12 @@ npm-debug.*
 *.orig.*
 web-build/
 
+# Android
+android
+
+# iOS
+ios
+
 # macOS
 .DS_Store
 

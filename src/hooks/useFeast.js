@@ -41,11 +41,11 @@ const useFeast = () => {
   const { user } = useAuthContext()
 
   const fallback = []
-  const { data: places = fallback } = useQuery(
-    [queryKeys.places, currentFeast?.name],
+  const { data: places = fallback, refetch } = useQuery(
+    [queryKeys.places],
     () => getFeastPulse(currentFeast, user),
     {
-      enabled: !!currentFeast.id,
+      enabled: !!currentFeast,
       // staleTime: 1000 * 60 * 60 * 24 * 7, // 1 week
       // staleTime: 1000 * 60 * 60 * 24, // 24 hours
       // staleTime: 300000, // 5 minutes
@@ -53,6 +53,6 @@ const useFeast = () => {
     }
   )
 
-  return places
+  return { places, refetch }
 }
 export default useFeast

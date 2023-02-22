@@ -48,6 +48,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useAuthContext } from '../context/AuthProvider'
 import axios from 'axios'
 import useUsers from '../hooks/useUsers'
+import CustomButton from './CustomButton'
 
 const submitFeast = async (formData, user) => {
   const response = await axios(`${apiURL.remote}/api/feast`, {
@@ -58,7 +59,7 @@ const submitFeast = async (formData, user) => {
       'authorization': `Bearer ${user?.token}`,
     },
   })
-  console.warn('submitFeast:', JSON.stringify(response))
+  // console.warn('submitFeast:', JSON.stringify(response))
   return response.data
 }
 
@@ -393,13 +394,20 @@ function CreateFeastForm({ props }) {
               </Box>
             </ScrollView>
 
-            <Button
+            {/* <Button
               mt="5"
               colorScheme="rose"
               onPress={() => handleCreateFeast()}
             >
               <Text>Create Feast</Text>
-            </Button>
+            </Button> */}
+            <Center>
+              <CustomButton
+                onPress={() => handleCreateFeast()}
+                text={'Create Feast'}
+              />
+            </Center>
+
             {createFeast.isLoading && (
               <HStack space={2} justifyContent="center">
                 <Spinner accessibilityLabel="Submitting feast" />

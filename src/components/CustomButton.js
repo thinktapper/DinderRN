@@ -1,27 +1,49 @@
 import React from 'react'
 import { View, Text, StyleSheet, Pressable } from 'react-native'
+import tw from 'twrnc'
 
-const CustomButton = ({
-  onPress,
-  text,
-  type = 'PRIMARY',
-  bgColor,
-  fgColor,
-}) => {
+// const CustomButton = ({
+//   onPress,
+//   text,
+//   type = 'PRIMARY',
+//   bgColor,
+//   fgColor,
+// }) => {
+//   return (
+//     <Pressable
+//       onPress={onPress}
+//       style={[
+//         styles.container,
+//         styles[`container_${type}`],
+//         bgColor ? { backgroundColor: bgColor } : {},
+//       ]}>
+//       <Text
+//         style={[
+//           styles.text,
+//           styles[`text_${type}`],
+//           fgColor ? { color: fgColor } : {},
+//         ]}>
+//         {text}
+//       </Text>
+//     </Pressable>
+//   )
+// }
+
+const CustomButton = ({ onPress, text, bgColor, fgColor }) => {
   return (
     <Pressable
       onPress={onPress}
       style={[
-        styles.container,
-        styles[`container_${type}`],
+        tw`w-60 h-10 justify-center items-center bg-rose-500 my-5 rounded-full`,
         bgColor ? { backgroundColor: bgColor } : {},
-      ]}>
+      ]}
+    >
       <Text
         style={[
-          styles.text,
-          styles[`text_${type}`],
+          tw`text-white text-base font-medium`,
           fgColor ? { color: fgColor } : {},
-        ]}>
+        ]}
+      >
         {text}
       </Text>
     </Pressable>

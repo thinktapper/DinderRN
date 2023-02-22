@@ -6,6 +6,7 @@ import {
   ScrollView,
   Alert,
   SafeAreaView,
+  Pressable,
 } from 'react-native'
 import {
   VStack,
@@ -91,7 +92,7 @@ const SignUpScreen = ({ navigation }) => {
               touched,
               errors,
             }) => (
-              <VStack width="80%" space={4}>
+              <VStack width="80%" space={4} mt={'6'}>
                 <FormControl
                   isInvalid={'username' in errors && touched.username}
                 >
@@ -184,26 +185,31 @@ const SignUpScreen = ({ navigation }) => {
                   </FormControl.ErrorMessage>
                 </FormControl>
 
-                <CustomButton
-                  text={loading ? 'Loading...' : 'Sign Up'}
-                  onPress={handleSubmit}
-                />
+                <Center>
+                  <CustomButton
+                    text={loading ? 'Loading...' : 'Sign Up'}
+                    onPress={handleSubmit}
+                  />
+                </Center>
               </VStack>
             )}
           </Formik>
 
-          {/* <CustomButton
-          text="Register"
-          onPress={handleSubmit(onRegisterPressed)}
-        /> */}
-
           {/* <SocialSignInButtons /> */}
 
-          <CustomButton
+          {/* <CustomButton
             text="Have an account? Sign in"
             onPress={onSignInPress}
             type="TERTIARY"
-          />
+          /> */}
+          <Pressable
+            onPress={onSignInPress}
+            style={[styles.container, styles.container_TERTIARY]}
+          >
+            <Text style={[styles.text, styles.text_TERTIARY]}>
+              Have an account? <Text style={styles.link}>Sign in</Text>
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -226,7 +232,40 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   link: {
-    color: '#FDB075',
+    color: 'cornflowerblue',
+  },
+  container: {
+    width: '100%',
+
+    padding: 15,
+    marginVertical: 5,
+
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+
+  container_PRIMARY: {
+    backgroundColor: '#3B71F3',
+  },
+
+  container_SECONDARY: {
+    borderColor: '#3B71F3',
+    borderWidth: 2,
+  },
+
+  container_TERTIARY: {},
+
+  // text: {
+  //   fontWeight: 'bold',
+  //   color: 'white',
+  // },
+
+  text_SECONDARY: {
+    color: '#3B71F3',
+  },
+
+  text_TERTIARY: {
+    color: 'gray',
   },
 })
 

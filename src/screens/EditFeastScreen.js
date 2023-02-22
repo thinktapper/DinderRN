@@ -30,7 +30,7 @@ const EditFeastScreen = ({ navigation }) => {
 
   const onFeastEdited = (response) => {
     if (response.success) {
-      queryClient.invalidateQueries(queryKeys.feasts)
+      queryClient.invalidateQueries([queryKeys.feasts])
       setSelectedFeast(null)
     }
     navigation.goBack()

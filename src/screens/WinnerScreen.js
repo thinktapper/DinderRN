@@ -9,6 +9,7 @@ import { useAuthContext } from '../context/AuthProvider'
 import useWinner from '../hooks/useWinner'
 import axios from 'axios'
 import { LoadingIndicator } from '../components/LoadingIndicator'
+import CustomButton from '../components/CustomButton'
 
 // const getFeastPulse = async (feastId, user) => {
 //   const response = await axios(
@@ -84,7 +85,7 @@ const WinnerScreen = ({ navigation, route }) => {
               colorScheme="white"
               onPress={() => navigation.goBack()}
             />
-            <View style={tw`justify-center px-10 pt-20`}>
+            <View style={tw`justify-center px-10 pt-20 mb-2`}>
               <Image
                 style={tw`h-20 w-full`}
                 source={{ uri: 'https://links.papareact.com/mg9' }}
@@ -97,7 +98,7 @@ const WinnerScreen = ({ navigation, route }) => {
                 : `The winning place will be determined after ${currentFeast.name}'s voting closes.`}
             </Text>
 
-            <Center>
+            <Center mt={'3'}>
               <Image
                 style={tw`h-50 w-50 rounded-full`}
                 source={{
@@ -107,20 +108,45 @@ const WinnerScreen = ({ navigation, route }) => {
                 }}
               />
             </Center>
-            <Pressable
+            {/* <Pressable
               style={tw`bg-white m-10 py-6 rounded-full`}
               onPress={() => navigation.navigate('Feasts')}
             >
               <Text style={tw`text-center text-lg`}>Your Feasts</Text>
-            </Pressable>
+            </Pressable> */}
+            <Center mt={'5'}>
+              <CustomButton
+                onPress={() => navigation.navigate('Feasts')}
+                text={'Your Feasts'}
+                bgColor={'white'}
+                fgColor={'black'}
+              />
+            </Center>
           </Box>
         ) : (
           // ) : isError ? (
           //   <Text>Error: {error.message}</Text>
           // ) : isInitialLoading ? (
           //   <LoadingIndicator />
-          <Text>No winner yet</Text>
+          // <Text>No winner yet</Text>
           // <Text>Not ready...</Text>
+          <Box safeArea flex={1} w="100%">
+            <IconButton
+              icon={<CloseIcon size="sm" color="white" />}
+              position="absolute"
+              top={3}
+              right={3}
+              rounded="full"
+              variant="ghost"
+              colorScheme="white"
+              onPress={() => navigation.goBack()}
+            />
+            <Center>
+              <Text style={tw`text-white text-center text-xl m-5`}>
+                {`The winning place will be determined after ${currentFeast.name}'s voting closes.`}
+              </Text>
+            </Center>
+          </Box>
         )}
         {/* <View>{isFetching ? <Text>Refreshing...</Text> : null}</View> */}
       </>
