@@ -146,6 +146,15 @@ const WinnerScreen = ({ navigation, route }) => {
                 {`The winning place will be determined after ${currentFeast.name}'s voting closes.`}
               </Text>
             </Center>
+
+            <Center mt={'5'}>
+              <CustomButton
+                onPress={() => navigation.navigate('Feasts')}
+                text={'Your Feasts'}
+                bgColor={'white'}
+                fgColor={'black'}
+              />
+            </Center>
           </Box>
         )}
         {/* <View>{isFetching ? <Text>Refreshing...</Text> : null}</View> */}

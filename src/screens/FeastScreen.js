@@ -66,18 +66,21 @@ const deleteFeast = async (feastId, token) => {
 const FeastScreen = ({ navigation }) => {
   const [currentFeast, setCurrentFeast] = feastState.use()
   const [selectedFeast, setSelectedFeast] = feastState.use()
-  const [isEditing, setIsEditing] = useState(false)
   const queryClient = useQueryClient()
   const { user } = useAuthContext()
-  // if new user or no feasts, don't call useFeasts
-  const feasts = useFeasts()
+  const { feasts, refetch, isLoading } = useFeasts()
+
+  useEffect(() => {
+    refetch()
+  }, [])
 
   const deleteItem = useMutation(
     ({ feastId, token }) => deleteFeast(feastId, token),
     {
       onSuccess: (data) => {
         // console.warn('deleteFeast success:', data)
-        queryClient.invalidateQueries([queryKeys.feasts])
+        // queryClient.invalidateQueries([queryKeys.feasts])
+        refetch()
       },
       onError: (error) => {
         console.warn('deleteFeast error:', error)
@@ -100,13 +103,6 @@ const FeastScreen = ({ navigation }) => {
 
     deleteItem.mutate({ feastId, token })
   }
-
-  if (deleteItem.isLoading) return <LoadingIndicator />
-  // if (error) return console.log(error)
-
-  // if (!feasts) return <LoadingIndicator />
-
-  // if (!data) return <LoadingIndicator />
 
   const handlePlaceSelect = (item) => {
     setCurrentFeast(item)
@@ -155,15 +151,8 @@ const FeastScreen = ({ navigation }) => {
     )
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  // useEffect(() => {
-  //   setCurrentFeast(selectedFeast)
-  //   if (selectedFeast.closed) {
-  //     navigation.push('Winner', { feast: selectedFeast })
-  //   } else {
-  //     navigation.navigate('Home', { feast: selectedFeast })
-  //   }
-  // }, [selectedFeast])
+  if (deleteItem.isLoading) return <LoadingIndicator />
+  if (isLoading) return <LoadingIndicator />
 
   return (
     <SafeAreaView style={styles.root}>

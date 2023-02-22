@@ -23,14 +23,17 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { feastState } from '../context/FeastState'
 import EditFeastForm from '../components/EditFeastForm'
 import { queryKeys } from '../lib/constants'
+import useFeasts from '../hooks/useFeasts'
 
 const EditFeastScreen = ({ navigation }) => {
   const queryClient = useQueryClient()
+  const { refetch } = useFeasts()
   const [selectedFeast, setSelectedFeast] = feastState.use()
 
   const onFeastEdited = (response) => {
     if (response.success) {
-      queryClient.invalidateQueries([queryKeys.feasts])
+      // queryClient.invalidateQueries([queryKeys.feasts])
+      refetch()
       setSelectedFeast(null)
     }
     navigation.goBack()

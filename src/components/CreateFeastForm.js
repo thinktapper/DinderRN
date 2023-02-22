@@ -412,7 +412,6 @@ function CreateFeastForm({ props }) {
               <Text textAlign="center" fontWeight="semibold" fontSize="md">
                 Radius
               </Text>
-              {/* <View> */}
               <Box top={'-60'}>
                 <Picker
                   label="Radius"
@@ -428,7 +427,6 @@ function CreateFeastForm({ props }) {
                   <PickerIOS.Item label="4 Miles" value={4} />
                   <PickerIOS.Item label="5 Miles" value={5} />
                 </Picker>
-                {/* </View> */}
               </Box>
             </Box>
             {/* </ScrollView> */}

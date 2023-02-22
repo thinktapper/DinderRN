@@ -10,9 +10,9 @@ const fetchFeasts = async (user) => {
     headers: { authorization: `Bearer ${user?.token}` },
   })
 
-  if (status !== 200) {
-    return []
-  }
+  // if (status !== 200) {
+  //   return []
+  // }
   return data.feasts
 }
 
@@ -20,16 +20,16 @@ function useFeasts() {
   const { user } = useAuthContext()
 
   const fallback = []
-  const { data: feasts = fallback } = useQuery(
-    [queryKeys.feasts],
-    () => fetchFeasts(user),
-    {
-      enabled: !!user,
-      // staleTime: 1000 * 60 * 60 * 24,
-      // cacheTime: Infinity,
-    }
-  )
+  const {
+    data: feasts = fallback,
+    refetch,
+    isLoading,
+  } = useQuery([queryKeys.feasts], () => fetchFeasts(user), {
+    enabled: !!user,
+    // staleTime: 1000 * 60 * 60 * 24,
+    // cacheTime: Infinity,
+  })
 
-  return feasts
+  return { feasts, refetch, isLoading }
 }
 export default useFeasts

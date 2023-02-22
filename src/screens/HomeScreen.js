@@ -90,6 +90,7 @@ const HomeScreen = ({ route, navigation }) => {
   const onSwipedAll = () => {
     queryClient.invalidateQueries([queryKeys.feasts])
 
+    refetch()
     navigation.push('Winner')
   }
 
