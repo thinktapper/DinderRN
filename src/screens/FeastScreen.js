@@ -71,7 +71,7 @@ const FeastScreen = ({ navigation }) => {
 
   useEffect(() => {
     refetch()
-  }, [feasts, currentFeast])
+  }, [])
 
   const deleteItem = useMutation(
     ({ feastId, token }) => deleteFeast(feastId, token),
@@ -119,14 +119,6 @@ const FeastScreen = ({ navigation }) => {
       <>
         <Center>
           <Text style={styles.title}>Your Feasts</Text>
-          {/* <Pressable
-            onPress={() => navigation.navigate('NewFeast')}
-            style={tw`w-60 bg-rose-500 my-5 rounded-full`}
-          >
-            <Text style={tw`text-white p-3 text-center text-lg`}>
-              Create new
-            </Text>
-          </Pressable> */}
         </Center>
       </>
     )
@@ -135,13 +127,6 @@ const FeastScreen = ({ navigation }) => {
   const getFooter = () => {
     return (
       <Center>
-        {/* <Pressable
-          onPress={() => navigation.navigate('NewFeast')}
-          style={tw`w-60 h-10 justify-center items-center bg-rose-500 my-5 rounded-full`}
-        >
-          <Text style={tw`text-white text-base font-medium`}>Create new</Text>
-        </Pressable> */}
-
         <CustomButton
           text={'Create new'}
           onPress={() => navigation.navigate('NewFeast')}

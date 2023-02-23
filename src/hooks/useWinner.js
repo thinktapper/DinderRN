@@ -20,11 +20,11 @@ const getFeastPulse = async (currentFeast, user) => {
 const useWinner = () => {
   const { user } = useAuthContext()
   const currentFeast = feastState.useValue()
-  const [currentFeastWinner, setCurrentFeastWinner] = feastState.use()
+  // const [currentFeastWinner, setCurrentFeastWinner] = feastState.use()
 
   const fallback = 'No winner yet'
   const { data: pulse = fallback } = useQuery(
-    [queryKeys.winner, currentFeast.id],
+    [queryKeys.winner, currentFeast.id, user.id],
     () => getFeastPulse(currentFeast, user),
     // { enabled: !!feastId },
     { enabled: !!currentFeast }

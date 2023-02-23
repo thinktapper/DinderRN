@@ -2,12 +2,12 @@ import { QueryClient, MutationCache } from '@tanstack/react-query'
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchOnReconnect: true,
+      // refetchOnWindowFocus: false,
+      // refetchOnMount: false,
+      // refetchOnReconnect: true,
       // staleTime: 1000 * 60 * 60 * 24, // 24 hours
       // cacheTime: Infinity,
-      retry: 1,
+      retry: 2,
     },
   },
   // configure global cache callbacks to show warns in dev

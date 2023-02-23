@@ -24,7 +24,7 @@ function useFeasts() {
     data: feasts = fallback,
     refetch,
     isLoading,
-  } = useQuery([queryKeys.feasts], () => fetchFeasts(user), {
+  } = useQuery([queryKeys.feasts, user.id], () => fetchFeasts(user), {
     enabled: !!user,
     // staleTime: 1000 * 60 * 60 * 24,
     // cacheTime: Infinity,

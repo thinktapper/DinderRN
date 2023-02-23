@@ -7,5 +7,5 @@ const appStorageKey = 'app-feast'
 export const feastState = newRidgeState({
   currentFeast: null,
   selectedFeast: null,
-  currentFeastWinner: null,
+  // currentFeastWinner: null,
 })

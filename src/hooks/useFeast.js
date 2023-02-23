@@ -4,14 +4,14 @@ import { queryKeys, apiURL } from '../lib/constants'
 import axios from 'axios'
 import { useAuthContext } from '../context/AuthProvider'
 
-const fetchFeast = async (currentFeast, user) => {
-  const { data } = await axios({
-    url: `${apiURL.remote}/api/feast/${currentFeast.id}`,
-    method: 'get',
-    headers: { authorization: `Bearer ${user?.token}` },
-  })
-  return data.feast.places
-}
+// const fetchFeast = async (currentFeast, user) => {
+//   const { data } = await axios({
+//     url: `${apiURL.remote}/api/feast/${currentFeast.id}`,
+//     method: 'get',
+//     headers: { authorization: `Bearer ${user?.token}` },
+//   })
+//   return data.feast.places
+// }
 
 const getFeastPulse = async (currentFeast, user) => {
   const response = await axios(
@@ -41,8 +41,12 @@ const useFeast = () => {
   const { user } = useAuthContext()
 
   const fallback = []
-  const { data: places = fallback, refetch } = useQuery(
-    [queryKeys.places],
+  const {
+    data: places = fallback,
+    refetch,
+    isLoading,
+  } = useQuery(
+    [queryKeys.places, currentFeast.id, user.id],
     () => getFeastPulse(currentFeast, user),
     {
       enabled: !!currentFeast,
@@ -53,6 +57,6 @@ const useFeast = () => {
     }
   )
 
-  return { places, refetch }
+  return { places, refetch, isLoading }
 }
 export default useFeast
