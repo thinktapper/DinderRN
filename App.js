@@ -2,7 +2,7 @@ import 'expo-dev-client'
 // import 'react-native-gesture-handler'
 import React from 'react'
 import { LogBox } from 'react-native'
-// import { StatusBar } from 'expo-status-bar'
+import { StatusBar } from 'expo-status-bar'
 import 'react-native-url-polyfill/auto'
 import { queryClient } from './src/lib/queryClient'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -35,6 +35,7 @@ const App = ({ navigation }) => {
       <AuthProvider>
         <NativeBaseProvider>
           <Navigation />
+          <StatusBar style="auto" />
         </NativeBaseProvider>
       </AuthProvider>
     </PersistQueryClientProvider>

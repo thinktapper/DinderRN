@@ -4,12 +4,16 @@
   },
   "build": {
     "development": {
+      "env": {
+        "APP_VARIANT": "development"
+      },
       "developmentClient": true,
       "distribution": "internal",
+      "channel": "local",
       "ios": {
+        "simulator": true,
         "resourceClass": "m1-medium"
-      },
-      "channel": "development"
+      }
     },
     "development-simulator": {
       "developmentClient": true,
