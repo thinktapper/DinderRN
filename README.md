@@ -61,12 +61,14 @@
 <!-- ABOUT THE PROJECT -->
 <h2>About The Project</h2>
 
-<p>Like Tinder for food, this app uses swipe matching to decide on the perfect place for your next meal.</p>
+<p>Like Tinder for food, Dinder uses swipe matching to decide on the perfect place for your next meal.</p>
 <div align="center">
 
-![Simulator Screen Recording - iPhone 14 - 2022-11-13 at 15 26 22](https://user-images.githubusercontent.com/10656909/204616384-599bf5b7-ea55-493a-83a4-2d53e11d67c0.gif)
+https://user-images.githubusercontent.com/10656909/221169812-5140ddaf-8d9b-4bad-ab52-b0d3382db2e8.mp4
 
-<p>Users are able to create accounts and log in, set profile information and location details, and swipe through a deck of restaurants tailored to their occasion. Each card in the deck contains real-time establishment data sourced from Google Maps and stored alongside user votes on the <a href="https://github.com/thinktapper/DinderIsServed">backend</a>.</p>
+<!-- ![Simulator Screen Recording - iPhone 14 - 2022-11-13 at 15 26 22](https://user-images.githubusercontent.com/10656909/204616384-599bf5b7-ea55-493a-83a4-2d53e11d67c0.gif) -->
+
+<p>Users are able to create accounts and log in, set profile information and location details, and swipe through a deck of restaurants tailored to their occasion. Each card in the deck contains real-time establishment data sourced from Google Maps and stored alongside user votes on the backend, <a href="https://github.com/thinktapper/DinderIsServed">DinderIsServed</a>.</p>
 
 <!-- ![Simulator Screen Recording - iPhone 14 - 2022-11-05 at 18 37 37](https://user-images.githubusercontent.com/10656909/200642329-f89bc4ff-69f1-4749-ab1d-9b479be1b35d.gif) -->
 
