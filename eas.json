@@ -9,28 +9,22 @@
       },
       "developmentClient": true,
       "distribution": "internal",
-      "channel": "local",
+      "channel": "staging",
       "ios": {
         "simulator": true,
         "resourceClass": "m1-medium"
       }
     },
-    "development-simulator": {
-      "developmentClient": true,
+    "preview": {
+      "env": {
+        "APP_VARIANT": "preview"
+      },
       "distribution": "internal",
       "ios": {
         "simulator": true,
         "resourceClass": "m1-medium"
       },
-      "channel": "development-simulator"
-    },
-    "preview": {
-      "distribution": "internal",
-      "ios": {
-        "resourceClass": "m1-medium",
-        "simulator": true
-      },
-      "channel": "staging"
+      "channel": "testing"
     },
     "production": {
       "ios": {
