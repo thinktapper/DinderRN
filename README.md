@@ -8,7 +8,6 @@
   </a>
 
 <h3 align="center">Swipe. Match. Eat.</h3>
-<h4 align="center">React Native Mobile App</h4>
 
 <p align="center">
     Going out to eat with friends is a great way to catch up and enjoy each other's company. But it can be a hassle to find a place that everyone likes. Dinder helps you find a place that everyone agrees on.
