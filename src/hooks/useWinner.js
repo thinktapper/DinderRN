@@ -6,7 +6,7 @@ import { useAuthContext } from '../context/AuthProvider'
 
 const getFeastPulse = async (currentFeast, user) => {
   const response = await axios(
-    `${apiURL.local}/api/feast/pulse/${currentFeast.id}`,
+    `${apiURL.remote}/api/feast/pulse/${currentFeast.id}`,
     {
       method: 'GET',
       // prettier-ignore
@@ -20,11 +20,11 @@ const getFeastPulse = async (currentFeast, user) => {
 const useWinner = () => {
   const { user } = useAuthContext()
   const currentFeast = feastState.useValue()
-  const [currentFeastWinner, setCurrentFeastWinner] = feastState.use()
+  // const [currentFeastWinner, setCurrentFeastWinner] = feastState.use()
 
   const fallback = 'No winner yet'
   const { data: pulse = fallback } = useQuery(
-    [queryKeys.winner, currentFeast.id],
+    [queryKeys.winner, currentFeast.id, user.id],
     () => getFeastPulse(currentFeast, user),
     // { enabled: !!feastId },
     { enabled: !!currentFeast }

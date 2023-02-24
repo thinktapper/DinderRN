@@ -11,13 +11,14 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
-import { useAppContext } from '../context/AppProvider'
 import { useAuthContext } from '../context/AuthProvider'
+import { feastState } from '../context/FeastState'
+import { color, activeColor } from '../lib/constants'
 
 const Header = () => {
   const navigation = useNavigation()
   const { user } = useAuthContext()
-  const { color, activeColor } = useAppContext()
+  const currentFeast = feastState.useValue()
   const [activeScreen, setActiveScreen] = React.useState('Home')
 
   return (
@@ -26,21 +27,18 @@ const Header = () => {
         onPress={() => {
           setActiveScreen('Feasts')
           navigation.navigate('Feasts')
-        }}>
+        }}
+      >
         <MaterialIcons name="restaurant-menu" size={33} color={activeColor} />
-        {/* <MaterialCommunityIcons
-          name="star-four-points"
-          size={30}
-          color={activeColor}
-          // color={activeScreen === 'Feasts' ? activeColor : color}
-        /> */}
       </Pressable>
       <Pressable
         onPress={() => {
           setActiveScreen('Home')
           navigation.navigate('Home')
         }}
-        style={tw`rounded-full`}>
+        style={tw`rounded-full`}
+        // disabled={currentFeast === null}
+      >
         <Image
           style={tw`w-16 h-16`}
           source={require('../../assets/images/flamelogo.png')}
@@ -50,8 +48,9 @@ const Header = () => {
         onPress={() => {
           setActiveScreen('Profile')
           navigation.navigate('Profile')
-        }}>
-        {user?.image ? (
+        }}
+      >
+        {user.image ? (
           <Image
             source={{ uri: user.image }}
             style={tw`w-10 h-10 rounded-full`}

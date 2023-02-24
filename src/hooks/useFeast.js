@@ -4,23 +4,23 @@ import { queryKeys, apiURL } from '../lib/constants'
 import axios from 'axios'
 import { useAuthContext } from '../context/AuthProvider'
 
-const fetchFeast = async (currentFeast, user) => {
-  const { data } = await axios({
-    url: `${apiURL.local}/api/feast/${currentFeast.id}`,
-    method: 'get',
-    headers: { authorization: `Bearer ${user?.token}` },
-  })
-  return data.feast.places
-}
+// const fetchFeast = async (currentFeast, user) => {
+//   const { data } = await axios({
+//     url: `${apiURL.remote}/api/feast/${currentFeast.id}`,
+//     method: 'get',
+//     headers: { authorization: `Bearer ${user?.token}` },
+//   })
+//   return data.feast.places
+// }
 
 const getFeastPulse = async (currentFeast, user) => {
   const response = await axios(
-    `${apiURL.local}/api/feast/pulse/${currentFeast.id}`,
+    `${apiURL.remote}/api/feast/pulse/${currentFeast.id}`,
     {
       method: 'GET',
       // prettier-ignore
       headers: { 'authorization': `Bearer ${user?.token}` },
-    },
+    }
   )
 
   // console.warn(
@@ -41,18 +41,22 @@ const useFeast = () => {
   const { user } = useAuthContext()
 
   const fallback = []
-  const { data: places = fallback } = useQuery(
-    [queryKeys.places, currentFeast?.name],
+  const {
+    data: places = fallback,
+    refetch,
+    isLoading,
+  } = useQuery(
+    [queryKeys.places, currentFeast.id, user.id],
     () => getFeastPulse(currentFeast, user),
     {
-      enabled: !!currentFeast.id,
+      enabled: !!currentFeast,
       // staleTime: 1000 * 60 * 60 * 24 * 7, // 1 week
       // staleTime: 1000 * 60 * 60 * 24, // 24 hours
       // staleTime: 300000, // 5 minutes
       // cacheTime: Infinity,
-    },
+    }
   )
 
-  return places
+  return { places, refetch, isLoading }
 }
 export default useFeast

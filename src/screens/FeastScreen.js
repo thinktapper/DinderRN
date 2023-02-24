@@ -36,31 +36,26 @@ import {
   Icon,
   Flex,
 } from 'native-base'
-// import Flame from '../../assets/images/flame-square.png'
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons'
 import tw from 'twrnc'
 import useFeasts from '../hooks/useFeasts'
-import Feast from '../components/Feast'
-import { ListItem } from '../components/ListItem'
 import { LoadingIndicator } from '../components/LoadingIndicator'
 import { useAuthContext } from '../context/AuthProvider'
 import { apiURL, queryKeys } from '../lib/constants'
-// import { useAppContext } from '../context/AppProvider'
 import axios from 'axios'
-import EditFeastModal from '../components/EditFeastModal'
 import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
-import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
+// import useRefetchOnFocus from '../hooks/useRefetchOnFocus'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import Moment from 'react-moment'
-import moment from 'moment'
+import CustomButton from '../components/CustomButton'
 
 const deleteFeast = async (feastId, token) => {
   // Add JWT to headers
   const headers = { authorization: `Bearer ${token}` }
 
   // Make DELETE request to server to delete the feast
-  const { data } = await axios.delete(`${apiURL.local}/api/feast/${feastId}`, {
+  const { data } = await axios.delete(`${apiURL.remote}/api/feast/${feastId}`, {
     headers,
   })
 
@@ -70,27 +65,30 @@ const deleteFeast = async (feastId, token) => {
 const FeastScreen = ({ navigation }) => {
   const [currentFeast, setCurrentFeast] = feastState.use()
   const [selectedFeast, setSelectedFeast] = feastState.use()
-  const [isEditing, setIsEditing] = useState(false)
   const queryClient = useQueryClient()
   const { user } = useAuthContext()
-  // if new user or no feasts, don't call useFeasts
-  const feasts = useFeasts()
+  const { feasts, refetch, isLoading } = useFeasts()
+
+  useEffect(() => {
+    refetch()
+  }, [])
 
   const deleteItem = useMutation(
     ({ feastId, token }) => deleteFeast(feastId, token),
     {
       onSuccess: (data) => {
-        console.warn('deleteFeast success:', data)
-        queryClient.invalidateQueries([queryKeys.feasts])
+        // console.warn('deleteFeast success:', data)
+        // queryClient.invalidateQueries([queryKeys.feasts])
+        refetch()
       },
       onError: (error) => {
         console.warn('deleteFeast error:', error)
       },
-    },
+    }
   )
 
   const onEditPress = (item) => {
-    console.warn(`Edit pressed for ${item.name}`)
+    // console.warn(`Edit pressed for ${item.name}`)
 
     setSelectedFeast(item)
     // setIsEditing(true)
@@ -104,13 +102,6 @@ const FeastScreen = ({ navigation }) => {
 
     deleteItem.mutate({ feastId, token })
   }
-
-  if (deleteItem.isLoading) return <LoadingIndicator />
-  // if (error) return console.log(error)
-
-  // if (!feasts) return <LoadingIndicator />
-
-  // if (!data) return <LoadingIndicator />
 
   const handlePlaceSelect = (item) => {
     setCurrentFeast(item)
@@ -128,13 +119,6 @@ const FeastScreen = ({ navigation }) => {
       <>
         <Center>
           <Text style={styles.title}>Your Feasts</Text>
-          <Pressable
-            onPress={() => navigation.navigate('NewFeast')}
-            style={tw`w-60 bg-rose-500 my-5 rounded-full`}>
-            <Text style={tw`text-white p-3 text-center text-lg`}>
-              Create new
-            </Text>
-          </Pressable>
         </Center>
       </>
     )
@@ -143,33 +127,23 @@ const FeastScreen = ({ navigation }) => {
   const getFooter = () => {
     return (
       <Center>
-        <Pressable
-          onPress={() => navigation.navigate('Home')}
-          style={tw`w-60 bg-rose-500 mt-5 rounded-full`}>
-          <Text style={tw`text-white p-3 text-center text-lg`}>
-            Back to deck
-          </Text>
-        </Pressable>
+        <CustomButton
+          text={'Create new'}
+          onPress={() => navigation.navigate('NewFeast')}
+        />
       </Center>
     )
   }
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  // useEffect(() => {
-  //   setCurrentFeast(selectedFeast)
-  //   if (selectedFeast.closed) {
-  //     navigation.push('Winner', { feast: selectedFeast })
-  //   } else {
-  //     navigation.navigate('Home', { feast: selectedFeast })
-  //   }
-  // }, [selectedFeast])
+  if (deleteItem.isLoading) return <LoadingIndicator />
+  if (isLoading) return <LoadingIndicator />
 
   return (
     <SafeAreaView style={styles.root}>
       <Header />
 
       {feasts.length > 0 ? (
-        <VStack px="3" mx="4">
+        <VStack px="3" mx="4" mt="4">
           <FlatList
             data={feasts}
             ListHeaderComponent={getHeader}
@@ -187,7 +161,8 @@ const FeastScreen = ({ navigation }) => {
                   pl={['0', '4']}
                   pr={['0', '5']}
                   py="2"
-                  mx="2">
+                  mx="2"
+                >
                   <Pressable onPress={() => handlePlaceSelect(item)}>
                     <HStack space={'1'} justifyContent="space-between" px="3">
                       <Flex direction="row" mb="2.5" mt="1.5">
@@ -198,20 +173,24 @@ const FeastScreen = ({ navigation }) => {
                           color={item.closed ? 'rose.400' : 'green.600'}
                         />
                         {/* <Spacer /> */}
-                        <VStack ml="1">
+                        <VStack ml="3">
                           <Text bold style={styles.feastName}>
                             {item.name}
                           </Text>
                           <Moment
-                            date={item.startDate}
+                            date={item.endDate}
                             element={Text}
                             format="MM/DD/YYYY"
                             style={styles.date}
                           />
                         </VStack>
                       </Flex>
-                      <HStack space={'3'}>
-                        <Pressable onPress={() => onEditPress(item)}>
+                      {/* <HStack space={'3'}> */}
+                      <Flex direction="row" m={'3'}>
+                        <Pressable
+                          onPress={() => onEditPress(item)}
+                          style={tw`pr-3`}
+                        >
                           <FontAwesome name="edit" size={24} color="black" />
                         </Pressable>
                         <Pressable onPress={() => onDeletePress(item)}>
@@ -221,7 +200,8 @@ const FeastScreen = ({ navigation }) => {
                             color="black"
                           />
                         </Pressable>
-                      </HStack>
+                      </Flex>
+                      {/* </HStack> */}
                     </HStack>
                   </Pressable>
                   {/* </Card> */}
@@ -231,78 +211,17 @@ const FeastScreen = ({ navigation }) => {
           />
         </VStack>
       ) : (
-        // <VStack px="3" mx="4">
-        //   <FlatList
-        //     data={feasts}
-        //     ListHeaderComponent={getHeader}
-        //     ListFooterComponent={getFooter}
-        //     keyExtractor={(item) => item.id}
-        //     renderItem={({ item }) => {
-        //       return (
-        //         <Box
-        //           borderBottomWidth="1"
-        //           _dark={{
-        //             borderColor: 'muted.50',
-        //           }}
-        //           borderColor="muted.800"
-        //           pl={['0', '4']}
-        //           pr={['0', '5']}
-        //           py="2"
-        //           mx="2">
-        //           <Pressable onPress={() => handlePlaceSelect(item)}>
-        //             <HStack space={'3'} justifyContent="space-between" px="3">
-        //               <Icon
-        //                 as={MaterialIcons}
-        //                 name={item.closed ? 'where-to-vote' : 'how-to-vote'}
-        //                 size="4xl"
-        //                 color={item.closed ? 'rose.400' : 'green.600'}
-        //               />
-        //               <VStack>
-        //                 <Text
-        //                   _dark={{
-        //                     color: 'warmGray.50',
-        //                   }}
-        //                   color="coolGray.800"
-        //                   bold>
-        //                   {item.name}
-        //                 </Text>
-        //                 <Moment
-        //                   date={item.startDate}
-        //                   element={Text}
-        //                   format="MM/DD/YYYY"
-        //                 />
-        //               </VStack>
-        //               {/* <Spacer /> */}
-
-        //               <HStack space={'3'}>
-        //                 <Pressable onPress={() => onEditPress(item)}>
-        //                   <FontAwesome name="edit" size={24} color="black" />
-        //                 </Pressable>
-        //                 <Pressable onPress={() => onDeletePress(item)}>
-        //                   <MaterialIcons
-        //                     name="delete"
-        //                     size={24}
-        //                     color="black"
-        //                   />
-        //                 </Pressable>
-        //               </HStack>
-        //             </HStack>
-        //           </Pressable>
-        //         </Box>
-        //         // />
-        //       )
-        //     }}
-        //   />
-        // </VStack>
         <Box>
           <Text style={[tw`text-center mt-8`, styles.title]}>
             You don't have any feasts yet 😲
           </Text>
-          <Pressable
-            style={styles.button}
-            onPress={() => navigation.navigate('NewFeast')}>
-            <Text>Create one!</Text>
-          </Pressable>
+
+          <Center>
+            <CustomButton
+              onPress={() => navigation.navigate('NewFeast')}
+              text={'Create one!'}
+            />
+          </Center>
         </Box>
       )}
     </SafeAreaView>

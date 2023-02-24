@@ -5,6 +5,8 @@ import {
   Image,
   useWindowDimensions,
   ScrollView,
+  StyleSheet,
+  Pressable,
   Alert,
 } from 'react-native'
 import {
@@ -45,47 +47,8 @@ const SignInScreen = ({ navigation }) => {
   const { height } = useWindowDimensions()
   const [loading, setLoading] = useState(false)
 
-  // Get current logged-in user
-  // const query = useQuery(['authUser'], getMe, {
-  //   enabled: false,
-  //   select: (data) => data.user,
-  //   retry: 1,
-  //   onSuccess: (data) => {
-  //     authContext.dispatch({ type: 'SET_USER', payload: data })
-  //   },
-  // })
-
-  // Login Mutation
-  // const { mutate: loginUser, isLoading } = useMutation(
-  //   (userData) => login(userData),
-  //   {
-  //     onSuccess: (response) => {
-  //       if ('user' in response && 'token' in response.user) {
-  //         console.debug(`User ${response.user.username} logged in`)
-  //         Alert.alert('You successfully logged in')
-  //       }
-
-  //       // update stored user data
-  //       authContext.dispatch({ type: 'SET_USER', payload: response.user })
-  //       // query.refetch()
-  //       // navigation.navigate('Home')
-  //     },
-  //     onError: (error) => {
-  //       if (Array.isArray(error.response.data.error)) {
-  //         error.data.error.forEach((el) => console.warn(el.message))
-  //       } else {
-  //         console.warn(error.response.data.message)
-  //       }
-  //     },
-  //   },
-  // )
-
-  // if (user) {
-  //   navigation.navigate('Home')
-  // }
-
   const onSubmit = async (values) => {
-    console.log('submitting with', values)
+    // console.log('submitting with', values)
     // loginUser(values)
     setLoading(true)
     try {
@@ -120,7 +83,8 @@ const SignInScreen = ({ navigation }) => {
             password: '',
           }}
           onSubmit={onSubmit}
-          validationSchema={loginSchema}>
+          validationSchema={loginSchema}
+        >
           {({
             handleChange,
             handleBlur,
@@ -164,36 +128,18 @@ const SignInScreen = ({ navigation }) => {
                 </FormControl.ErrorMessage>
               </FormControl>
 
-              <CustomButton
-                text={loading ? 'Loading...' : 'Sign In'}
-                onPress={handleSubmit}
-              />
+              <Center>
+                <CustomButton
+                  text={loading ? 'Loading...' : 'Sign In'}
+                  onPress={handleSubmit}
+                  bgColor={'cornflowerblue'}
+                />
+              </Center>
             </VStack>
           )}
         </Formik>
 
-        {/* <CustomInput
-          name="username"
-          placeholder="username"
-          capitalize="none"
-          control={control}
-          rules={{ required: 'Username is required' }}
-        />
-        <CustomInput
-          name="password"
-          placeholder="Password"
-          control={control}
-          rules={{
-            required: 'Password is required',
-            minLength: {
-              value: 3,
-              message: 'Password should be minimum 3 characters long',
-            },
-          }}
-          secureTextEntry
-        /> */}
-
-        <CustomButton
+        {/* <CustomButton
           text="Forgot password?"
           onPress={onForgotPasswordPressed}
           type="TERTIARY"
@@ -203,10 +149,63 @@ const SignInScreen = ({ navigation }) => {
           text="Don't have an account? Create one"
           onPress={onSignUpPressed}
           type="TERTIARY"
-        />
+        /> */}
+        {/* <Pressable
+          onPress={onForgotPasswordPressed}
+          style={[styles.container, styles.container_TERTIARY]}
+        >
+          <Text style={[styles.text, styles.text_TERTIARY]}>
+            Forgot password?
+          </Text>
+        </Pressable> */}
+
+        <Pressable
+          onPress={onSignUpPressed}
+          style={[styles.container, styles.container_TERTIARY]}
+        >
+          <Text style={[styles.text, styles.text_TERTIARY]}>
+            Don't have an account? Create one
+          </Text>
+        </Pressable>
       </View>
     </ScrollView>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+
+    padding: 15,
+    marginVertical: 5,
+
+    alignItems: 'center',
+    borderRadius: 5,
+  },
+
+  container_PRIMARY: {
+    backgroundColor: '#3B71F3',
+  },
+
+  container_SECONDARY: {
+    borderColor: '#3B71F3',
+    borderWidth: 2,
+  },
+
+  container_TERTIARY: {},
+
+  text: {
+    fontWeight: 'bold',
+    color: 'white',
+  },
+
+  text_SECONDARY: {
+    color: '#3B71F3',
+  },
+
+  text_TERTIARY: {
+    color: 'gray',
+  },
+})
 
 export default SignInScreen

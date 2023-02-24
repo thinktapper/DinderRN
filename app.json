@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "DinderRN",
+    "name": "Dinder",
     "slug": "dinder",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -12,14 +12,14 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/9a8d4dc4-0f50-49bf-a432-cb0540b72035"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.thinktapper.dinder"
+      "bundleIdentifier": "com.thinktapper.dinder",
+      "buildNumber": "1",
+      "icon": "./assets/icon.png"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,11 +31,9 @@
     "web": {
       "favicon": "./assets/images/favicon-32x32.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "9a8d4dc4-0f50-49bf-a432-cb0540b72035"
-      }
-    },
-    "owner": "tapper"
+    "owner": "tapper",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
   }
 }

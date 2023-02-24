@@ -18,16 +18,13 @@ import {
   Center,
 } from 'native-base'
 import tw from 'twrnc'
-import FormInput from '../components/FormInput'
-// import { useForm } from 'react-hook-form'
+import CustomButton from '../components/CustomButton'
+import { LoadingIndicator } from '../components/LoadingIndicator'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { EMAIL_REGEX } from '../lib/constants'
 import { useAuthContext } from '../context/AuthProvider'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import Header from '../components/Header'
-// import { useMutation } from '@tanstack/react-query'
-// import { logout } from '../utils/useApi'
 
 const ProfileScreen = ({ navigation }) => {
   const authContext = useAuthContext()
@@ -70,6 +67,8 @@ const ProfileScreen = ({ navigation }) => {
     }
   }
 
+  if (loading) return <LoadingIndicator />
+
   return (
     <SafeAreaView style={styles.root}>
       <Header />
@@ -88,7 +87,8 @@ const ProfileScreen = ({ navigation }) => {
             image: authContext.user.image ? authContext.user.image : '',
           }}
           validationSchema={updateUserSchema}
-          onSubmit={handleUpdateUser}>
+          onSubmit={handleUpdateUser}
+        >
           {({
             handleSubmit,
             handleChange,
@@ -146,19 +146,32 @@ const ProfileScreen = ({ navigation }) => {
                 </FormControl.ErrorMessage>
               </FormControl>
 
-              <Pressable onPress={handleSubmit} style={styles.button}>
+              {/* <Pressable onPress={handleSubmit} style={styles.button}>
                 <Text>{loading ? 'Loading...' : 'Save'}</Text>
               </Pressable>
 
               <Pressable
                 onPress={() => navigation.goBack()}
-                style={styles.button}>
+                style={styles.button}
+              >
                 <Text>Cancel</Text>
               </Pressable>
 
               <Pressable onPress={onLogoutHandler} style={styles.button}>
                 <Text>Sign out</Text>
-              </Pressable>
+              </Pressable> */}
+              <Center>
+                <CustomButton
+                  onPress={handleSubmit}
+                  text="Save"
+                  // bgColor={'cornflowerblue'}
+                />
+                <CustomButton
+                  onPress={() => navigation.goBack()}
+                  text="Cancel"
+                />
+                <CustomButton onPress={onLogoutHandler} text="Sign out" />
+              </Center>
             </VStack>
           )}
         </Formik>

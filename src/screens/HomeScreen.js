@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react'
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useLayoutEffect,
+} from 'react'
 import {
   View,
   Text,
@@ -14,7 +20,6 @@ import { AntDesign, Entypo, Ionicons } from '@expo/vector-icons'
 import Swiper from 'react-native-deck-swiper'
 import { rs } from '../utils/ResponsiveScreen'
 import PlaceCard from '../components/PlaceCard'
-import { useAppContext } from '../context/AppProvider'
 import { useAuthContext } from '../context/AuthProvider'
 import useFeast from '../hooks/useFeast'
 import axios from 'axios'
@@ -25,12 +30,19 @@ import Header from '../components/Header'
 import { feastState } from '../context/FeastState'
 
 const HomeScreen = ({ route, navigation }) => {
+  const swipeRef = useRef(null)
+  const globalPadding = rs(12)
+  const wrapperPadding = rs(12)
   const queryClient = useQueryClient()
   const currentFeast = feastState.useValue()
   const { user } = useAuthContext()
   const feastId = route.params?.feast
-  const swipeRef = useRef(null)
-  const places = useFeast()
+  const { places, refetch, isLoading } = useFeast()
+
+  useEffect(() => {
+    // update feast places
+    refetch()
+  }, [])
 
   // mutation to submit nah vote on left swipe
   const nahMutation = useMutation((placeSwiped) => {
@@ -74,14 +86,16 @@ const HomeScreen = ({ route, navigation }) => {
     yassMutation.mutate(placeSwiped)
   }
 
-  // check if voting is done and navigate to winner screen
-  const onSwipedAll = () => {
+  const swipedAll = () => {
+    // check if voting is done and navigate to winner screen
+    refetch()
+
     queryClient.invalidateQueries([queryKeys.feasts])
 
     navigation.push('Winner')
   }
 
-  // if (isLoading) return <LoadingIndicator />
+  if (isLoading) return <LoadingIndicator />
 
   return (
     <SafeAreaView style={tw`flex-1`}>
@@ -108,15 +122,15 @@ const HomeScreen = ({ route, navigation }) => {
             onSwipedLeft={(cardIndex) => swipeLeft(cardIndex)}
             onSwipedRight={(cardIndex) => swipeRight(cardIndex)}
             // onSwipedAll={() => onSwipedAll()}
-            onSwipedAll={() => {
-              // Alert.alert({
-              //   title: 'All done!',
-              //   message: "Let's check for a winner..",
-              // })
-              queryClient.invalidateQueries([queryKeys.feasts])
-              navigation.push('Winner', { feast: feastId })
-            }}
-            // onTapCard={setCurrentImageIndex(currentImageIndex + 1)}
+            onSwipedAll={swipedAll}
+            // () => {
+            // Alert.alert({
+            //   title: 'All done!',
+            //   message: "Let's check for a winner..",
+            // })
+            // queryClient.invalidateQueries([queryKeys.feasts])
+            // navigation.push('Winner', { feast: feastId })
+            // }}
             renderCard={(card) => {
               return (
                 <PlaceCard

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { URL } from 'react-native-url-polyfill'
 import {
   ScrollView,
@@ -31,15 +31,9 @@ import {
   Text,
   Flex,
 } from 'native-base'
-import { EvilIcons } from '@expo/vector-icons'
 import tw from 'twrnc'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { LoadingIndicator } from '../components/LoadingIndicator'
-import {
-  useMutation,
-  useAsyncMutation,
-  useQueryClient,
-} from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { GOOGLE_API } from '@env'
 import { apiURL } from '../lib/constants'
@@ -48,9 +42,10 @@ import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useAuthContext } from '../context/AuthProvider'
 import axios from 'axios'
 import useUsers from '../hooks/useUsers'
+import CustomButton from './CustomButton'
 
 const submitFeast = async (formData, user) => {
-  const response = await axios(`${apiURL.local}/api/feast`, {
+  const response = await axios(`${apiURL.remote}/api/feast`, {
     method: 'POST',
     data: { ...formData },
     headers: {
@@ -58,7 +53,7 @@ const submitFeast = async (formData, user) => {
       'authorization': `Bearer ${user?.token}`,
     },
   })
-  console.warn('submitFeast:', JSON.stringify(response))
+  // console.warn('submitFeast:', JSON.stringify(response))
   return response.data
 }
 
@@ -66,22 +61,35 @@ function CreateFeastForm({ props }) {
   const { navigation, onFeastCreated } = props
   const { user } = useAuthContext()
   const guests = useUsers()
-  const [groupValues, setGroupValues] = useState([])
   const [guestArr, setGuestArr] = useState([])
+  const [name, setName] = useState('')
+  const [image, setImage] = useState('')
+  const [startDate, setStartDate] = useState(new Date())
+  const [endDate, setEndDate] = useState(new Date())
+  const [radius, setRadius] = useState(1)
   const [showAlert, setShowAlert] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    image: '',
-    startDate: new Date(),
-    endDate: new Date(),
-    location: { lat: 0, long: 0 },
-    radius: 1,
-    guests: [],
-  })
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   image: '',
+  //   startDate: new Date(),
+  //   endDate: new Date(),
+  //   location: { lat: 0, long: 0 },
+  //   radius: 1,
+  //   guests: [],
+  // })
 
-  const handleChange = (name, value) => {
-    setFormData({ ...formData, [name]: value })
-  }
+  // const nameRef = useRef(null)
+  // const imageRef = useRef(null)
+  // const startDateRef = useRef(new Date())
+  // const endDateRef = useRef(new Date())
+  const locationRef = useRef({ lat: 0, long: 0 })
+  // const radiusRef = useRef(1)
+  const guestListRef = useRef([])
+  let guestList = []
+
+  // const handleChange = (name, value) => {
+  //   setFormData({ ...formData, [name]: value })
+  // }
 
   const getPhotoUri = async (photoRef) => {
     let imageUrl
@@ -94,7 +102,7 @@ function CreateFeastForm({ props }) {
           photoreference: photoRef,
           maxwidth: 400,
         },
-      },
+      }
     )
     // const imageUrl = URL.createObjectURL(response.data.request._url)
     const imageLookupUrl = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoRef}&key=${GOOGLE_API}`
@@ -113,7 +121,7 @@ function CreateFeastForm({ props }) {
       imgageUrlQuery,
       // JSON.stringify(response),
       'imageUrl obj:',
-      JSON.stringify(imageUrl),
+      JSON.stringify(imageUrl)
     )
 
     return JSON.stringify(imageUrl)
@@ -121,6 +129,12 @@ function CreateFeastForm({ props }) {
   }
 
   async function handlePlaceSelect(data, details) {
+    locationRef.current = {
+      lat: details.geometry.location.lat,
+      long: details.geometry.location.lng,
+    }
+    // console.debug('location data:', JSON.stringify(locationRef.current))
+
     // console.debug('details:', JSON.stringify(details))
     // const photoRef = details.photos?.[0]?.photo_reference
     // console.debug('photoRef:', JSON.stringify(photoRef))
@@ -142,13 +156,52 @@ function CreateFeastForm({ props }) {
     // handleChange('image', imageUrl)
     // }
 
-    handleChange('location', {
-      lat: details.geometry.location.lat,
-      long: details.geometry.location.lng,
-    })
+    // handleChange('location', {
+    //   lat: details.geometry.location.lat,
+    //   long: details.geometry.location.lng,
+    // })
   }
 
+  const handleGuestSelect = (guest) => {
+    console.debug('guest:', JSON.stringify(guest))
+
+    const selectedIndex = guestArr.indexOf(guest)
+    if (selectedIndex === -1) {
+      setGuestArr([...guestArr, guest])
+    } else {
+      const newGuestArr = [...guestArr]
+      newGuestArr.splice(selectedIndex, 1)
+      setGuestArr(newGuestArr)
+    }
+
+    // guestListRef.current.push(guest)
+    // guestList.push(guest)
+
+    console.debug('guest array:', JSON.stringify(guestArr))
+    // console.debug('formData:', JSON.stringify(formData))
+  }
+
+  // const guestList = useMemo(() => {
+  //   return
+  // })
+
+  // useEffect(() => {
+  //   console.debug('guestArr:', JSON.stringify(guestArr))
+  //   console.debug('formData:', JSON.stringify(formData))
+  // }, [guestArr, formData])
+
   const handleCreateFeast = () => {
+    const formData = {
+      name,
+      image,
+      startDate: startDate,
+      endDate: endDate,
+      location: locationRef.current,
+      radius: radius,
+      guests: guestArr,
+    }
+    console.debug('formData:', formData)
+
     // handleChange('guests', guestArr)
     // let guestsArrData = []
     try {
@@ -156,29 +209,29 @@ function CreateFeastForm({ props }) {
       //   guestArr.forEach((val) => guestsArrData.push(val))
       // }
       // setGuestArr(...guestsArrData)
-      setFormData({ ...formData, guests: guestArr })
+      // setFormData({ ...formData, guests: guestArr })
       // setFormData((prevFormData) => ({
       //   ...prevFormData,
       //   [guests]: guestsArrData,
       // }))
       console.log(
-        guestArr.length,
-        // formData.guests.length,
-        // guestsArrData.length,
-        JSON.stringify(formData),
-        // {
-        //   ...formData.guests,
-        // },
+        // guestArr.length,
+        formData.guests.length
+        //   // guestsArrData.length,
+        // JSON.stringify(formData)
+        //   // {
+        //   //   ...formData.guests,
+        //   // },
       )
-      // if (formData.guests.length) {
-      createFeast.mutate({ formData, user })
-      // } else {
-      //   console.debug(
-      //     `Did not send mutation bc formData.guests.length fail, see: ${JSON.stringify(
-      //       formData.guests,
-      //     )}}`,
-      //   )
-      // }
+      if (formData.guests.length) {
+        createFeast.mutate({ formData, user })
+      } else {
+        console.debug(
+          `Did not send mutation bc formData.guests.length fail, see: ${JSON.stringify(
+            formData.guests
+          )}}`
+        )
+      }
     } catch (err) {
       console.debug(`ERROR setting guests array in formData: ${err}`)
     }
@@ -193,7 +246,7 @@ function CreateFeastForm({ props }) {
       onError: (error) => {
         console.log('error', error)
       },
-    },
+    }
   )
 
   return (
@@ -220,8 +273,12 @@ function CreateFeastForm({ props }) {
             <Center w="100%" h="20" rounded="lg" shadow={3}>
               <Input
                 placeholder="Feast name..."
-                value={formData.name}
-                onChangeText={(text) => handleChange('name', text)}
+                value={name}
+                // onChangeText={(text) =>
+                //   nameRef.current.setNativeProps({ text })
+                // }
+                onChangeText={(text) => setName(text)}
+                // onChangeText={(text) => handleChange('name', text)}
                 variant="rounded"
                 size="xl"
                 bgColor="white"
@@ -231,7 +288,8 @@ function CreateFeastForm({ props }) {
               <ScrollView
                 keyboardShouldPersistTaps="handled"
                 contentContainerStyle={{ flexGrow: 1 }}
-                horizontal>
+                horizontal
+              >
                 <GooglePlacesAutocomplete
                   enablePoweredByContainer={false}
                   placeholder="Type a location"
@@ -308,11 +366,15 @@ function CreateFeastForm({ props }) {
                   <RNDateTimePicker
                     // display="inline"
                     mode="date"
-                    value={formData.startDate}
+                    // ref={startDateRef}
+                    value={startDate}
                     minimumDate={new Date()}
-                    style={tw`flex-1 w-full mt-2`}
+                    style={tw`mt-2`}
+                    // onChange={(e, selectedDate) => {
+                    //   handleChange('startDate', selectedDate)
+                    // }}
                     onChange={(e, selectedDate) => {
-                      handleChange('startDate', selectedDate)
+                      setStartDate(selectedDate)
                     }}
                   />
                 </Center>
@@ -323,41 +385,47 @@ function CreateFeastForm({ props }) {
                   <RNDateTimePicker
                     // display="inline"
                     mode="date"
-                    value={formData.endDate}
+                    // ref={endDateRef}
+                    value={endDate}
                     minimumDate={new Date()}
-                    style={tw`flex-1 w-full mt-2`}
+                    style={tw`mt-2`}
+                    // onChange={(e, selectedDate) => {
+                    //   handleChange('endDate', selectedDate)
+                    // }}
                     onChange={(e, selectedDate) => {
-                      handleChange('endDate', selectedDate)
+                      setEndDate(selectedDate)
                     }}
                   />
                 </Center>
               </HStack>
             </Box>
 
-            <ScrollView style={styles.container}>
-              {/* <View style={tw`flex-row justify-evenly`}> */}
-              <View>
-                <Text textAlign="center" fontWeight="bold">
-                  Radius
-                </Text>
-                <View style={styles.elementContainer}>
-                  <Picker
-                    label="Radius"
-                    selectedValue={formData.radius}
-                    onValueChange={(itemValue) =>
-                      handleChange('radius', itemValue)
-                    }>
-                    <PickerIOS.Item label="1 Mile" value={1} />
-                    <PickerIOS.Item label="2 Miles" value={2} />
-                    <PickerIOS.Item label="3 Miles" value={3} />
-                    <PickerIOS.Item label="4 Miles" value={4} />
-                    <PickerIOS.Item label="5 Miles" value={5} />
-                  </Picker>
-                </View>
-              </View>
-            </ScrollView>
+            {/* <ScrollView style={styles.container}> */}
+            {/* <View style={tw`flex-row justify-evenly`}> */}
+            <Box mt={'1'}>
+              <Text textAlign="center" fontWeight="semibold" fontSize="md">
+                Radius
+              </Text>
+              <Box top={'-60'}>
+                <Picker
+                  label="Radius"
+                  selectedValue={radius}
+                  onValueChange={(itemValue) =>
+                    // handleChange('radius', itemValue)
+                    setRadius(itemValue)
+                  }
+                >
+                  <PickerIOS.Item label="1 Mile" value={1} />
+                  <PickerIOS.Item label="2 Miles" value={2} />
+                  <PickerIOS.Item label="3 Miles" value={3} />
+                  <PickerIOS.Item label="4 Miles" value={4} />
+                  <PickerIOS.Item label="5 Miles" value={5} />
+                </Picker>
+              </Box>
+            </Box>
+            {/* </ScrollView> */}
 
-            <ScrollView>
+            <ScrollView style={tw`-mt-16`}>
               <Box alignItems="center">
                 <VStack space={2}>
                   <HStack alignItems="baseline">
@@ -367,15 +435,21 @@ function CreateFeastForm({ props }) {
                     <Box>
                       <Text>
                         Selected: (
-                        {guestArr.length ? guestArr.length : 'None yet 😏'})
+                        {/* {guestArr.length ? guestArr.length : 'None yet 😏'}) */}
+                        {guestList.length ? guestList.length : 'None yet 😏'})
                       </Text>
                     </Box>
                   </VStack>
                   <Checkbox.Group
                     colorScheme="rose"
+                    // ref={guestListRef}
                     defaultValue={guestArr}
                     accessibilityLabel="invite guests"
-                    onChange={setGuestArr}>
+                    onChange={(values) => {
+                      setGuestArr(values || [])
+                    }}
+                    // onChangeText={(values) => (guestList = [values])}
+                  >
                     {guests.map((guest) => (
                       <Checkbox key={guest.id} value={guest.username} my="1">
                         <Image
@@ -390,12 +464,20 @@ function CreateFeastForm({ props }) {
               </Box>
             </ScrollView>
 
-            <Button
+            {/* <Button
               mt="5"
               colorScheme="rose"
-              onPress={() => handleCreateFeast()}>
+              onPress={() => handleCreateFeast()}
+            >
               <Text>Create Feast</Text>
-            </Button>
+            </Button> */}
+            <Center>
+              <CustomButton
+                onPress={() => handleCreateFeast()}
+                text={'Create Feast'}
+              />
+            </Center>
+
             {createFeast.isLoading && (
               <HStack space={2} justifyContent="center">
                 <Spinner accessibilityLabel="Submitting feast" />
@@ -413,7 +495,8 @@ function CreateFeastForm({ props }) {
                         flexShrink={1}
                         space={2}
                         alignItems="center"
-                        justifyContent="space-between">
+                        justifyContent="space-between"
+                      >
                         <HStack flexShrink={1} space={2} alignItems="center">
                           <Alert.Icon />
                           <Text
@@ -421,7 +504,8 @@ function CreateFeastForm({ props }) {
                             fontWeight="medium"
                             _dark={{
                               color: 'coolGray.800',
-                            }}>
+                            }}
+                          >
                             Failed to create feast
                           </Text>
                         </HStack>
@@ -443,7 +527,8 @@ function CreateFeastForm({ props }) {
                           _text: {
                             color: 'coolGray.600',
                           },
-                        }}>
+                        }}
+                      >
                         {createFeast.error.message}
                       </Box>
                     </VStack>

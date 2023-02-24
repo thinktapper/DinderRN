@@ -6,7 +6,6 @@ import React, {
   useMemo,
 } from 'react'
 import * as SecureStore from 'expo-secure-store'
-// import { queryClient } from '../lib/queryClient'
 import { useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import { apiURL } from '../lib/constants'
@@ -17,7 +16,7 @@ const AuthContext = createContext({})
 export const AuthProvider = ({ children }) => {
   const queryClient = useQueryClient()
   const [user, setUser] = useState(null)
-  const [isSignOut, setIsSignOut] = useState(false)
+  // const [isSignOut, setIsSignOut] = useState(false)
   // const [isLoading, setIsLoading] = useState(false)
   const [splashLoading, setSplashLoading] = useState(false)
   const value = {
@@ -87,7 +86,7 @@ export const AuthProvider = ({ children }) => {
 
         // update stored user data
         await setStoredUser(data.user)
-        console.debug(`User ${data.user.username} signed up`)
+        // console.debug(`User ${data.user.username} signed up`)
       }
 
       setSplashLoading(false)

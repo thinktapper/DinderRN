@@ -1,0 +1,39 @@
+{
+  "cli": {
+    "version": ">= 3.5.2"
+  },
+  "build": {
+    "development": {
+      "env": {
+        "APP_VARIANT": "development"
+      },
+      "developmentClient": true,
+      "distribution": "internal",
+      "channel": "staging",
+      "ios": {
+        "simulator": true,
+        "resourceClass": "m1-medium"
+      }
+    },
+    "preview": {
+      "env": {
+        "APP_VARIANT": "preview"
+      },
+      "distribution": "internal",
+      "ios": {
+        "simulator": true,
+        "resourceClass": "m1-medium"
+      },
+      "channel": "testing"
+    },
+    "production": {
+      "ios": {
+        "resourceClass": "m1-medium"
+      },
+      "channel": "production"
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
