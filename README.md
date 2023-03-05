@@ -15,7 +15,7 @@
     <a href="#readme-toc"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/thinktapper/DinderRN">View Demo</a>
+    <a href="https://user-images.githubusercontent.com/10656909/221169812-5140ddaf-8d9b-4bad-ab52-b0d3382db2e8.mp4" target='_blank'>View Demo</a>
     ·
     <a href="https://github.com/thinktapper/DinderRN/issues">Report Bug</a>
     ·
@@ -59,7 +59,7 @@
 <!-- ABOUT THE PROJECT -->
 <h2>About The Project</h2>
 
-<p>Like Tinder for food, Dinder uses swipe matching to decide on the perfect place for your next meal. Users are able to create accounts and log in, set profile information and location details, and swipe through a deck of restaurants tailored to their occasion. Each card in the deck contains real-time establishment data sourced from Google Maps and stored alongside user votes on the backend, <a href="https://github.com/thinktapper/DinderIsServed">Dinder Is Served</a>.</p>
+<p>Like Tinder for food, Dinder uses swipe matching to decide on the perfect place for your next meal. Users are able to create accounts and log in, set profile information and location details, and swipe through a deck of restaurants tailored to their occasion. Each card in the deck contains real-time establishment data sourced from Google Maps which is stored alongside user votes on the backend -> <a href="https://github.com/thinktapper/DinderIsServed" target='_blank'>DinderIsServed</a>.</p>
 
 <div align="center">
 
@@ -97,11 +97,11 @@ https://user-images.githubusercontent.com/10656909/221169812-5140ddaf-8d9b-4bad-
 
 ## Getting Started
 
-### Prerequisites
+### Prerequisites:
 
-You’ll need to have modern versions of node.js (LTS ^16.18 recommend) and yarn or npm installed.
+You’ll need to have modern versions of node.js (LTS >=16.18 recommend) and yarn or npm installed.
 
-### Installation
+### Installation:
 
 - Install packages with `yarn` or `npx expo install`.
 - Copy environment variables so you can safely add secrets if necessary:
@@ -115,11 +115,11 @@ You’ll need to have modern versions of node.js (LTS ^16.18 recommend) and yarn
 
 ## Why It’s Made
 
-Dinder is a passion project that solves a problem that many can relate to. I enjoy building fun, engaging things that add value to people’s lives. The idea driving Dinder fits this bill and is an excellent excuse to learn and play with new & exciting technologies. I initially started building [the app](https://github.com/thinktapper/dinder) for the browser, leveraging Next.js as a React framework and serverless API. However, I knew its true user experience was destined for mobile phones. This codebase is now a viable user-facing client for Dinder’s new life as a native app on iOS, Android— and eventually web-based platforms.
+Dinder is a passion project that solves a problem that many can relate to. I enjoy building fun, engaging things that add value to people’s lives. The idea driving Dinder fits this bill and is an excellent excuse to learn and play with new & exciting technologies. I initially started building the <a href='https://github.com/thinktapper/dinder' target='_blank'>app</a> for the browser, leveraging Next.js as a React framework and serverless API. However, I knew its true user experience was destined for mobile phones. This codebase is now a viable user-facing client for Dinder’s new life as a native app on iOS, Android— and eventually web-based platforms.
 
 ## How It's Made
 
-This project was made using React Native and Expo. I used TailwindCSS for styling and Tanstack Query (React Query) for handling data communications with the backend, [Dinder Is Served](https://github.com/thinktapper/DinderIsServed). The Google Maps Places API was used to autocomplete feast locations & get detailed restaurant data.
+This project was made using React Native and Expo. I used TailwindCSS for styling and Tanstack Query (React Query) for handling data communications with the backend, <a href='https://github.com/thinktapper/DinderIsServed' target='_blank'>DinderIsServed</a>. The Google Maps Places API was used to autocomplete feast locations & get detailed restaurant data.
 
 <details name="why-expo">
 <summary><i>Why Expo vs. plain React Native?</i></summary>
@@ -134,7 +134,7 @@ This project was made using React Native and Expo. I used TailwindCSS for stylin
 
 ## Lessons Learned
 
-This full-stack project was a great way to learn about React/React Native for the frontend and building a Node + Express API server in TypeScript for the [backend](https://github.com/thinktapper/DinderIsServed). I learned how to use react-query to keep client/server data in sync, and even for global state management. I also learned how to use the Google Maps Places API to autocomplete location searches, and how to use Tailwind utility classes in a React Native mobile app.
+This full-stack project was a great way to learn about React/React Native for the frontend and building a Node + Express API server in TypeScript for the <a href='https://github.com/thinktapper/DinderIsServed' target='_blank'>backend</a>. I learned how to use react-query to keep client/server data in sync, and even for global state management. I also learned how to use the Google Maps Places API to autocomplete location searches, and how to use Tailwind utility classes in a React Native mobile app.
 
 ### Key Takeaways:
 
