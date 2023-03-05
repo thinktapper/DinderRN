@@ -129,7 +129,7 @@ This project was made using React Native and Expo. I used TailwindCSS for stylin
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Lessons Learned:
+## Lessons Learned
 
 This full-stack project was a great way to learn about React/React Native for the frontend and building a Node + Express API server in TypeScript for the [backend](https://github.com/thinktapper/DinderIsServed). I learned how to use react-query to keep client/server data in sync, and even for global state management. I also learned how to use the Google Maps Places API to autocomplete location searches, and how to use Tailwind utility classes in a React Native mobile app.
 
