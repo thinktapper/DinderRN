@@ -1,4 +1,4 @@
-import 'expo-dev-client'
+// import 'expo-dev-client'
 // import 'react-native-gesture-handler'
 import React from 'react'
 import { LogBox } from 'react-native'
@@ -6,7 +6,6 @@ import { StatusBar } from 'expo-status-bar'
 import 'react-native-url-polyfill/auto'
 import { queryClient } from './src/lib/queryClient'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-// import Reactotron from 'reactotron-react-native'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 import Navigation from './src/navigation'
@@ -27,7 +26,7 @@ const asyncPersister = createAsyncStoragePersister({
 
 const App = ({ navigation }) => {
   return (
-    // <SafeAreaView style={tw`flex-1 bg-slate-200`}>
+    // <SafeAreaView style={tw`flex-1`}>
     <PersistQueryClientProvider
       client={queryClient}
       persistOptions={{ persister: asyncPersister }}

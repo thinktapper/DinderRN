@@ -65,16 +65,28 @@
 
 https://user-images.githubusercontent.com/10656909/221169812-5140ddaf-8d9b-4bad-ab52-b0d3382db2e8.mp4
 
+### Screenshots
+
+<details>
+  <summary>Show Images</summary>
+    <img src='https://user-images.githubusercontent.com/10656909/222942913-bb4eef89-61e1-424b-b26d-7e4a1f5f2554.png' alt='' width='128'>
+    <img src='https://user-images.githubusercontent.com/10656909/222942889-336a796b-3730-4530-bcdf-f55a920c057b.png' alt='' width='128'>
+    <img src='https://user-images.githubusercontent.com/10656909/222942931-42860e6b-625a-4ebf-a432-b61f3d37ad01.png' alt='' width='128'>
+    <img src='https://user-images.githubusercontent.com/10656909/222942957-b218210d-428b-4147-bbe6-70de11c16c10.png' alt='' width='128'>
+    <img src='https://user-images.githubusercontent.com/10656909/222942962-73635777-2d89-4cad-aae7-41b3d4bbe25b.png' alt='' width='128'>
+    <img src='https://user-images.githubusercontent.com/10656909/222942965-4bf6c1e5-a7ec-4f5f-ac0d-3d55cc06b60d.png' alt='' width='128'>
+</details>
 </div>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
 
-- [![React Native][react-native]][react-native-url]
-- [![PostgreSQL][postgresql]][postgresql-url]
+- [![Expo][expo]][expo-url]
 - [![GoogleMaps][googlemaps]][googlemaps-url]
 - [![tailwindcss][tailwindcss]][tailwindcss-url]
+- [![React Query][react-query]][react-query-url]
+<!-- - [![React Native][react-native]][react-native-url] -->
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -104,7 +116,7 @@ Dinder is a passion project that solves a problem that many can relate to. I enj
 
 ## How It's Made
 
-This project was made using React Native and Expo. I used TailwindCSS for styling and Prisma for generating a typesafe ORM to interact with the PostgreSQL database hosted on [Render](https://render.com/). The Google Places API was used to autocomplete the feast location & get restaurant data.
+This project was made using React Native and Expo. I used TailwindCSS for styling and Tanstack Query (React Query) for handling data communications with the backend, [Dinder Is Served](https://github.com:thinktapper/DinderIsServed). The Google Maps Places API was used to autocomplete feast locations & get detailed restaurant data.
 
 <details name="why-expo">
 <summary><i>Why Expo vs. plain React Native?</i></summary>
@@ -119,7 +131,7 @@ This project was made using React Native and Expo. I used TailwindCSS for stylin
 
 ## Lessons Learned:
 
-This full-stack project was a great way to learn about React/React Native for the frontend and building a Node + Express API server in TypeScript for the backend. I learned how to use Prisma to generate relational database models on the [backend](https://github.com/thinktapper/DinderIsServed), and how to use react-query for interactions between the client/server. I also learned how to use the Google Places API to autocomplete location searches and fetch restaurant data, and how to use Tailwind utility classes in a React Native mobile app.
+This full-stack project was a great way to learn about React/React Native for the frontend and building a Node + Express API server in TypeScript for the [backend](https://github.com/thinktapper/DinderIsServed). I learned how to use react-query to keep client/server data in sync, and even for global state management. I also learned how to use the Google Maps Places API to autocomplete location searches, and how to use Tailwind utility classes in a React Native mobile app.
 
 ### Key Takeaways:
 
@@ -149,10 +161,9 @@ With time, I plan to add the following features:
 
 - [x] Add a "Winner" screen to display winning restuarant after voting closes.
 - [x] Implement list of other users/friends to optionally add to new feasts.
-- [ ] Create sharable links for inviting other users (registered or not) to feasts.
-- [ ] Add automatic dark mode support
+- [x] Switch remaining touchableOpacities to pressables
 - [ ] Implement 'react-native-fast-image’ to replace RN’s Image component (even FB doesn’t use)
-- [ ] Switch remaining touchableOpacities to pressables
+- [ ] Add automatic dark mode support
 - [ ] Add a feature so users can filter restaurants by various criteria
   - [ ] Add options for that criteria in the feast creation form & persist in the database
 - [ ] Add a component for users to see the restaurants on a map
@@ -231,8 +242,12 @@ Distributed under the GNU GPLv3. See `LICENSE` for more information.
 [product-screenshot]: images/screenshot.png
 [next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white
 [next-url]: https://beta.nextjs.org/
+[expo]: https://img.shields.io/badge/expo-000020?style=for-the-badge&logo=expo&logoColor=white
+[expo-url]: https://expo.dev/
 [react.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [react-url]: https://reactjs.org/
+[react-query]: https://img.shields.io/badge/React-Query-FF4154?style=for-the-badge&logo=reactquery&logoColor=FF4154
+[react-query-url]: https://tanstack.com/query/
 [react-native]: https://img.shields.io/badge/React-Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [react-native-url]: https://reactnative.dev/
 [vue.js]: https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D
