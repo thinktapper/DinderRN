@@ -59,7 +59,7 @@
 <!-- ABOUT THE PROJECT -->
 <h2>About The Project</h2>
 
-<p>Like Tinder for food, Dinder uses swipe matching to decide on the perfect place for your next meal. Users are able to create accounts and log in, set profile information and location details, and swipe through a deck of restaurants tailored to their occasion. Each card in the deck contains real-time establishment data sourced from Google Maps which is stored alongside user votes on the backend -> <a href="https://github.com/thinktapper/DinderIsServed" target='_blank'>DinderIsServed</a>.</p>
+<p>Like Tinder for food, Dinder uses swipe matching to decide on the perfect place for your next meal. Users are able to create accounts and log in, set profile information and location details, and swipe through a deck of restaurants tailored to their occasion. Each card in the deck contains real-time establishment data sourced from Google Maps which is stored alongside user votes on the backend → <a href="https://github.com/thinktapper/DinderIsServed" target='_blank'>DinderIsServed</a>.</p>
 
 <div align="center">
 
