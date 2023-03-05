@@ -59,7 +59,7 @@
 <!-- ABOUT THE PROJECT -->
 <h2>About The Project</h2>
 
-<p>Like Tinder for food, Dinder uses swipe matching to decide on the perfect place for your next meal. Users are able to create accounts and log in, set profile information and location details, and swipe through a deck of restaurants tailored to their occasion. Each card in the deck contains real-time establishment data sourced from Google Maps and stored alongside user votes on the backend, <a href="https://github.com/thinktapper/DinderIsServed">DinderIsServed</a>.</p>
+<p>Like Tinder for food, Dinder uses swipe matching to decide on the perfect place for your next meal. Users are able to create accounts and log in, set profile information and location details, and swipe through a deck of restaurants tailored to their occasion. Each card in the deck contains real-time establishment data sourced from Google Maps and stored alongside user votes on the backend, <a href="https://github.com/thinktapper/DinderIsServed">Dinder Is Served</a>.</p>
 
 <div align="center">
 
@@ -69,12 +69,12 @@ https://user-images.githubusercontent.com/10656909/221169812-5140ddaf-8d9b-4bad-
 
 <details>
   <summary>Show Images</summary>
-    <img src='https://user-images.githubusercontent.com/10656909/222942913-bb4eef89-61e1-424b-b26d-7e4a1f5f2554.png' alt='' width='128'>
-    <img src='https://user-images.githubusercontent.com/10656909/222942889-336a796b-3730-4530-bcdf-f55a920c057b.png' alt='' width='128'>
-    <img src='https://user-images.githubusercontent.com/10656909/222942931-42860e6b-625a-4ebf-a432-b61f3d37ad01.png' alt='' width='128'>
-    <img src='https://user-images.githubusercontent.com/10656909/222942957-b218210d-428b-4147-bbe6-70de11c16c10.png' alt='' width='128'>
-    <img src='https://user-images.githubusercontent.com/10656909/222942962-73635777-2d89-4cad-aae7-41b3d4bbe25b.png' alt='' width='128'>
-    <img src='https://user-images.githubusercontent.com/10656909/222942965-4bf6c1e5-a7ec-4f5f-ac0d-3d55cc06b60d.png' alt='' width='128'>
+    <img src='https://user-images.githubusercontent.com/10656909/222942913-bb4eef89-61e1-424b-b26d-7e4a1f5f2554.png' alt=''>
+    <img src='https://user-images.githubusercontent.com/10656909/222942889-336a796b-3730-4530-bcdf-f55a920c057b.png' alt=''>
+    <img src='https://user-images.githubusercontent.com/10656909/222942931-42860e6b-625a-4ebf-a432-b61f3d37ad01.png' alt=''>
+    <img src='https://user-images.githubusercontent.com/10656909/222942957-b218210d-428b-4147-bbe6-70de11c16c10.png' alt=''>
+    <img src='https://user-images.githubusercontent.com/10656909/222942962-73635777-2d89-4cad-aae7-41b3d4bbe25b.png' alt=''>
+    <img src='https://user-images.githubusercontent.com/10656909/222942965-4bf6c1e5-a7ec-4f5f-ac0d-3d55cc06b60d.png' alt=''>
 </details>
 </div>
 
@@ -116,7 +116,7 @@ Dinder is a passion project that solves a problem that many can relate to. I enj
 
 ## How It's Made
 
-This project was made using React Native and Expo. I used TailwindCSS for styling and Tanstack Query (React Query) for handling data communications with the backend, [Dinder Is Served](https://github.com:thinktapper/DinderIsServed). The Google Maps Places API was used to autocomplete feast locations & get detailed restaurant data.
+This project was made using React Native and Expo. I used TailwindCSS for styling and Tanstack Query (React Query) for handling data communications with the backend, [Dinder Is Served](https://github.com/thinktapper/DinderIsServed). The Google Maps Places API was used to autocomplete feast locations & get detailed restaurant data.
 
 <details name="why-expo">
 <summary><i>Why Expo vs. plain React Native?</i></summary>
@@ -135,19 +135,18 @@ This full-stack project was a great way to learn about React/React Native for th
 
 ### Key Takeaways:
 
-<i>Coming soon...</i>
-
-<!-- <ul>
-  <li>Strengthened skills needed to plan, scope, research, and deploy a full-stack web app.</li>
-  <li>Practiced using TypeScript for better type safety and code quality.</li>
-  <li>Practiced using TailwindCSS to quickly build out a UI from a design spec.</li>
-  <li>Learned how to build out and deploy a serverless API.</li>
-  <li>Practiced utilizing middleware to protect my app from unauthenticated users.</li>
-  <li>Learned how and when to use React Server Components to render content server-side, and when client-side components are necessary.</li>
-  <li>Learned how to use the new React 18 Suspense component to render loading states.</li>
-  <li>Learned how to set up continuous deployment with CI.</li>
-  <li>Gained experience debugging and troubleshooting TypeScript and ESLint build errors and deployment issues.</li>
-</ul> -->
+<ul>
+  <li>Dinder offered an opportunity to learn about developing mobile applications using Expo and React Native.</li>
+  <li>Practiced full-stack development to gain a deeper understanding of how the frontend and backend components interact with each other.</li>
+  <li>Built a custom REST API server for the backend in order to meet business logic requirements.</li>
+  <li>Strengthend my understanding of the overall architecture of modern JS applications.</li>
+  <li>Practiced working with third-party APIs on both the client and server-side by making requests, parsing responses, and handling errors.</li>
+  <li>Learned how to use Tanstack/React Query as to optimize data fetching, caching, and synchronization.</li>
+  <li>The project also taught me how to create context providers to share authentication information across multiple components.</li>
+  <li>Learned how to use Tailwind utility classes in a React Native mobile app.</li>
+  <li>The project provided opportunities to practice my debugging skills by identifying and fixing bugs in both the frontend and backend.</li>
+  <li>Learned how to deploy code to multiple environments, such as development, staging, and production.</li>
+</ul>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -155,19 +154,21 @@ This full-stack project was a great way to learn about React/React Native for th
 
 ## Roadmap
 
-🏋️‍♂️ This project is still in progress ✨
-
 With time, I plan to add the following features:
 
 - [x] Add a "Winner" screen to display winning restuarant after voting closes.
 - [x] Implement list of other users/friends to optionally add to new feasts.
 - [x] Switch remaining touchableOpacities to pressables
 - [ ] Implement 'react-native-fast-image’ to replace RN’s Image component (even FB doesn’t use)
-- [ ] Add automatic dark mode support
+- [ ] Restyle homescreen for when no feast is selected to instruct the user to choose or create a new one
+- [ ] Add tooltip if user presses disabled button when current feast is not closed
+- [ ] Feastscreen: add error if editing or deleting a feast they don't own (status code 401)
+- [ ] Save image for feast location and display it in the feasts list
+- [ ] Use 'flashlist' instead of flatlist for better performance
 - [ ] Add a feature so users can filter restaurants by various criteria
   - [ ] Add options for that criteria in the feast creation form & persist in the database
-- [ ] Add a component for users to see the restaurants on a map
 - [ ] Add a feature so users can save their favorite restaurants
+- [ ] Add automatic dark mode support
 - [ ] Use 'react-native-haptic-feedback' to add a vibration effects
 - [ ] Refactor the code to use TypeScript for better type safety
 - [ ] Add Detox E2E testing
