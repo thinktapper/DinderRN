@@ -57,7 +57,7 @@
     "@tanstack/eslint-plugin-query": "^4.21.0",
     "eslint": "^8.26.0",
     "eslint-config-universe": "^11.1.1",
-    "postcss": "^8.4.19",
+    "postcss": "^8.4.31",
     "prettier": "^2.7.1",
     "react-native-dotenv": "^3.3.1",
     "reactotron-react-native": "^5.0.3",
